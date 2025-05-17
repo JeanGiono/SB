@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>強化版 Excel 檔案編輯與匯出</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* 自訂樣式 */
+        body {
+            font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
+            background-color: #f4f7f6; /* 柔和的背景色 */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px; /* 圓角 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 陰影 */
+        }
+        #excel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #excel-table th, #excel-table td {
+            border: 1px solid #e0e0e0; /* 淺灰色邊框 */
+            padding: 12px;
+            text-align: left;
+        }
+        #excel-table th {
+            background-color: #eef2f7; /* 淺藍色背景 */
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10; /* 確保置頂 */
+        }
+        /* 確保空白和有內容的儲存格都能編輯 */
+        #excel-table td[contenteditable="true"] {
+            background-color: #fffacd; /* 淺黃色可編輯背景 */
+            outline: none;
+            transition: background-color 0.2s ease; /* 過渡效果 */
+            min-width: 50px; /* 確保空白儲存格有最小寬度 */
+        }
+        #excel-table td[contenteditable="true"]:focus {
+             background-color: #ffffcc; /* 聚焦時顏色更亮 */
+        }
+        #excel-table tr:nth-child(even) {
+            background-color: #f9f9f9; /* 斑馬紋 */
+        }
+        #excel-table tr:hover {
+            background-color: #eef2f7; /* 懸停效果 */
+        }
+        #table-container {
+            max-height: 600px; /* 限制表格高度 */
+            overflow-y: auto; /* 垂直滾動 */
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow-x: auto; /* 水平滾動 */
+        }
+        .validation-error {
+            border: 2px solid #ff6b6b !important; /* 錯誤時紅色邊框 */
+            background-color: #ffecec !important; /* 錯誤時淺紅色背景 */
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #4caf50;
+            width: 0%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            transition: width 0.4s ease;
+        }
+        .footer-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+         .footer-buttons button {
+            margin: 0 10px;
+         }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="container">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">強化版 Excel 檔案編輯器</h1>
+
+        <div id="upload-area" class="mb-6 p-6 border-2 border-dashed border-gray-300 bg-gray-50 text-center rounded-lg">
+            <label for="excelFile" class="block mb-3 text-lg font-medium text-gray-700">請選擇一個 Excel (.xlsx) 檔案上傳:</label>
+            <input type="file" id="excelFile" accept=".xlsx" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+
+            <div class="mt-4 text-sm text-gray-600">
+                <input type="radio" id="replace" name="upload-mode" value="replace" checked class="mr-1">
+                <label for="replace" class="mr-4">替換現有資料</label>
+                <input type="radio" id="append" name="upload-mode" value="append" class="mr-1">
+                <label for="append">追加到現有資料</label>
+            </div>
+        </div>
+
+        <div id="progress-area" class="hidden">
+             <p class="text-sm text-gray-700 mb-2">讀取進度:</p>
+             <div class="progress-bar-container">
+                 <div class="progress-bar" id="progressBar">0%</div>
+             </div>
+        </div>
+
+        <div id="controls" class="mb-4 flex flex-col md:flex-row justify-between items-center hidden">
+            <div class="mb-4 md:mb-0">
+                 <label for="sheetSelect" class="mr-2 text-gray-700">選擇工作表:</label>
+                 <select id="sheetSelect" class="p-2 border rounded-md"></select>
+            </div>
+
+            <div class="flex flex-wrap justify-center md:justify-end gap-4">
+                <div>
+                    <label for="exportFormat" class="mr-2 text-gray-700">匯出格式:</label>
+                    <select id="exportFormat" class="p-2 border rounded-md">
+                        <option value="xlsx">Excel (.xlsx)</option>
+                        <option value="csv">CSV (.csv)</option>
+                        <option value="html">HTML (.html)</option>
+                    </select>
+                </div>
+
+                <button id="export-button" class="px-6 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition duration-200 ease-in-out shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    匯出檔案
+                </button>
+            </div>
+        </div>
+
+        <div id="table-container">
+            <table id="excel-table">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+         <p id="status-message" class="mt-4 text-center text-gray-700"></p>
+
+         <div class="footer-buttons hidden" id="footer-buttons">
+             <button id="finish-editing-button" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-200 ease-in-out shadow-md">
+                 完成編輯
+             </button>
+             </div>
+
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('excelFile');
+        const excelTableHead = document.querySelector('#excel-table thead');
+        const excelTableBody = document.querySelector('#excel-table tbody');
+        const exportButton = document.getElementById('export-button');
+        const sheetSelect = document.getElementById('sheetSelect');
+        const exportFormatSelect = document.getElementById('exportFormat');
+        const uploadModeRadios = document.getElementsByName('upload-mode');
+        const controlsDiv = document.getElementById('controls');
+        const progressBarContainer = document.getElementById('progress-area');
+        const progressBar = document.getElementById('progressBar');
+        const statusMessage = document.getElementById('status-message');
+        const footerButtonsDiv = document.getElementById('footer-buttons');
+        const finishEditingButton = document.getElementById('finish-editing-button');
+
+        let workbook = null; // 儲存整個工作簿對象
+        let currentSheetData = []; // 儲存目前工作表的資料 (Array of Arrays)
+        let columnTypes = []; // 儲存每欄的資料型別
+
+        // 監聽檔案上傳事件
+        fileInput.addEventListener('change', handleFileUpload);
+
+        // 監聽匯出按鈕點擊事件
+        exportButton.addEventListener('click', handleExport);
+
+        // 監聽工作表選擇變化事件
+        sheetSelect.addEventListener('change', handleSheetChange);
+
+        // 監聽單元格編輯事件 (使用事件委派)
+        excelTableBody.addEventListener('input', handleCellEdit);
+        excelTableBody.addEventListener('blur', handleCellBlur, true); // 使用捕獲階段確保在失去焦點時觸發
+
+        // 監聽完成編輯按鈕點擊事件
+        finishEditingButton.addEventListener('click', handleFinishEditing);
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            statusMessage.textContent = '正在讀取檔案...';
+            progressBarContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+            exportButton.disabled = true;
+            controlsDiv.classList.add('hidden'); // 隱藏控制項直到載入完成
+            footerButtonsDiv.classList.add('hidden'); // 隱藏底部按鈕
+
+            const reader = new FileReader();
+
+            reader.onloadstart = function() {
+                 statusMessage.textContent = '開始讀取檔案...';
+                 progressBar.style.width = '0%';
+                 progressBar.textContent = '0%';
+            }
+
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    // 讀取工作簿，加入 cellDates: true 選項來更好地處理日期
+                    const newWorkbook = XLSX.read(data, { type: 'array', cellDates: true });
+
+                    const uploadMode = document.querySelector('input[name="upload-mode"]:checked').value;
+
+                    if (uploadMode === 'append' && workbook) {
+                         // 追加模式
+                         // 這裡假設是將新檔案的第一個工作表追加到現有工作簿的當前工作表末尾
+                         if (newWorkbook.SheetNames.length === 0) {
+                             Swal.fire({
+                                 icon: 'warning',
+                                 title: '追加失敗',
+                                 text: '新檔案中沒有工作表可以追加。'
+                             });
+                             resetUI(); // 重置介面
+                             return;
+                         }
+
+                         const newSheetName = newWorkbook.SheetNames[0];
+                         const newWorksheet = newWorkbook.Sheets[newSheetName];
+                         // 讀取新資料，確保格式與現有資料一致
+                         const newData = XLSX.utils.sheet_to_json(newWorksheet, { header: 1, raw: false, dateNF:'yyyy-mm-dd' });
+
+                         if (workbook.SheetNames.length > 0) {
+                             const currentSheetName = sheetSelect.value || workbook.SheetNames[0];
+                             const currentWorksheet = workbook.Sheets[currentSheetName];
+                             // 讀取現有資料
+                             const existingData = XLSX.utils.sheet_to_json(currentWorksheet, { header: 1, raw: false, dateNF:'yyyy-mm-dd' });
+
+                             // 檢查標頭是否一致，如果不一致則提示使用者
+                             if (existingData.length > 0 && newData.length > 0 && JSON.stringify(existingData[0]) !== JSON.stringify(newData[0])) {
+                                 Swal.fire({
+                                     icon: 'warning',
+                                     title: '標頭不一致',
+                                     text: '新檔案的標頭與現有資料的標頭不一致，無法追加。請選擇替換模式或確認檔案格式。'
+                                 });
+                                 resetUI(); // 重置介面
+                                 return;
+                             }
+
+                             // 移除新資料的標頭行，如果存在且與舊資料標頭相同
+                             if (newData.length > 0 && existingData.length > 0 && JSON.stringify(existingData[0]) === JSON.stringify(newData[0])) {
+                                 newData.shift();
+                             }
+
+                             // 追加資料
+                             const combinedData = existingData.concat(newData);
+                             // 更新工作簿中的工作表資料
+                             workbook.Sheets[currentSheetName] = XLSX.utils.aoa_to_sheet(combinedData);
+                             currentSheetData = combinedData; // 更新當前工作表資料
+                             statusMessage.textContent = `檔案讀取成功，已將新資料追加到工作表 "${currentSheetName}"。`;
+
+                         } else {
+                             // 如果是第一次上傳，就當作替換
+                             workbook = newWorkbook;
+                             statusMessage.textContent = '檔案讀取成功。';
+                         }
+
+                    } else {
+                        // 替換模式 或 第一次上傳
+                        workbook = newWorkbook;
+                        statusMessage.textContent = '檔案讀取成功。';
+                    }
+
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = '100%';
+                    progressBarContainer.classList.add('hidden');
+
+                    populateSheetSelect(); // 填充工作表選擇下拉選單
+                    handleSheetChange(); // 顯示第一個工作表或之前選中的工作表
+
+                    controlsDiv.classList.remove('hidden'); // 顯示控制項
+                    exportButton.disabled = false; // 啟用匯出按鈕
+                    footerButtonsDiv.classList.remove('hidden'); // 顯示底部按鈕
+
+                } catch (error) {
+                    console.error("讀取或解析檔案時發生錯誤:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '讀取錯誤',
+                        text: '讀取檔案時發生錯誤，請確認檔案格式是否正確。'
+                    });
+                    resetUI(); // 重置介面
+                }
+            };
+
+            reader.onerror = function(e) {
+                 console.error("檔案讀取錯誤:", e);
+                 Swal.fire({
+                     icon: 'error',
+                     title: '讀取錯誤',
+                     text: '檔案讀取失敗。'
+                 });
+                 resetUI(); // 重置介面
+            }
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function resetUI() {
+             excelTableHead.innerHTML = ''; // 清空表格
+             excelTableBody.innerHTML = '';
+             exportButton.disabled = true; // 禁用匯出按鈕
+             controlsDiv.classList.add('hidden');
+             footerButtonsDiv.classList.add('hidden');
+             statusMessage.textContent = '請上傳檔案。';
+             progressBarContainer.classList.add('hidden');
+             workbook = null;
+             currentSheetData = [];
+             columnTypes = [];
+             sheetSelect.innerHTML = ''; // 清空工作表選單
+        }
+
+        function populateSheetSelect() {
+            sheetSelect.innerHTML = ''; // 清空現有選項
+            if (workbook && workbook.SheetNames) {
+                workbook.SheetNames.forEach(sheetName => {
+                    const option = document.createElement('option');
+                    option.value = sheetName;
+                    option.textContent = sheetName;
+                    sheetSelect.appendChild(option);
+                });
+            }
+        }
+
+        function handleSheetChange() {
+            const selectedSheetName = sheetSelect.value;
+            if (!workbook || !selectedSheetName) {
+                excelTableHead.innerHTML = '';
+                excelTableBody.innerHTML = '';
+                currentSheetData = [];
+                columnTypes = [];
+                statusMessage.textContent = '請選擇一個工作表。';
+                return;
+            }
+
+            const worksheet = workbook.Sheets[selectedSheetName];
+
+            // 將工作表資料轉換為 Array of Arrays
+            // raw: false 保留格式化的值，dateNF 確保日期格式正確
+            currentSheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, dateNF:'yyyy-mm-dd' });
+
+            renderTable(currentSheetData); // 渲染表格
+            inferColumnTypes(currentSheetData); // 判斷欄位型別
+        }
+
+        function renderTable(data) {
+            excelTableHead.innerHTML = '';
+            excelTableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                statusMessage.textContent = '此工作表沒有資料。';
+                return;
+            }
+
+            // 渲染標頭
+            const headerRow = document.createElement('tr');
+            // 確保即使 data[0] 是 null 或 undefined 也能處理
+            const headers = data[0] || [];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText === undefined ? '' : headerText; // 處理 undefined 標頭
+                headerRow.appendChild(th);
+            });
+            excelTableHead.appendChild(headerRow);
+
+            // 渲染資料行
+            // 從第二行開始 (索引 1)，因為第一行是標頭
+            for (let i = 1; i < data.length; i++) {
+                const dataRow = document.createElement('tr');
+                // 確保 data[i] 存在且是陣列
+                const rowData = data[i] || [];
+                // 確保單元格數量與標頭數量一致，即使資料行較短
+                for (let colIndex = 0; colIndex < headers.length; colIndex++) {
+                    const td = document.createElement('td');
+                    // 處理單元格資料可能是 null 或 undefined 的情況
+                    const cellData = rowData[colIndex] === undefined || rowData[colIndex] === null ? '' : rowData[colIndex];
+                    td.textContent = cellData;
+                    td.setAttribute('contenteditable', 'true');
+                    td.setAttribute('data-row', i); // 儲存行索引
+                    td.setAttribute('data-col', colIndex); // 儲存列索引
+                    // 可以在這裡根據 columnTypes 設定 data-type 屬性
+                    // td.setAttribute('data-type', columnTypes[colIndex]); // 等待 inferColumnTypes 完成
+
+                    dataRow.appendChild(td);
+                }
+                excelTableBody.appendChild(dataRow);
+            }
+             statusMessage.textContent = `顯示工作表: ${sheetSelect.value}，共 ${data.length > 0 ? data.length - 1 : 0} 筆資料。`; // 減去標頭行
+        }
+
+        function inferColumnTypes(data) {
+            if (data.length <= 1) { // 沒有資料或只有標頭
+                columnTypes = data[0] ? new Array(data[0].length).fill('text') : [];
+                return;
+            }
+
+            const numColumns = data[0].length;
+            columnTypes = new Array(numColumns).fill('text'); // 預設為文字
+
+            // 檢查前幾行來判斷型別 (可以根據需要調整檢查的行數)
+            const rowsToCheck = Math.min(data.length, 10); // 檢查前 10 行或所有行
+
+            for (let col = 0; col < numColumns; col++) {
+                let isNumber = true;
+                let isDate = true;
+
+                for (let row = 1; row < rowsToCheck; row++) { // 從資料行開始檢查
+                    const cellValue = data[row][col];
+
+                    // 檢查是否為數字
+                    if (cellValue !== null && cellValue !== undefined && cellValue !== '') {
+                         if (isNaN(cellValue)) {
+                             isNumber = false;
+                         }
+                         // 檢查是否為日期 (簡單判斷，可以根據需要使用更嚴格的日期解析)
+                         // SheetJS 讀取時如果 cellDates: true 會嘗試解析日期並返回 Date 對象或格式化的字符串
+                         if (!(cellValue instanceof Date || (typeof cellValue === 'string' && !isNaN(new Date(cellValue))))) {
+                             isDate = false;
+                         }
+                    } else {
+                        // 空白單元格不影響型別判斷
+                    }
+
+                    // 如果已經確定不是數字也不是日期，則一定是文字，可以提前退出
+                    if (!isNumber && !isDate) {
+                        break;
+                    }
+                }
+
+                if (isNumber) {
+                    columnTypes[col] = 'number';
+                } else if (isDate) {
+                    columnTypes[col] = 'date';
+                } else {
+                    columnTypes[col] = 'text';
+                }
+            }
+
+            console.log("Inferred Column Types:", columnTypes);
+
+            // 根據判斷的型別更新單元格的 data-type 屬性
+            // 需要等待表格渲染完成後再執行
+             requestAnimationFrame(() => {
+                 const cells = excelTableBody.querySelectorAll('td');
+                 cells.forEach(cell => {
+                      const colIndex = parseInt(cell.getAttribute('data-col'));
+                      if (colIndex < columnTypes.length) {
+                           cell.setAttribute('data-type', columnTypes[colIndex]);
+                      }
+                 });
+             });
+        }
+
+        function handleCellEdit(event) {
+            // 這個事件在單元格內容改變時觸發
+            const cell = event.target;
+            const row = parseInt(cell.getAttribute('data-row'));
+            const col = parseInt(cell.getAttribute('data-col'));
+            const newValue = cell.textContent;
+
+            // 實時更新 currentSheetData
+            if (currentSheetData[row] && currentSheetData[row][col] !== undefined) {
+                 currentSheetData[row][col] = newValue;
+            }
+
+            // 實時驗證 (可選，如果驗證規則複雜，可以在 blur 時再驗證)
+            // validateCell(cell, newValue);
+        }
+
+        function handleCellBlur(event) {
+            // 這個事件在單元格失去焦點時觸發
+            const cell = event.target;
+            if (cell.tagName === 'TD' && cell.getAttribute('contenteditable') === 'true') {
+                 const newValue = cell.textContent;
+                 validateCell(cell, newValue);
+            }
+        }
+
+        function validateCell(cell, value) {
+            const row = parseInt(cell.getAttribute('data-row'));
+            const col = parseInt(cell.getAttribute('data-col'));
+            const dataType = cell.getAttribute('data-type') || 'text'; // 預設為文字
+
+            let isValid = true;
+            let errorMessage = '';
+
+            // 簡單的驗證規則 (可以根據需求擴展)
+            if (dataType === 'number') {
+                // 允許空白或有效的數字
+                if (value !== '' && isNaN(value)) {
+                    isValid = false;
+                    errorMessage = '請輸入有效的數字。';
+                }
+            } else if (dataType === 'date') {
+                 // 允許空白或有效的日期格式 (如 YYYY-MM-DD)
+                 // 這裡需要更嚴格的日期驗證，例如使用正規表達式或日期解析庫
+                 // 簡單範例：檢查是否能被解析為有效的日期對象
+                 if (value !== '' && isNaN(new Date(value).getTime())) {
+                     isValid = false;
+                     errorMessage = '請輸入有效的日期格式 (如 YYYY-MM-DD)。';
+                 }
+            }
+            // 對於必填欄位，可以在這裡添加檢查
+            // 例如： if (isColumnRequired(col) && value.trim() === '') { ... }
+
+            if (!isValid) {
+                cell.classList.add('validation-error');
+                // 顯示錯誤提示 (可以使用 tooltip 或 SweetAlert2)
+                // 這裡使用簡單的 SweetAlert2 提示
+                 Swal.fire({
+                     icon: 'warning',
+                     title: '資料驗證失敗',
+                     text: `第 ${row} 行，第 ${col + 1} 欄: ${errorMessage}`,
+                     toast: true, // 顯示為 toast 提示
+                     position: 'top-end', // 顯示在右上角
+                     showConfirmButton: false,
+                     timer: 3000 // 3 秒後自動關閉
+                 });
+            } else {
+                cell.classList.remove('validation-error');
+                // 如果之前有錯誤提示，可以在這裡清除
+            }
+             return isValid;
+        }
+
+        // 匯出檔案
+        function handleExport() {
+            if (!workbook || !currentSheetData) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '沒有資料',
+                    text: '沒有資料可以匯出。請先上傳並編輯 Excel 檔案。'
+                });
+                return;
+            }
+
+            const selectedSheetName = sheetSelect.value;
+            const exportFormat = exportFormatSelect.value;
+
+            // 從 currentSheetData (Array of Arrays) 生成工作表
+            // 確保包含標頭行
+            const dataToExport = [currentSheetData[0]].concat(currentSheetData.slice(1));
+            const worksheet = XLSX.utils.aoa_to_sheet(dataToExport);
+
+            // 更新工作簿中的當前工作表
+            workbook.Sheets[selectedSheetName] = worksheet;
+
+            try {
+                let filename = "edited_file";
+                let fileType = "";
+
+                switch (exportFormat) {
+                    case 'xlsx':
+                        filename += ".xlsx";
+                        fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        XLSX.writeFile(workbook, filename);
+                        break;
+                    case 'csv':
+                        filename += ".csv";
+                        fileType = "text/csv";
+                         // 將單前工作表轉換為 CSV 格式的字串
+                        const csvData = XLSX.utils.sheet_to_csv(worksheet);
+                        downloadFile(filename, fileType, csvData);
+                        break;
+                    case 'html':
+                        filename += ".html";
+                        fileType = "text/html";
+                         // 將單前工作表轉換為 HTML 格式的字串
+                        const htmlData = XLSX.utils.sheet_to_html(worksheet);
+                        downloadFile(filename, fileType, htmlData);
+                        break;
+                    default:
+                        Swal.fire({
+                            icon: 'error',
+                            title: '不支援的格式',
+                            text: '選擇的匯出格式不支援。'
+                        });
+                        return;
+                }
+
+                 Swal.fire({
+                     icon: 'success',
+                     title: '匯出成功',
+                     text: `檔案已匯出為 ${filename}`,
+                     toast: true,
+                     position: 'top-end',
+                     showConfirmButton: false,
+                     timer: 3000
+                 });
+
+            } catch (error) {
+                console.error("匯出檔案時發生錯誤:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '匯出錯誤',
+                    text: '匯出檔案時發生錯誤。'
+                });
+            }
+        }
+
+        // 處理完成編輯按鈕點擊事件
+        function handleFinishEditing() {
+            // 這裡可以加入完成編輯後的邏輯，例如：
+            // 1. 提示使用者編輯已完成
+            // 2. 禁用編輯功能 (可選)
+            // 3. 自動觸發匯出 (可選)
+
+            // 目前只顯示一個提示訊息
+            Swal.fire({
+                icon: 'info',
+                title: '編輯已完成',
+                text: '您可以選擇匯出檔案或追加更多資料。',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            // 如果需要禁用編輯，可以遍歷所有可編輯單元格並移除 contenteditable 屬性
+            // const cells = excelTableBody.querySelectorAll('td[contenteditable="true"]');
+            // cells.forEach(cell => {
+            //     cell.setAttribute('contenteditable', 'false');
+            // });
+        }
+
+        // 輔助函數：下載檔案
+        function downloadFile(filename, type, data) {
+            const blob = new Blob([data], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+        }
+
+        // 初始化時禁用匯出按鈕和控制項
+        exportButton.disabled = true;
+        controlsDiv.classList.add('hidden');
+        footerButtonsDiv.classList.add('hidden'); // 初始化時隱藏底部按鈕
+
+    </script>
+
+</body>
+</html>
