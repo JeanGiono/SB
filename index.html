@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RCA+ 矛盾分析繪圖工具 (整合Gemini AI)</title>
+    <title>RCA+矛盾分析繪圖工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -11,136 +11,119 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            background-color: #f3f4f6; 
         }
-        #diagram-render-area { /* Area where the diagram is rendered */
+        #diagram-render-area { 
             position: relative; 
-            overflow: auto; /* Allows scrolling for large diagrams */
+            overflow: auto; 
             padding: 0; 
-            background-color: #fff; /* White background for the diagram */
-            border-radius: 0.5rem; /* Rounded corners */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow */
-            min-height: 450px; /* Minimum height for the diagram area */
-            width: 100%; /* Full width */
-            -webkit-user-select: none; /* Disable text selection for better UX */
+            background-color: #fff; 
+            border-radius: 0.5rem; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-height: 450px; 
+            width: 100%; 
+            -webkit-user-select: none; 
             -ms-user-select: none; 
             user-select: none; 
         }
-        #scalable-content-wrapper { /* Wrapper for zoomable/pannable content */
+        #scalable-content-wrapper { 
             position: relative;
-            transform-origin: top left; /* Zoom from top-left corner */
-            display: inline-block; /* Allows content to define its own size */
-            padding: 20px; /* Padding inside the scalable area */
-            cursor: grab; /* Grab cursor for panning */
+            transform-origin: top left; 
+            display: inline-block; 
+            padding: 20px; 
+            cursor: grab; 
         }
         #scalable-content-wrapper:active {
-            cursor: grabbing; /* Grabbing cursor when panning */
+            cursor: grabbing; 
         }
-        #svg-connector-layer { /* SVG layer for drawing connectors between nodes */
+        #svg-connector-layer { 
             position: absolute; 
-            top: 20px; /* Align with padding of scalable-content-wrapper */
-            left: 20px; /* Align with padding of scalable-content-wrapper */
-            pointer-events: none; /* SVG layer should not intercept mouse events */
-            z-index: 0; /* Behind the nodes */
+            top: 20px; 
+            left: 20px; 
+            pointer-events: none; 
+            z-index: 0; 
         }
-        #rca-diagram-container { /* Container for the actual diagram nodes */
-            display: inline-block; /* Allows it to size based on content */
-            text-align: center; /* Center align nodes if they are inline-block */
-            position: relative; /* For z-indexing and positioning children */
-            z-index: 1; /* Above the SVG layer */
+        #rca-diagram-container { 
+            display: inline-block; 
+            text-align: center; 
+            position: relative; 
+            z-index: 1; 
         }
 
-        .rca-node-wrapper { /* Wrapper for each node and its children container */
-            display: inline-flex; /* Use flex for layout */
-            flex-direction: column; /* Stack node and children vertically */
-            align-items: center; /* Center items horizontally */
-            margin: 0 1rem; /* Horizontal margin between sibling nodes */
-            vertical-align: top; /* Align to the top with sibling wrappers */
-            transition: margin 0.3s ease-in-out; /* Smooth transition for margin changes */
+        .rca-node-wrapper { 
+            display: inline-flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin: 0 1rem; 
+            vertical-align: top; 
+            transition: margin 0.3s ease-in-out; 
         }
-        .rca-node { /* Individual RCA node styling */
-            border: 2px solid #4b5563; /* Dark gray border */
-            padding: 0.6rem 1.1rem; /* Padding inside the node */
-            margin-top: 30px; /* Top margin */
-            margin-bottom: 15px; /* Bottom margin */
-            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            display: inline-flex; /* Use flex for internal layout */
-            flex-direction: column; /* Stack content vertically */
-            align-items: center; /* Center content horizontally */
-            max-width: 350px; /* Maximum width of a node */
-            border-radius: 0.375rem; /* Rounded corners */
-            position: relative; /* For positioning elements like icons */
-            z-index: 1; /* Ensure nodes are above connectors */
-            background-color: #ffffff; /* White background */
-            overflow-wrap: break-word; /* Break long words to prevent overflow */
+        .rca-node { 
+            border: 2px solid #4b5563; 
+            padding: 0.6rem 1.1rem; 
+            margin-top: 30px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1); 
+            display: inline-flex; 
+            flex-direction: column; 
+            align-items: center; 
+            max-width: 350px; 
+            border-radius: 0.375rem; 
+            position: relative;
+            z-index: 1; 
+            background-color: #ffffff; 
+            overflow-wrap: break-word; 
         }
-        .rca-node-content { /* Content area within a node */
+        .rca-node-content { 
             display: flex; 
             flex-direction: column; 
-            gap: 0.4rem; /* Spacing between elements in content */
+            gap: 0.4rem; 
             width: 100%; 
             align-items: center; 
         }
-        .rca-node-header { /* Header part of the node (text and icon) */
-            display: flex; 
+        .rca-node-header { 
+            display: flex;
             align-items: center; 
             justify-content: center; 
             gap: 0.4rem; 
             width: 100%;
-            position: relative; /* For absolute positioning of icon */
-            margin-bottom: 0.25rem; 
+            position: relative; 
+            margin-bottom: 0.25rem;
         }
-        .rca-node-icon { /* Icon styling (e.g., (+), (-), NC) */
+        .rca-node-icon { 
             font-weight: bold; font-size: 0.85em; 
-            padding: 0.2em 0.4em; border-radius: 50%; 
-            color: white; /* White text color */
-            position: absolute; /* Position relative to header */
-            top: 0.4rem; 
-            right: 0.4rem;
-            min-width: 22px; /* Minimum width for consistency */
-            height: 22px; /* Fixed height */
-            display: flex;
+            padding: 0.2em 0.4em; 
+            border-radius: 50%; 
+            color: white; 
+            min-width: 22px; 
+            height: 22px; 
+            display: flex; 
             align-items: center;
             justify-content: center;
-            border: 2px solid white; /* White border around icon */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Subtle shadow for depth */
-            z-index: 10; /* Above other node content */
+            border: 2px solid white; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2); 
+            z-index: 10; 
         }
-        .nc-badge { /* "Non-Changeable" badge styling */
+        .nc-badge { 
             font-size: 0.65em; font-weight: bold; color: #374151; 
             background-color: #e5e7eb; padding: 0.15rem 0.35rem; 
             border-radius: 0.25rem; 
-            align-self: center; 
-            margin-left: 0.25rem; 
         }
-        .rca-node-text { /* Text content of the node */
+        .rca-node-text { 
             font-weight: 500; 
             font-size: 0.9rem; 
             text-align: center; 
             overflow-wrap: break-word; 
             line-height: 1.4; 
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
-        /* Specific width adjustments for text based on node type to accommodate icons/badges */
-        .rca-node:not(.rca-node-positive-effect):not(.rca-node-negative-effect) .rca-node-text {
-            width: 9em; /* Fixed width for standard nodes */
-            padding-right: 2.5em; /* Space for icon */
-            display: inline-block; 
-            vertical-align: middle;
-        }
-        .rca-node-positive-effect .rca-node-text,
-        .rca-node-negative-effect .rca-node-text {
-            display: block; 
-            width: 100%;    
-            padding-right: 3em; /* More space for icon in effect nodes */
-        }
-
-        .selected-items-list { /* Styling for lists of parameters/principles */
+        
+        .selected-items-list { 
             font-size: 0.75rem; 
             color: #374151; 
             margin-top: 0.5rem; 
             padding-top: 0.375rem; 
-            border-top: 1px dashed #d1d5db; /* Dashed separator */
+            border-top: 1px dashed #d1d5db; 
             width: 100%; 
             text-align: left; 
         }
@@ -159,41 +142,38 @@
         }
         .selected-items-list .solution-text { color: #059669; margin-left: 0.3rem; font-style: italic;}
 
-        /* Node type specific styling */
-        .rca-node-initial-problem { background-color: #fee2e2; border-color: #ef4444; } /* Red for initial problem */
+        .rca-node-initial-problem { background-color: #fee2e2; border-color: #ef4444; } 
         .rca-node-initial-problem .rca-node-icon { background-color: #ef4444; }
-        .rca-node-cause { background-color: #fef9c3; border-color: #f59e0b; } /* Yellow for cause */
-        .rca-node-cause .rca-node-icon.contradictory { background-color: #8b5cf6; } /* Purple for contradictory cause icon */
-        .rca-node-positive-effect { background-color: #dbeafe; border-color: #3b82f6; border-radius: 50px; padding: 0.6rem 1.2rem; } /* Blue for positive effect */
+        .rca-node-cause { background-color: #fef9c3; border-color: #f59e0b; } 
+        .rca-node-cause .rca-node-icon.contradictory { background-color: #8b5cf6; } 
+        .rca-node-positive-effect { background-color: #dbeafe; border-color: #3b82f6; border-radius: 50px; padding: 0.6rem 1.2rem; } 
         .rca-node-positive-effect .rca-node-icon { background-color: #2563eb; }
-        .rca-node-negative-effect { background-color: #ffedd5; border-color: #f97316; border-radius: 50px; padding: 0.6rem 1.2rem; } /* Orange for negative effect */
+        .rca-node-negative-effect { background-color: #ffedd5; border-color: #f97316; border-radius: 50px; padding: 0.6rem 1.2rem; } 
         .rca-node-negative-effect .rca-node-icon { background-color: #f97316; }
 
-        .rca-children-container { /* Container for child nodes */
+        .rca-children-container { 
             display: flex; 
             flex-direction: row; 
             justify-content: center; 
             align-items: flex-start; 
             margin-top: 15px; 
             position: relative; 
-            padding-top: 25px; /* Space for connector lines */
-            width: max-content; /* Adjust width to content */
+            padding-top: 25px; 
+            width: max-content; 
         }
         
-        .rca-node-actions { /* Action buttons container within a node */
+        .rca-node-actions { 
             display: flex; 
-            flex-wrap: wrap; /* Allow buttons to wrap */
-            gap: 0.25rem; /* Spacing between buttons */
+            flex-wrap: wrap; 
+            gap: 0.25rem; 
             margin-top: 0.5rem; 
-            border-top: 1px solid #e5e7eb; /* Separator line */
+            border-top: 1px solid #e5e7eb; 
             padding-top: 0.5rem; 
             width: 100%; 
-            justify-content: flex-start; /* Align buttons to start */
+            justify-content: flex-start; 
         }
-        /* General action button styling */
         .action-button { background-color: #6b7280; color: white; padding: 0.375rem 0.75rem; border-radius: 0.25rem; font-size: 0.75rem; border: none; cursor: pointer; transition: background-color 0.2s; }
         .action-button:hover:not(:disabled) { background-color: #4b5563; } .action-button:disabled { background-color: #9ca3af; cursor: not-allowed; }
-        /* Specific action button colors */
         .action-button.add-cause { background-color: #3b82f6; } .action-button.add-cause:hover:not(:disabled) { background-color: #2563eb; }
         .action-button.add-positive { background-color: #10b981; } .action-button.add-positive:hover:not(:disabled) { background-color: #059669; }
         .action-button.add-negative { background-color: #f97316; } .action-button.add-negative:hover:not(:disabled) { background-color: #ea580c; }
@@ -202,28 +182,28 @@
         .action-button.edit-node { background-color: #f59e0b; } .action-button.edit-node:hover:not(:disabled) { background-color: #d97706; }
         .action-button.set-parameters { background-color: #0ea5e9; } .action-button.set-parameters:hover:not(:disabled) { background-color: #0284c7; }
         .action-button.set-principles { background-color: #ec4899; } .action-button.set-principles:hover:not(:disabled) { background-color: #db2777; }
-        .action-button.ai-suggest { background-color: #7c3aed; } /* Purple for AI features */
+        .action-button.ai-suggest { background-color: #7c3aed; } 
         .action-button.ai-suggest:hover:not(:disabled) { background-color: #6d28d9; }
         .action-button.finalize-diagram { background-color: #059669; } .action-button.finalize-diagram:hover:not(:disabled) { background-color: #047857; }
         .action-button.edit-diagram { background-color: #d97706; } .action-button.edit-diagram:hover:not(:disabled) { background-color: #b45309; }
         .remove-button { background-color: #ef4444; } .remove-button:hover:not(:disabled) { background-color: #dc2626; }
         
-        .input-group-container { margin-top: 0.5rem; width: calc(100% - 1rem); } /* Container for temporary input fields */
+        .input-group-container { margin-top: 0.5rem; width: calc(100% - 1rem); } 
         .input-group { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; background-color: #f9fafb; }
         .input-field { border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem; width: 100%; }
         .save-button { background-color: #065f46; color: white; } .save-button:hover:not(:disabled) { background-color: #047857; }
         .save-edit-button { background-color: #065f46; color: white; } .save-edit-button:hover:not(:disabled) { background-color: #047857; }
 
-        /* Data table section styling */
         .data-table-section { margin-top: 2rem; }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        .data-table th, .data-table td { border: 1px solid #d1d5db; padding: 0.5rem; font-size: 0.875rem; text-align: center; vertical-align: middle; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; table-layout: fixed; }
+        .data-table th, .data-table td { border: 1px solid #d1d5db; padding: 0.5rem; font-size: 0.875rem; text-align: center; vertical-align: middle; word-wrap: break-word; }
         .data-table th { background-color: #e5e7eb; font-weight: 600; }
         .data-table td { background-color: white; }
         .data-table td:first-child, .data-table th:first-child { text-align: left; }
+        .data-table .action-cell { width: 120px; } 
+        .data-table textarea { width: 100%; box-sizing: border-box; font-size: 0.875rem; padding: 0.25rem; border: 1px solid #d1d5db; border-radius: 0.25rem; min-height: 40px;}
         
-        /* Modal styling */
-        .modal { z-index: 50; } /* Ensure modals are on top */
+        .modal { z-index: 50; } 
         .modal-content { position: relative; } 
         .modal-close-button { position: absolute; top: 0.75rem; right: 0.75rem; background: none; border: none; font-size: 1.5rem; color: #6b7280; cursor: pointer; line-height: 1; }
         .modal-close-button:hover { color: #1f2937; }
@@ -234,24 +214,85 @@
         #ai-suggestions-container { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed #d1d5db; }
         #ai-suggestions-list { list-style-type: decimal; margin-left: 1.5rem; font-size: 0.875rem; color: #374151; max-height: 150px; overflow-y: auto; }
         #ai-suggestions-list li { margin-bottom: 0.5rem; padding: 0.25rem; border-radius: 0.25rem; }
-        #ai-suggestions-list li:hover { background-color: #e9d5ff; cursor: pointer; } /* Light purple hover for AI suggestions */
+        #ai-suggestions-list li:hover { background-color: #e9d5ff; cursor: pointer; } 
         .loading-spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; display: none; }
         .loading-spinner { border: 8px solid #f3f3f3; border-top: 8px solid #7c3aed; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Zoom controls styling */
         .zoom-controls { display: flex; gap: 0.5rem; align-items: center; }
         .zoom-controls span { font-size: 0.875rem; color: #4b5563; min-width: 50px; text-align: center; }
         
-        /* Dropdown menu styling */
         .dropdown { position: relative; display: inline-block; }
         .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 230px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 10; border-radius: 0.375rem; padding: 0.5rem 0; }
         .dropdown-content button, .dropdown-content label { color: black; padding: 0.75rem 1rem; text-decoration: none; display: block; text-align: left; background: none; border: none; width: 100%; font-size: 0.875rem; cursor: pointer; }
         .dropdown-content button:hover, .dropdown-content label:hover { background-color: #e5e7eb; }
         .dropdown-content button:disabled { color: #9ca3af; cursor: not-allowed; background-color: #f9f9f9; }
         .dropdown-content button i, .dropdown-content label i { margin-right: 0.5rem; width: 1.25rem; text-align: center; }
-        .dropdown-trigger-button { background-color: #1f2937; } /* Default dark color for dropdown triggers */
+        .dropdown-trigger-button { background-color: #1f2937; } 
         .dropdown-trigger-button:hover:not(:disabled) { background-color: #374151; }
+
+        #tracking-item-modal .input-field, #tracking-item-modal textarea, #tracking-item-modal select {
+            margin-bottom: 0.75rem;
+        }
+
+        /* TRIZ-MCDA Section Styles */
+        #triz-mcda-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .triz-mcda-phase {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .triz-mcda-phase:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .triz-mcda-phase h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* text-gray-700 */
+            margin-bottom: 1rem;
+        }
+        .triz-parameter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .triz-solution-concept {
+            margin-top: 0.5rem;
+        }
+        .triz-solution-concept textarea {
+            min-height: 60px;
+        }
+        #mcda-criteria-table th, #mcda-criteria-table td,
+        #mcda-evaluation-table th, #mcda-evaluation-table td {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+        #mcda-criteria-table input[type="number"] {
+            width: 60px;
+            text-align: right;
+        }
+         #mcda-evaluation-table input[type="number"] {
+            width: 50px;
+            text-align: center;
+        }
+        .mcda-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -260,13 +301,13 @@
     </div>
     <div class="container mx-auto max-w-7xl"> 
         <header class="mb-6 text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-700">RCA+ 矛盾分析繪圖工具 (整合Gemini AI)</h1>
-            <p class="text-gray-500 mt-1">視覺化根本原因、正面/負面效果，支援「且」關係連接、矛盾點標示、效果參數與發明原理。新增「✨ AI 建議方案」功能。</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-700">RCA+矛盾分析繪圖工具</h1>
+            <p class="text-gray-500 mt-1">視覺化根本原因、矛盾，整合 TRIZ-MCDA 分析流程、AI建議方案，並包含改善方案追蹤。</p>
         </header>
 
         <section id="controls-section" class="mb-6 p-4 bg-white rounded-lg shadow">
              <div id="problem-input-area">
-                <h2 class="text-xl font-semibold text-gray-700 mb-3">1. 設定主要負面效果</h2>
+                <h2 class="text-xl font-semibold text-gray-700 mb-3">1. 設定主要負面效果 (RCA+)</h2>
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="problem-statement-input" placeholder="輸入觀察到的主要負面效果" class="input-field flex-grow p-2 rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500">
                     <button id="set-problem-button" class="action-button add-cause text-white font-semibold py-2 px-4 rounded-md">設定問題根源</button>
@@ -304,6 +345,9 @@
                     <button id="auto-adjust-layout-button" class="action-button bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-md">
                         <i class="fas fa-project-diagram"></i> 自動調整節點
                     </button>
+                     <button id="toggle-triz-mcda-button" class="action-button bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md">
+                        <i class="fas fa-lightbulb mr-1"></i> TRIZ-MCDA 分析
+                    </button>
                     <div class="dropdown">
                         <button id="export-menu-button" class="action-button dropdown-trigger-button bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-md">
                             <i class="fas fa-download"></i> 匯出 <i class="fas fa-caret-down ml-1"></i>
@@ -319,11 +363,83 @@
                         <div id="view-tables-dropdown-content" class="dropdown-content">
                             <button id="show-cause-effect-table-button"><i class="fas fa-tasks"></i> 顯示原因效果表</button>
                             <button id="show-solution-table-button"><i class="fas fa-lightbulb"></i> 顯示改善方案表</button>
+                            <button id="show-tracking-table-button"><i class="fas fa-clipboard-check"></i> 顯示改善追蹤表</button>
                             <button id="hide-all-tables-button"><i class="fas fa-eye-slash"></i> 隱藏所有表格</button>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <section id="triz-mcda-section" style="display: none;">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">TRIZ-MCDA 整合分析</h2>
+            
+            <div id="triz-phase-1" class="triz-mcda-phase">
+                <h3>階段一：問題定義</h3>
+                <div>
+                    <label for="triz-problem-description" class="block text-sm font-medium text-gray-700 mb-1">問題描述：</label>
+                    <textarea id="triz-problem-description" rows="3" class="input-field w-full" placeholder="詳細描述您待解決的問題..."></textarea>
+                </div>
+                <div class="mt-4">
+                    <label for="triz-contradiction-phenomenon" class="block text-sm font-medium text-gray-700 mb-1">矛盾現象：</label>
+                    <input type="text" id="triz-contradiction-phenomenon" class="input-field w-full" placeholder="例如：當A改善時，卻導致B惡化">
+                </div>
+            </div>
+
+            <div id="triz-phase-2" class="triz-mcda-phase">
+                <h3>階段二：TRIZ 方案生成</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="triz-improving-parameter" class="block text-sm font-medium text-gray-700 mb-1">改善參數 (Improving Feature)：</label>
+                        <select id="triz-improving-parameter" class="triz-parameter-select"></select>
+                    </div>
+                    <div>
+                        <label for="triz-worsening-parameter" class="block text-sm font-medium text-gray-700 mb-1">惡化參數 (Worsening Feature)：</label>
+                        <select id="triz-worsening-parameter" class="triz-parameter-select"></select>
+                    </div>
+                </div>
+                <button id="triz-generate-principles-button" class="action-button bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mt-3">
+                    <i class="fas fa-cogs mr-2"></i>應用矛盾矩陣建議發明原理
+                </button>
+                <div id="triz-principles-output" class="mt-4">
+                    </div>
+            </div>
+
+            <div id="triz-phase-3" class="triz-mcda-phase">
+                <h3>階段三：MCDA 評估框架</h3>
+                <div>
+                    <h4 class="text-lg font-medium text-gray-700 mb-2">設定評估標準與權重：</h4>
+                    <div id="mcda-criteria-input-area" class="space-y-2 mb-4">
+                        </div>
+                    <button id="mcda-add-criterion-button" class="action-button bg-gray-500 hover:bg-gray-600 text-sm py-1 px-3 rounded-md">
+                        <i class="fas fa-plus mr-1"></i>新增標準
+                    </button>
+                    <button id="mcda-calculate-total-weight-button" class="action-button bg-yellow-500 hover:bg-yellow-600 text-sm py-1 px-3 rounded-md ml-2">
+                        檢查權重總和
+                    </button>
+                    <span id="mcda-total-weight-display" class="ml-2 text-sm text-gray-600"></span>
+                </div>
+                <div id="mcda-evaluation-area" class="mt-6">
+                    <h4 class="text-lg font-medium text-gray-700 mb-2">方案評估表：</h4>
+                    <div class="overflow-x-auto">
+                        <table id="mcda-evaluation-table" class="data-table w-full">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                     <button id="mcda-calculate-scores-button" class="action-button bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md mt-4">
+                        <i class="fas fa-calculator mr-2"></i>計算總分並推薦方案
+                    </button>
+                </div>
+                <div id="mcda-result-output" class="mcda-result" style="display: none;">
+                    <h4 class="text-lg font-medium text-gray-700 mb-2">評估結果：</h4>
+                    <p id="mcda-best-solution-text" class="text-green-600 font-semibold"></p>
+                    <p id="mcda-recommendation-reason" class="mt-1 text-sm"></p>
+                </div>
+            </div>
+             <button id="save-triz-mcda-button" class="action-button bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md mt-6">
+                <i class="fas fa-save mr-2"></i>儲存 TRIZ-MCDA 分析進度
+            </button>
         </section>
 
         <section id="rca-diagram-section" class="bg-white p-0 md:p-0 rounded-lg shadow min-h-[400px]">
@@ -348,6 +464,28 @@
             <table class="data-table">
                 <thead> <tr><th>矛盾原因</th><th>發明原理</th><th>改善方案</th></tr> </thead>
                 <tbody id="solution-table-body"></tbody>
+            </table>
+        </section>
+        <section id="tracking-table-section" style="display: none;" class="data-table-section bg-white p-4 md:p-6 rounded-lg shadow">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-xl font-semibold text-gray-700">5. 改善方案追蹤表</h2>
+                <button id="add-tracking-item-button" class="action-button bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md">
+                    <i class="fas fa-plus mr-2"></i>新增追蹤項目
+                </button>
+            </div>
+            <table class="data-table">
+                <thead> 
+                    <tr>
+                        <th style="width: 20%;">改善方案</th>
+                        <th style="width: 10%;">負責人</th>
+                        <th style="width: 10%;">完成日期</th>
+                        <th style="width: 15%;">狀態</th>
+                        <th style="width: 25%;">實際成效</th>
+                        <th style="width: 10%;">備註</th>
+                        <th class="action-cell">操作</th>
+                    </tr> 
+                </thead>
+                <tbody id="tracking-table-body"></tbody>
             </table>
         </section>
         
@@ -383,7 +521,7 @@
                 <div class="mt-3">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 text-center" id="inventive-principle-modal-title">選擇發明原理與改善方案</h3>
                     <div class="mt-4 px-2 py-3 max-h-[calc(100vh-250px)] overflow-y-auto modal-options-container" id="inventive-principle-options-container">
-                        </div>
+                    </div>
                      <div id="ai-suggestions-section" style="display: none;" class="mt-4">
                         <h4 class="text-md font-semibold text-gray-800 mb-2">✨ AI 方案建議</h4>
                         <button id="get-ai-suggestions-button" class="action-button ai-suggest text-white font-semibold py-2 px-4 rounded-md w-full mb-2">
@@ -403,30 +541,88 @@
                 </div>
             </div>
         </div>
+        <div id="tracking-item-modal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
+            <div class="modal-content mx-auto p-5 border w-11/12 md:w-1/2 lg:w-2/5 shadow-lg rounded-md bg-white">
+                 <button class="modal-close-button" onclick="closeTrackingItemModal()">&times;</button>
+                <div class="mt-3">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 text-center mb-4" id="tracking-item-modal-title">新增/編輯追蹤項目</h3>
+                    <input type="hidden" id="tracking-item-id">
+                    <div>
+                        <label for="tracking-solution-text" class="block text-sm font-medium text-gray-700">改善方案</label>
+                        <textarea id="tracking-solution-text" rows="3" class="input-field w-full mt-1" placeholder="輸入改善方案描述"></textarea>
+                    </div>
+                    <div>
+                        <label for="tracking-responsible-person" class="block text-sm font-medium text-gray-700 mt-2">負責人</label>
+                        <input type="text" id="tracking-responsible-person" class="input-field w-full mt-1" placeholder="輸入負責人或團隊">
+                    </div>
+                    <div>
+                        <label for="tracking-due-date" class="block text-sm font-medium text-gray-700 mt-2">預計完成日期</label>
+                        <input type="date" id="tracking-due-date" class="input-field w-full mt-1">
+                    </div>
+                    <div>
+                        <label for="tracking-status" class="block text-sm font-medium text-gray-700 mt-2">狀態</label>
+                        <select id="tracking-status" class="input-field w-full mt-1">
+                            <option value="未開始">未開始</option>
+                            <option value="進行中">進行中</option>
+                            <option value="已完成">已完成</option>
+                            <option value="已驗證">已驗證</option>
+                            <option value="遇到障礙">遇到障礙</option>
+                            <option value="已取消">已取消</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tracking-actual-outcome" class="block text-sm font-medium text-gray-700 mt-2">實際成效</label>
+                        <textarea id="tracking-actual-outcome" rows="3" class="input-field w-full mt-1" placeholder="記錄實際執行成效與結果"></textarea>
+                    </div>
+                    <div>
+                        <label for="tracking-notes" class="block text-sm font-medium text-gray-700 mt-2">備註</label>
+                        <textarea id="tracking-notes" rows="2" class="input-field w-full mt-1" placeholder="其他備註事項"></textarea>
+                    </div>
+                    <div class="items-center px-4 py-3 mt-4 text-right">
+                        <button id="cancel-tracking-item-button" class="action-button mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400" onclick="closeTrackingItemModal()">取消</button>
+                        <button id="save-tracking-item-button" class="action-button px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700">儲存項目</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // --- Global Variables and Constants ---
-        function deepCopy(obj) { return JSON.parse(JSON.stringify(obj)); } // Utility to deep copy objects
-        let rcaData = null; // Holds the main diagram data structure
-        let nodeIdCounter = 0; // Counter for generating unique node IDs
-        let currentAndTargetNodeId = null; // ID of node being targeted for AND source linking
-        let isFinalizedView = false; // Flag to toggle between edit and view-only mode
-        let currentParameterTargetNodeId = null; // ID of node for setting effect parameters
-        let currentPrincipleTargetNodeId = null; // ID of node for setting inventive principles
-        let currentZoom = 1.0; // Current zoom level of the diagram
-        const ZOOM_STEP = 0.1; // Increment/decrement for zoom
-        const MIN_ZOOM = 0.2; // Minimum zoom level
-        const MAX_ZOOM = 3.0; // Maximum zoom level
-        let historyStack = []; // Array to store states for undo/redo
-        let historyIndex = -1; // Current position in the history stack
-        const MAX_HISTORY_STATES = 50; // Maximum number of history states to keep
-        let longPressTimer = null; // Timer for long-press/touch context menu
-        let touchStartX = 0, touchStartY = 0; // Initial touch coordinates for long-press detection
-        const LONG_PRESS_DURATION = 700; // Duration for a long press in milliseconds
-        const MAX_TOUCH_MOVE_THRESHOLD = 10; // Max movement allowed during long press detection
+        // --- TRIZ-MCDA 相關資料與變數 ---
+        let trizMcdaData = {
+            problemDescription: "",
+            contradictionPhenomenon: "",
+            improvingParameter: null,
+            worseningParameter: null,
+            suggestedPrinciples: [], 
+            mcdaCriteria: [], 
+            mcdaSolutions: [], 
+            mcdaBestSolution: null,
+            mcdaRecommendation: ""
+        };
+        const TRIZ_PARAMETERS = []; 
+        const TRIZ_PRINCIPLES = {}; 
+        const TRIZ_CONTRADICTION_MATRIX = {}; 
 
-        // --- DOM Element References ---
+        // --- 現有全域變數與常數 ---
+        let trackingData = []; 
+        let currentEditingTrackingItemId = null; 
+        function deepCopy(obj) { return JSON.parse(JSON.stringify(obj)); } 
+        let rcaData = null; 
+        let nodeIdCounter = 0; 
+        let currentAndTargetNodeId = null; 
+        let isFinalizedView = false; 
+        let currentParameterTargetNodeId = null; 
+        let currentPrincipleTargetNodeId = null; 
+        let currentZoom = 1.0; 
+        const ZOOM_STEP = 0.1; 
+        const MIN_ZOOM = 0.2; 
+        const MAX_ZOOM = 3.0; 
+        let historyStack = []; 
+        let historyIndex = -1; 
+        const MAX_HISTORY_STATES = 50; 
+
         const problemInput = document.getElementById('problem-statement-input');
         const setProblemButton = document.getElementById('set-problem-button');
         const diagramRenderArea = document.getElementById('diagram-render-area'); 
@@ -438,7 +634,6 @@
         const toolButtonsContainer = document.getElementById('tool-buttons');
         const loadingSpinnerOverlay = document.getElementById('loading-spinner-overlay');
         
-        // File Menu elements
         const fileMenuButton = document.getElementById('file-menu-button');
         const fileDropdownContent = document.getElementById('file-dropdown-content');
         const saveWorkspaceButton = document.getElementById('save-workspace-button'); 
@@ -447,39 +642,37 @@
         const loadBackupLabel = document.getElementById('load-backup-label'); 
         const loadBackupInput = document.getElementById('load-backup-input');
         
-        // Undo/Redo buttons
         const undoButton = document.getElementById('undo-button');
         const redoButton = document.getElementById('redo-button');
         
-        // Zoom controls
         const zoomOutButton = document.getElementById('zoom-out-button'); 
         const zoomInButton = document.getElementById('zoom-in-button');   
         const resetZoomButton = document.getElementById('reset-zoom-button'); 
         const zoomLevelDisplay = document.getElementById('zoom-level-display'); 
         
-        // Diagram actions
         const finalizeDiagramButton = document.getElementById('finalize-diagram-button'); 
         const autoAdjustLayoutButton = document.getElementById('auto-adjust-layout-button'); 
+        const toggleTrizMcdaButton = document.getElementById('toggle-triz-mcda-button'); 
 
-        // Export Menu elements
         const exportMenuButton = document.getElementById('export-menu-button');
         const exportDropdownContent = document.getElementById('export-dropdown-content');
         const exportPngButton = document.getElementById('export-png-button');
 
-        // View Tables Menu elements
         const viewTablesMenuButton = document.getElementById('view-tables-menu-button');
         const viewTablesDropdownContent = document.getElementById('view-tables-dropdown-content');
         const showCauseEffectTableButton = document.getElementById('show-cause-effect-table-button');
         const showSolutionTableButton = document.getElementById('show-solution-table-button');
+        const showTrackingTableButton = document.getElementById('show-tracking-table-button'); 
         const hideAllTablesButton = document.getElementById('hide-all-tables-button');
 
-        // Table sections and bodies
         const causeEffectTableSection = document.getElementById('cause-effect-table-section');
         const causeEffectTableBody = document.getElementById('cause-effect-table-body');
         const solutionTableSection = document.getElementById('solution-table-section'); 
         const solutionTableBody = document.getElementById('solution-table-body'); 
+        const trackingTableSection = document.getElementById('tracking-table-section'); 
+        const trackingTableBody = document.getElementById('tracking-table-body'); 
+        const addTrackingItemButton = document.getElementById('add-tracking-item-button'); 
         
-        // Modal elements
         const andSourceModal = document.getElementById('and-source-modal');
         const andSourceOptionsContainer = document.getElementById('and-source-options-container');
         const andSourceModalTitle = document.getElementById('and-source-modal-title');
@@ -491,7 +684,6 @@
         const saveEffectParametersButton = document.getElementById('save-effect-parameters-button');
         const cancelEffectParametersButton = document.getElementById('cancel-effect-parameters-button');
         
-        // Inventive Principle Modal & AI Suggestion Elements
         const inventivePrincipleModal = document.getElementById('inventive-principle-modal');
         const inventivePrincipleOptionsContainer = document.getElementById('inventive-principle-options-container');
         const inventivePrincipleModalTitle = document.getElementById('inventive-principle-modal-title');
@@ -503,7 +695,36 @@
         const aiSuggestionsOutput = document.getElementById('ai-suggestions-output');
         const aiSuggestionsList = document.getElementById('ai-suggestions-list');
 
-        // --- Data Constants for Modals ---
+        const trackingItemModal = document.getElementById('tracking-item-modal');
+        const trackingItemModalTitle = document.getElementById('tracking-item-modal-title');
+        const trackingItemIdInput = document.getElementById('tracking-item-id');
+        const trackingSolutionTextInput = document.getElementById('tracking-solution-text');
+        const trackingResponsiblePersonInput = document.getElementById('tracking-responsible-person');
+        const trackingDueDateInput = document.getElementById('tracking-due-date');
+        const trackingStatusSelect = document.getElementById('tracking-status');
+        const trackingActualOutcomeInput = document.getElementById('tracking-actual-outcome');
+        const trackingNotesInput = document.getElementById('tracking-notes');
+        const saveTrackingItemButton = document.getElementById('save-tracking-item-button');
+
+        const trizMcdaSection = document.getElementById('triz-mcda-section');
+        const trizProblemDescriptionInput = document.getElementById('triz-problem-description');
+        const trizContradictionPhenomenonInput = document.getElementById('triz-contradiction-phenomenon');
+        const trizImprovingParameterSelect = document.getElementById('triz-improving-parameter');
+        const trizWorseningParameterSelect = document.getElementById('triz-worsening-parameter');
+        const trizGeneratePrinciplesButton = document.getElementById('triz-generate-principles-button');
+        const trizPrinciplesOutput = document.getElementById('triz-principles-output');
+        const mcdaCriteriaInputArea = document.getElementById('mcda-criteria-input-area');
+        const mcdaAddCriterionButton = document.getElementById('mcda-add-criterion-button');
+        const mcdaCalculateTotalWeightButton = document.getElementById('mcda-calculate-total-weight-button');
+        const mcdaTotalWeightDisplay = document.getElementById('mcda-total-weight-display');
+        const mcdaEvaluationTable = document.getElementById('mcda-evaluation-table');
+        const mcdaCalculateScoresButton = document.getElementById('mcda-calculate-scores-button');
+        const mcdaResultOutput = document.getElementById('mcda-result-output');
+        const mcdaBestSolutionText = document.getElementById('mcda-best-solution-text');
+        const mcdaRecommendationReason = document.getElementById('mcda-recommendation-reason');
+        const saveTrizMcdaButton = document.getElementById('save-triz-mcda-button');
+
+
         const EFFECT_PARAMETERS = {
             "活動": ["活動效用性", "活動可變性", "活動費用", "活動時間", "活動複雜性", "活動方便性", "活動安全性", "活動可靠性"],
             "系統": ["系統有效性", "系統可變性", "系統費用", "系統時間", "系統複雜性", "系統方便性", "系統安全性", "系統可靠性", "對系統的有害影響", "系統產生的有害影響", "組織壓力", "組織穩定性"],
@@ -513,18 +734,33 @@
             "分割", "取出/分離", "改變局部特性", "非對稱性", "合併/整合", "多用性/多功能", "套疊/巢狀結構", "反制行動", 
             "預先反制行動", "預先行動", "事先補償/預防", "消除緊張", "另一方向/反向操作", "非直線姓", "動態化", 
             "稍微少些或多些(的動作)", "另外維度/空間", "共鳴(協調)", "週期行動", "連續的有利作用", "快速行動", 
-            "轉有害為有利", "回饋", "中介物/媒介", "自助/自我服務", "使用複製品或模型", "廉價與短期[拋棄式]", 
+            "轉有害為利", "回饋", "中介物/媒介", "自助/自我服務", "使用複製品或模型", "廉價與短期[拋棄式]", 
             "替換系統運作原理/使用其他原理", "流動性和靈活性", "改變邊界條件", "孔洞和網路", "改變外觀/可見度", 
             "同質性", "丟棄與恢復", "改變特性", "模範轉移", "相對變化", "增強的環境", "鈍性(惰性)環境", "組合(複合)結構"
         ];
         
-        // --- Initialization and Event Listeners ---
+        function handleToggleFinalizeView() { 
+            isFinalizedView = !isFinalizedView; 
+            if (isFinalizedView) { 
+                finalizeDiagramButton.textContent = '編輯圖表'; 
+                finalizeDiagramButton.classList.remove('finalize-diagram'); 
+                finalizeDiagramButton.classList.add('edit-diagram'); 
+            } else { 
+                finalizeDiagramButton.textContent = '完成圖表'; 
+                finalizeDiagramButton.classList.remove('edit-diagram'); 
+                finalizeDiagramButton.classList.add('finalize-diagram'); 
+            } 
+            renderRcaDiagram(); 
+            updateButtonStates(); 
+        }
+        
         function initialize() {
-            // Initial problem setup
+            populateTrizParameters();
+            initializeTrizMatrix();
+
             setProblemButton.addEventListener('click', handleSetInitialProblem);
             problemInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSetInitialProblem(); });
             
-            // File menu interactions
             fileMenuButton.addEventListener('click', (event) => { 
                 event.stopPropagation(); 
                 toggleDropdown(fileDropdownContent, [exportDropdownContent, viewTablesDropdownContent]);
@@ -536,20 +772,17 @@
             loadBackupLabel.addEventListener('click', () => { loadBackupInput.click(); }); 
             loadBackupInput.addEventListener('change', (event) => { handleLoadFromFile(event); closeAllDropdowns(); });
 
-            // Undo/Redo
             undoButton.addEventListener('click', handleUndo);
             redoButton.addEventListener('click', handleRedo);
 
-            // Zoom controls
             zoomInButton.addEventListener('click', () => applyZoom(currentZoom + ZOOM_STEP));
             zoomOutButton.addEventListener('click', () => applyZoom(currentZoom - ZOOM_STEP));
             resetZoomButton.addEventListener('click', () => applyZoom(1.0));
 
-            // Diagram actions
             finalizeDiagramButton.addEventListener('click', handleToggleFinalizeView); 
             autoAdjustLayoutButton.addEventListener('click', autoAdjustNodeLayout); 
+            toggleTrizMcdaButton.addEventListener('click', handleToggleTrizMcdaSection); 
 
-            // Export menu interactions
             exportMenuButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 toggleDropdown(exportDropdownContent, [fileDropdownContent, viewTablesDropdownContent]);
@@ -557,7 +790,6 @@
             });
             exportPngButton.addEventListener('click', () => { exportDiagramAsPNG(); closeAllDropdowns(); });
             
-            // View Tables menu interactions
             viewTablesMenuButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 toggleDropdown(viewTablesDropdownContent, [fileDropdownContent, exportDropdownContent]);
@@ -565,9 +797,12 @@
             });
             showCauseEffectTableButton.addEventListener('click', () => { handleShowCauseEffectTable(); closeAllDropdowns(); });
             showSolutionTableButton.addEventListener('click', () => { handleShowSolutionTable(); closeAllDropdowns(); });
+            showTrackingTableButton.addEventListener('click', () => { handleShowTrackingTable(); closeAllDropdowns(); }); 
             hideAllTablesButton.addEventListener('click', () => { handleHideAllTables(); closeAllDropdowns(); });
             
-            // Modal save/cancel buttons
+            addTrackingItemButton.addEventListener('click', openTrackingItemModalForAdd); 
+            saveTrackingItemButton.addEventListener('click', handleSaveTrackingItem); 
+
             saveAndSourcesButton.addEventListener('click', handleSaveAndSources);
             cancelAndSourcesButton.addEventListener('click', () => { andSourceModal.style.display = 'none'; currentAndTargetNodeId = null; });
             saveEffectParametersButton.addEventListener('click', handleSaveEffectParameters);
@@ -575,31 +810,34 @@
             saveInventivePrinciplesButton.addEventListener('click', handleSaveInventivePrinciples);
             cancelInventivePrinciplesButton.addEventListener('click', () => { inventivePrincipleModal.style.display = 'none'; currentPrincipleTargetNodeId = null; clearAiSuggestions(); });
             
-            // AI Suggestion Button
             getAiSuggestionsButton.addEventListener('click', handleGetAiSuggestions);
 
-            // Global click listener to close dropdowns
+            trizGeneratePrinciplesButton.addEventListener('click', handleTrizGeneratePrinciples);
+            mcdaAddCriterionButton.addEventListener('click', handleMcdaAddCriterion);
+            mcdaCalculateTotalWeightButton.addEventListener('click', calculateAndDisplayTotalWeight);
+            mcdaCalculateScoresButton.addEventListener('click', handleMcdaCalculateScores);
+            saveTrizMcdaButton.addEventListener('click', saveTrizMcdaProgress);
+
             window.addEventListener('click', (event) => { 
                 if (!event.target.closest('.dropdown')) {
                     closeAllDropdowns();
                 }
             });
 
-            // Resize observer for redrawing connectors
             new ResizeObserver(() => drawAllSvgConnectors()).observe(scalableContentWrapper); 
             toolButtonsContainer.style.display = 'flex'; 
             applyZoom(1.0, true); 
             updateButtonStates(); 
             
-            // Diagram area touch events
-            scalableContentWrapper.addEventListener('contextmenu', handleDiagramContextMenu);
-            scalableContentWrapper.addEventListener('touchstart', handleDiagramTouchStart, { passive: false });
-            scalableContentWrapper.addEventListener('touchmove', handleDiagramTouchMove, { passive: true });
-            scalableContentWrapper.addEventListener('touchend', handleDiagramTouchEnd);
-            scalableContentWrapper.addEventListener('touchcancel', handleDiagramTouchEnd); 
+            scalableContentWrapper.addEventListener('contextmenu', (event) => {
+                event.preventDefault(); 
+                if (rcaData) {
+                    exportDiagramAsPNG(); 
+                }
+            });
+             loadTrizMcdaDataFromLocalStorage(); 
         }
 
-        // --- Dropdown Helper Functions ---
         function toggleDropdown(dropdownToShow, otherDropdownsToHide) {
             const currentDisplay = dropdownToShow.style.display;
             otherDropdownsToHide.forEach(dd => dd.style.display = 'none');
@@ -611,15 +849,7 @@
             exportDropdownContent.style.display = 'none';
             viewTablesDropdownContent.style.display = 'none';
         }
-
-        // --- Diagram Interaction (Context Menu / Long Press) ---
-        function handleDiagramContextMenu(event) { event.preventDefault(); if (rcaData) { exportDiagramAsPNG(); } }
-        function triggerDownloadForLongPress() { if (rcaData) { exportDiagramAsPNG(); } }
-        function handleDiagramTouchStart(event) { if (event.touches.length === 1) { touchStartX = event.touches[0].clientX; touchStartY = event.touches[0].clientY; clearTimeout(longPressTimer); longPressTimer = setTimeout(() => { const touch = event.touches[0] || event.changedTouches[0]; if (touch) { const deltaX = Math.abs(touch.clientX - touchStartX); const deltaY = Math.abs(touch.clientY - touchStartY); if (deltaX <= MAX_TOUCH_MOVE_THRESHOLD && deltaY <= MAX_TOUCH_MOVE_THRESHOLD) { triggerDownloadForLongPress(); } } else { clearTimeout(longPressTimer); } }, LONG_PRESS_DURATION); } else { clearTimeout(longPressTimer); } }
-        function handleDiagramTouchMove(event) { if (longPressTimer && event.touches.length === 1) { const deltaX = Math.abs(event.touches[0].clientX - touchStartX); const deltaY = Math.abs(event.touches[0].clientY - touchStartY); if (deltaX > MAX_TOUCH_MOVE_THRESHOLD || deltaY > MAX_TOUCH_MOVE_THRESHOLD) { clearTimeout(longPressTimer); longPressTimer = null; } } }
-        function handleDiagramTouchEnd() { clearTimeout(longPressTimer); longPressTimer = null; }
         
-        // --- Zoom Functionality ---
         function applyZoom(newZoomLevel, avoidRedraw = false) { 
             currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoomLevel)); 
             scalableContentWrapper.style.transform = `scale(${currentZoom})`; 
@@ -630,20 +860,19 @@
             updateButtonStates(); 
         }
         
-        // --- UI State Management (Button Disabling & Loading Spinner) ---
         function showLoadingSpinner() { loadingSpinnerOverlay.style.display = 'flex'; }
         function hideLoadingSpinner() { loadingSpinnerOverlay.style.display = 'none'; }
 
         function updateButtonStates() { 
             const noData = !rcaData; 
-            const noLocalStorageData = !localStorage.getItem('rcaDiagramData'); 
+            const noLocalStorageData = !localStorage.getItem('rcaPlusData'); 
             
             undoButton.disabled = historyIndex <= 0; 
             redoButton.disabled = historyIndex >= historyStack.length - 1; 
             
-            saveWorkspaceButton.disabled = noData; 
+            saveWorkspaceButton.disabled = noData && trackingData.length === 0 && !hasTrizMcdaData(); 
             loadWorkspaceButton.disabled = noLocalStorageData; 
-            downloadBackupButton.disabled = noData; 
+            downloadBackupButton.disabled = noData && trackingData.length === 0 && !hasTrizMcdaData(); 
             
             zoomInButton.disabled = currentZoom >= MAX_ZOOM; 
             zoomOutButton.disabled = currentZoom <= MIN_ZOOM; 
@@ -658,18 +887,26 @@
             viewTablesMenuButton.disabled = noData;
             showCauseEffectTableButton.disabled = noData;
             showSolutionTableButton.disabled = noData;
-            hideAllTablesButton.disabled = noData || (causeEffectTableSection.style.display === 'none' && solutionTableSection.style.display === 'none');
+            showTrackingTableButton.disabled = noData; 
+            addTrackingItemButton.disabled = noData; 
+            hideAllTablesButton.disabled = noData || (causeEffectTableSection.style.display === 'none' && solutionTableSection.style.display === 'none' && trackingTableSection.style.display === 'none');
         }
         
-        // --- History (Undo/Redo) Management ---
-        function pushStateToHistory(currentState, clearRedoStack = true) { 
-            if (!currentState) { updateButtonStates(); return; } 
-            const stateCopy = deepCopy(currentState); 
-            if (!stateCopy) { console.error("無法複製狀態以供歷史記錄。"); return; } 
+        function hasTrizMcdaData() {
+            return trizMcdaData.problemDescription || trizMcdaData.contradictionPhenomenon || trizMcdaData.suggestedPrinciples.length > 0 || trizMcdaData.mcdaCriteria.length > 0;
+        }
+
+        function pushStateToHistory(currentRcaData, clearRedoStack = true) { 
+            if (!currentRcaData && trackingData.length === 0 && !hasTrizMcdaData()) { updateButtonStates(); return; } 
+            const stateCopy = {
+                rca: currentRcaData ? deepCopy(currentRcaData) : null,
+                tracking: deepCopy(trackingData),
+                trizMcda: deepCopy(trizMcdaData) 
+            };
             if (clearRedoStack) { 
                 historyStack = historyStack.slice(0, historyIndex + 1); 
             } 
-            historyStack.push({ data: stateCopy, counter: nodeIdCounter, zoom: currentZoom }); 
+            historyStack.push({ diagramData: stateCopy.rca, trackingInfo: stateCopy.tracking, trizMcdaInfo: stateCopy.trizMcda, counter: nodeIdCounter, zoom: currentZoom }); 
             historyIndex = historyStack.length - 1; 
             if (historyStack.length > MAX_HISTORY_STATES) { 
                 historyStack.shift(); 
@@ -678,13 +915,17 @@
             updateButtonStates(); 
         }
         function restoreStateFromHistory(historyEntry) { 
-            if (historyEntry && historyEntry.data) { 
-                rcaData = deepCopy(historyEntry.data); 
+            if (historyEntry) { 
+                rcaData = historyEntry.diagramData ? deepCopy(historyEntry.diagramData) : null; 
+                trackingData = historyEntry.trackingInfo ? deepCopy(historyEntry.trackingInfo) : []; 
+                trizMcdaData = historyEntry.trizMcdaInfo ? deepCopy(historyEntry.trizMcdaInfo) : initializeTrizMcdaDataObject(); 
                 nodeIdCounter = historyEntry.counter; 
                 recalculateNodeIdCounter(rcaData); 
                 renderRcaDiagram(); 
                 renderCauseEffectTable(); 
                 renderSolutionTable(); 
+                renderTrackingTable(); 
+                renderTrizMcdaFromData(); 
                 applyZoom(historyEntry.zoom, true); 
             } else { 
                 console.error("無法從歷史記錄中檢索狀態。"); 
@@ -711,24 +952,27 @@
             updateButtonStates(); 
         }
         
-        // --- Data Persistence (Save/Load) ---
         function processLoadedData(dataString) { 
             try { 
                 const parsedJson = JSON.parse(dataString); 
-                if (parsedJson && typeof parsedJson.diagramData !== 'undefined' && typeof parsedJson.counter !== 'undefined') { 
-                    rcaData = parsedJson.diagramData; 
+                if (parsedJson && (typeof parsedJson.diagramData !== 'undefined' || typeof parsedJson.rcaDiagramData !== 'undefined') && typeof parsedJson.counter !== 'undefined') { 
+                    rcaData = parsedJson.diagramData || parsedJson.rcaDiagramData; 
+                    trackingData = parsedJson.trackingData || []; 
+                    trizMcdaData = parsedJson.trizMcdaData || initializeTrizMcdaDataObject(); 
                     nodeIdCounter = parseInt(parsedJson.counter); 
                     if (isNaN(nodeIdCounter)) nodeIdCounter = 0; 
                     recalculateNodeIdCounter(rcaData); 
                     historyStack = []; 
                     historyIndex = -1; 
                     pushStateToHistory(rcaData, true); 
-                    problemInputArea.style.display = 'none'; 
-                    diagramTitle.style.display = 'block'; 
+                    problemInputArea.style.display = rcaData ? 'none' : 'flex'; 
+                    diagramTitle.style.display = rcaData ? 'block' : 'none'; 
                     toolButtonsContainer.style.display = 'flex'; 
                     renderRcaDiagram(); 
                     renderCauseEffectTable(); 
                     renderSolutionTable(); 
+                    renderTrackingTable(); 
+                    renderTrizMcdaFromData(); 
                     applyZoom(parsedJson.zoomLevel || 1.0, true); 
                     alert('圖表進度已成功載入！'); 
                     return true; 
@@ -745,10 +989,10 @@
             } 
         } 
         function handleSaveToLocalStorage() { 
-            if (rcaData) { 
+            if (rcaData || trackingData.length > 0 || hasTrizMcdaData()) { 
                 try { 
-                    const dataToSave = { diagramData: rcaData, counter: nodeIdCounter, zoomLevel: currentZoom }; 
-                    localStorage.setItem('rcaDiagramData', JSON.stringify(dataToSave)); 
+                    const dataToSave = { diagramData: rcaData, trackingData: trackingData, trizMcdaData: trizMcdaData, counter: nodeIdCounter, zoomLevel: currentZoom }; 
+                    localStorage.setItem('rcaPlusData', JSON.stringify(dataToSave)); 
                     alert('圖表進度已儲存至瀏覽器！'); 
                 } catch (e) { 
                     console.error("儲存至localStorage時發生錯誤:", e); 
@@ -760,7 +1004,7 @@
             updateButtonStates(); 
         }
         function handleLoadFromLocalStorage() { 
-            const savedDataString = localStorage.getItem('rcaDiagramData'); 
+            const savedDataString = localStorage.getItem('rcaPlusData'); 
             if (savedDataString) { 
                 processLoadedData(savedDataString); 
             } else { 
@@ -768,14 +1012,14 @@
             } 
         }
         function handleSaveToFile() { 
-            if (!rcaData) { alert('沒有圖表資料可儲存至檔案。'); return; } 
-            const dataToSave = { diagramData: rcaData, counter: nodeIdCounter, zoomLevel: currentZoom }; 
+            if (!rcaData && trackingData.length === 0 && !hasTrizMcdaData()) { alert('沒有圖表資料可儲存至檔案。'); return; } 
+            const dataToSave = { diagramData: rcaData, trackingData: trackingData, trizMcdaData: trizMcdaData, counter: nodeIdCounter, zoomLevel: currentZoom }; 
             const jsonData = JSON.stringify(dataToSave, null, 2); 
             const blob = new Blob([jsonData], { type: 'application/json' }); 
             const url = URL.createObjectURL(blob); 
             const a = document.createElement('a'); 
             a.href = url; 
-            a.download = `rca-diagram-data-${new Date().toISOString().slice(0,10)}.json`; 
+            a.download = `rca-plus-triz-mcda-data-${new Date().toISOString().slice(0,10)}.json`; 
             document.body.appendChild(a); 
             a.click(); 
             document.body.removeChild(a); 
@@ -824,12 +1068,13 @@
             nodeIdCounter = maxId; 
         }
         
-        // --- Core Diagram Logic (Initial Problem, Finalize View) ---
         function handleSetInitialProblem() { 
             const problemText = problemInput.value.trim(); 
             if (!problemText) { alert('請輸入主要負面效果！'); return; } 
             nodeIdCounter = 0; 
             rcaData = createNode(problemText, 'initial-problem', null); 
+            trackingData = []; 
+            trizMcdaData = initializeTrizMcdaDataObject(); 
             historyStack = []; 
             historyIndex = -1; 
             pushStateToHistory(rcaData); 
@@ -844,22 +1089,426 @@
             renderRcaDiagram(); 
             renderCauseEffectTable(); 
             renderSolutionTable(); 
+            renderTrackingTable();
+            renderTrizMcdaFromData(); 
             updateButtonStates(); 
         } 
-        function handleToggleFinalizeView() { 
-            isFinalizedView = !isFinalizedView; 
-            if (isFinalizedView) { 
-                finalizeDiagramButton.textContent = '編輯圖表'; 
-                finalizeDiagramButton.classList.remove('finalize-diagram'); 
-                finalizeDiagramButton.classList.add('edit-diagram'); 
-            } else { 
-                finalizeDiagramButton.textContent = '完成圖表'; 
-                finalizeDiagramButton.classList.remove('edit-diagram'); 
-                finalizeDiagramButton.classList.add('finalize-diagram'); 
-            } 
-            renderRcaDiagram(); 
-            updateButtonStates(); 
+        
+        // --- TRIZ-MCDA 相關函數 ---
+        function initializeTrizMcdaDataObject() {
+            return {
+                problemDescription: "",
+                contradictionPhenomenon: "",
+                improvingParameter: null,
+                worseningParameter: null,
+                suggestedPrinciples: [],
+                mcdaCriteria: [],
+                mcdaSolutions: [],
+                mcdaBestSolution: null,
+                mcdaRecommendation: ""
+            };
         }
+
+        function populateTrizParameters() {
+            const parameters = [
+                { id: 1, name: "1. 移動物體的重量" }, { id: 2, name: "2. 固定物體的重量" },
+                { id: 3, name: "3. 移動物體的長度" }, { id: 4, name: "4. 固定物體的長度" },
+                { id: 5, name: "5. 移動物體的面積" }, { id: 6, name: "6. 固定物體的面積" },
+                { id: 7, name: "7. 移動物體的體積" }, { id: 8, name: "8. 固定物體的體積" },
+                { id: 9, name: "9. 速度" }, { id: 10, name: "10. 力" },
+                { id: 11, name: "11. 應力或壓力" }, { id: 12, name: "12. 形狀" },
+                { id: 13, name: "13. 物體組成的穩定性" }, { id: 14, name: "14. 強度" },
+                { id: 15, name: "15. 移動物體的作用時間" }, { id: 16, name: "16. 固定物體的作用時間" },
+                { id: 17, name: "17. 溫度" }, { id: 18, name: "18. 照明強度" },
+                { id: 19, name: "19. 移動物體的能量消耗" }, { id: 20, name: "20. 固定物體的能量消耗" },
+                { id: 21, name: "21. 功率" }, { id: 22, name: "22. 能量損失" },
+                { id: 23, name: "23. 物質損失" }, { id: 24, name: "24. 資訊損失" },
+                { id: 25, name: "25. 時間損失" }, { id: 26, name: "26. 物質數量" },
+                { id: 27, name: "27. 可靠性" }, { id: 28, name: "28. 量測精度" },
+                { id: 29, name: "29. 製造精度" }, { id: 30, name: "30. 物體相關的有害因素" },
+                { id: 31, name: "31. 物體產生的有害因素" }, { id: 32, name: "32. 製造容易度" },
+                { id: 33, name: "33. 操作容易度" }, { id: 34, name: "34. 維修容易度" },
+                { id: 35, name: "35. 適應性或通用性" }, { id: 36, name: "36. 裝置複雜性" },
+                { id: 37, name: "37. 偵測與量測的困難度" }, { id: 38, name: "38. 自動化程度" },
+                { id: 39, name: "39. 生產率" }
+            ];
+            parameters.forEach(param => {
+                TRIZ_PARAMETERS.push(param); 
+                const option1 = new Option(param.name, param.id);
+                const option2 = new Option(param.name, param.id);
+                trizImprovingParameterSelect.add(option1);
+                trizWorseningParameterSelect.add(option2);
+            });
+
+            const principles = [
+                "1. 分割", "2. 取出", "3. 局部品質", "4. 不對稱", "5. 合併", "6. 通用性", "7. 套疊", "8. 反作用力（配重）",
+                "9. 預先反作用", "10. 預先作用", "11. 事先防範", "12. 等勢能", "13. 反向作用", "14. 曲面化", "15. 動態化",
+                "16. 不足或超額作用", "17. 維度變更", "18. 機械振動", "19. 週期性作用", "20. 連續有用作用", "21. 快速通過",
+                "22. 轉害為利", "23. 回饋", "24. 中介物", "25. 自助服務", "26. 複製", "27. 廉價替代品", "28. 機械系統替代",
+                "29. 氣壓與液壓", "30. 可撓性殼膜", "31. 多孔材料", "32. 改變顏色", "33. 同質性", "34. 拋棄與再生",
+                "35. 參數改變", "36. 相態轉換", "37. 熱膨脹", "38. 強氧化劑", "39. 惰性環境", "40. 複合材料"
+            ];
+            principles.forEach((name, index) => {
+                TRIZ_PRINCIPLES[index + 1] = name;
+            });
+        }
+
+        function initializeTrizMatrix() {
+            TRIZ_CONTRADICTION_MATRIX[1] = { 2: [1,40,27,3], 14: [1,40,27,3] }; 
+            TRIZ_CONTRADICTION_MATRIX[2] = { 1: [1,40,27,3], 14: [1,40,27,3] }; 
+            TRIZ_CONTRADICTION_MATRIX[9] = { 1: [15,1,28,35], 2: [15,1,28,35], 14: [10,15,40,1], 19:[15,18,10,35], 21:[10,15,18,35] }; 
+            TRIZ_CONTRADICTION_MATRIX[14] = { 1: [1,40,27,3], 2: [1,40,27,3], 9: [10,15,40,1] }; 
+            TRIZ_CONTRADICTION_MATRIX[17] = { 13:[35,2,19,37], 14:[35,1,19,13] }; 
+            TRIZ_CONTRADICTION_MATRIX[19] = { 9:[10,18,15,35], 21:[10,15,18,35]}; 
+            TRIZ_CONTRADICTION_MATRIX[21] = { 9:[10,18,15,35], 19:[10,15,18,35]}; 
+        }
+        
+        function handleToggleTrizMcdaSection() {
+            const isHidden = trizMcdaSection.style.display === 'none';
+            trizMcdaSection.style.display = isHidden ? 'block' : 'none';
+            toggleTrizMcdaButton.innerHTML = isHidden ? '<i class="fas fa-times mr-1"></i> 關閉 TRIZ-MCDA' : '<i class="fas fa-lightbulb mr-1"></i> TRIZ-MCDA 分析';
+            if (isHidden) {
+                renderMcdaEvaluationTableHeaders();
+                renderMcdaSolutionsForEvaluation(); 
+            }
+        }
+
+        function handleTrizGeneratePrinciples() {
+            const improvingParamId = parseInt(trizImprovingParameterSelect.value);
+            const worseningParamId = parseInt(trizWorseningParameterSelect.value);
+
+            if (!improvingParamId || !worseningParamId) {
+                alert("請選擇改善參數和惡化參數。");
+                return;
+            }
+            if (improvingParamId === worseningParamId) {
+                alert("改善參數和惡化參數不能相同。");
+                return;
+            }
+
+            const principlesIds = (TRIZ_CONTRADICTION_MATRIX[improvingParamId] && TRIZ_CONTRADICTION_MATRIX[improvingParamId][worseningParamId]) || [];
+            
+            trizMcdaData.improvingParameter = improvingParamId;
+            trizMcdaData.worseningParameter = worseningParamId;
+            const newSuggestedPrinciples = principlesIds.slice(0, 4).map(pId => {
+                const existingPrinciple = trizMcdaData.suggestedPrinciples.find(sp => sp.id === pId);
+                return {
+                    id: pId,
+                    name: TRIZ_PRINCIPLES[pId] || `原理 ${pId}`,
+                    concepts: existingPrinciple ? existingPrinciple.concepts : [""] 
+                };
+            });
+            trizMcdaData.suggestedPrinciples = newSuggestedPrinciples;
+            
+            renderTrizPrinciplesOutput();
+            updateMcdaSolutionsFromTriz(); 
+        }
+
+        function renderTrizPrinciplesOutput() {
+            trizPrinciplesOutput.innerHTML = '';
+            if (trizMcdaData.suggestedPrinciples.length === 0) {
+                trizPrinciplesOutput.innerHTML = '<p class="text-gray-500">未找到匹配的發明原理，或此組合無建議原理。請嘗試其他參數組合。</p>';
+                return;
+            }
+
+            trizMcdaData.suggestedPrinciples.forEach((principle, pIndex) => {
+                const div = document.createElement('div');
+                div.classList.add('mb-4', 'p-3', 'border', 'border-gray-200', 'rounded-md');
+                div.innerHTML = `<h5 class="font-semibold text-indigo-700">${principle.name} (原理 #${principle.id})</h5>`;
+                
+                principle.concepts.forEach((concept, cIndex) => {
+                    const conceptDiv = document.createElement('div');
+                    conceptDiv.classList.add('triz-solution-concept', 'ml-4', 'mb-2');
+                    const label = document.createElement('label');
+                    label.textContent = `方案雛形 ${pIndex+1}-${cIndex+1}：`;
+                    label.classList.add('block', 'text-sm', 'font-medium', 'text-gray-600', 'mb-1');
+                    const textarea = document.createElement('textarea');
+                    textarea.classList.add('input-field', 'w-full');
+                    textarea.rows = 2;
+                    textarea.placeholder = `基於「${principle.name}」的方案描述...`;
+                    textarea.value = concept;
+                    textarea.oninput = (e) => { 
+                        trizMcdaData.suggestedPrinciples[pIndex].concepts[cIndex] = e.target.value;
+                        updateMcdaSolutionsFromTriz(); 
+                    };
+                    conceptDiv.appendChild(label);
+                    conceptDiv.appendChild(textarea);
+                    div.appendChild(conceptDiv);
+                });
+                const addConceptButton = document.createElement('button');
+                addConceptButton.textContent = '新增此原理的方案雛形';
+                addConceptButton.classList.add('action-button', 'bg-gray-400', 'hover:bg-gray-500', 'text-xs', 'py-1', 'px-2', 'rounded', 'mt-1', 'ml-4');
+                addConceptButton.onclick = () => {
+                    trizMcdaData.suggestedPrinciples[pIndex].concepts.push("");
+                    renderTrizPrinciplesOutput(); 
+                    updateMcdaSolutionsFromTriz();
+                };
+                div.appendChild(addConceptButton);
+                trizPrinciplesOutput.appendChild(div);
+            });
+        }
+        
+        function updateMcdaSolutionsFromTriz() {
+            const newMcdaSolutions = [];
+            trizMcdaData.suggestedPrinciples.forEach(principle => {
+                principle.concepts.forEach((conceptText, conceptIndex) => {
+                    if (conceptText.trim() !== "") { 
+                        const solutionId = `${principle.id}-${conceptIndex}`;
+                        const existingSolution = trizMcdaData.mcdaSolutions.find(s => s.id === solutionId);
+                        newMcdaSolutions.push({
+                            id: solutionId,
+                            principleId: principle.id,
+                            principleName: principle.name,
+                            conceptIndex: conceptIndex,
+                            conceptText: conceptText,
+                            scores: existingSolution ? existingSolution.scores : {},
+                            weightedScore: existingSolution ? existingSolution.weightedScore : 0
+                        });
+                    }
+                });
+            });
+            trizMcdaData.mcdaSolutions = newMcdaSolutions;
+            renderMcdaEvaluationTableHeaders(); 
+            renderMcdaSolutionsForEvaluation(); 
+        }
+
+
+        function handleMcdaAddCriterion() {
+            const criterionId = `crit-${Date.now()}`;
+            trizMcdaData.mcdaCriteria.push({ id: criterionId, name: "", weight: 0 });
+            renderMcdaCriteriaInputs();
+            renderMcdaEvaluationTableHeaders(); 
+        }
+
+        function renderMcdaCriteriaInputs() {
+            mcdaCriteriaInputArea.innerHTML = '';
+            trizMcdaData.mcdaCriteria.forEach((criterion, index) => {
+                const div = document.createElement('div');
+                div.classList.add('flex', 'items-center', 'gap-2', 'mb-2');
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.value = criterion.name;
+                nameInput.placeholder = `標準 ${index + 1} 名稱`;
+                nameInput.classList.add('input-field', 'flex-grow');
+                nameInput.onchange = (e) => {
+                    criterion.name = e.target.value;
+                    renderMcdaEvaluationTableHeaders(); 
+                };
+
+                const weightInput = document.createElement('input');
+                weightInput.type = 'number';
+                weightInput.value = criterion.weight;
+                weightInput.min = 0;
+                weightInput.max = 100;
+                weightInput.placeholder = '權重 %';
+                weightInput.classList.add('input-field', 'w-24', 'text-right');
+                weightInput.onchange = (e) => criterion.weight = parseInt(e.target.value) || 0;
+
+                const removeButton = document.createElement('button');
+                removeButton.innerHTML = '<i class="fas fa-times text-red-500"></i>';
+                removeButton.classList.add('p-1', 'hover:bg-red-100', 'rounded');
+                removeButton.onclick = () => {
+                    trizMcdaData.mcdaCriteria.splice(index, 1);
+                    renderMcdaCriteriaInputs();
+                    renderMcdaEvaluationTableHeaders(); 
+                    renderMcdaSolutionsForEvaluation(); 
+                };
+
+                div.appendChild(nameInput);
+                div.appendChild(weightInput);
+                div.appendChild(removeButton);
+                mcdaCriteriaInputArea.appendChild(div);
+            });
+        }
+        
+        function calculateAndDisplayTotalWeight() {
+            const totalWeight = trizMcdaData.mcdaCriteria.reduce((sum, crit) => sum + (crit.weight || 0), 0);
+            mcdaTotalWeightDisplay.textContent = `目前總權重: ${totalWeight}%`;
+            if (totalWeight !== 100 && trizMcdaData.mcdaCriteria.length > 0) {
+                mcdaTotalWeightDisplay.classList.add('text-red-500');
+                mcdaTotalWeightDisplay.classList.remove('text-green-500');
+                 alert(`提醒：目前評估標準的總權重為 ${totalWeight}%，建議調整至 100%。`);
+            } else if (totalWeight === 100) {
+                 mcdaTotalWeightDisplay.classList.remove('text-red-500');
+                 mcdaTotalWeightDisplay.classList.add('text-green-500');
+            } else {
+                mcdaTotalWeightDisplay.classList.remove('text-red-500', 'text-green-500');
+            }
+        }
+
+
+        function renderMcdaEvaluationTableHeaders() {
+            const tableHead = mcdaEvaluationTable.querySelector('thead');
+            if (!tableHead) return;
+            tableHead.innerHTML = ''; 
+            const headerRow = tableHead.insertRow();
+            
+            let th = document.createElement('th');
+            th.textContent = '方案雛形';
+            headerRow.appendChild(th);
+
+            trizMcdaData.mcdaCriteria.forEach(criterion => {
+                th = document.createElement('th');
+                th.textContent = `${criterion.name || '未命名標準'} (${criterion.weight || 0}%)`;
+                headerRow.appendChild(th);
+            });
+
+            th = document.createElement('th');
+            th.textContent = '加權總分';
+            headerRow.appendChild(th);
+        }
+        
+        function renderMcdaSolutionsForEvaluation() {
+            const tableBody = mcdaEvaluationTable.querySelector('tbody');
+            if (!tableBody) return;
+            tableBody.innerHTML = ''; 
+
+            if (trizMcdaData.mcdaSolutions.length === 0) {
+                const row = tableBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = trizMcdaData.mcdaCriteria.length + 2; 
+                cell.textContent = "請先在階段二生成方案雛形，並在上方設定評估標準。";
+                cell.classList.add("text-center", "text-gray-500", "py-4");
+                return;
+            }
+
+            trizMcdaData.mcdaSolutions.forEach(solution => {
+                const row = tableBody.insertRow();
+                let cell = row.insertCell();
+                cell.textContent = `${solution.principleName} - 方案 ${solution.conceptIndex + 1}: ${solution.conceptText.substring(0,30)}...`;
+                cell.title = solution.conceptText;
+
+                trizMcdaData.mcdaCriteria.forEach(criterion => {
+                    cell = row.insertCell();
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'number';
+                    scoreInput.min = 0; 
+                    scoreInput.max = 10; 
+                    scoreInput.classList.add('input-field', 'w-16', 'text-center');
+                    scoreInput.value = solution.scores[criterion.id] || '';
+                    scoreInput.onchange = (e) => {
+                        solution.scores[criterion.id] = parseFloat(e.target.value) || 0;
+                    };
+                    cell.appendChild(scoreInput);
+                });
+                
+                cell = row.insertCell();
+                cell.textContent = solution.weightedScore.toFixed(2); 
+                cell.id = `score-${solution.id}`; 
+            });
+        }
+
+
+        function handleMcdaCalculateScores() {
+            const totalWeight = trizMcdaData.mcdaCriteria.reduce((sum, crit) => sum + (crit.weight || 0), 0);
+            if (totalWeight !== 100 && trizMcdaData.mcdaCriteria.length > 0) {
+                alert(`警告：評估標準的總權重為 ${totalWeight}%，並非 100%。計算結果可能不符合預期。`);
+            }
+            if (trizMcdaData.mcdaSolutions.length === 0) {
+                alert("請先定義方案雛形並設定評估標準。");
+                return;
+            }
+
+            trizMcdaData.mcdaSolutions.forEach(solution => {
+                solution.weightedScore = 0;
+                trizMcdaData.mcdaCriteria.forEach(criterion => {
+                    const score = solution.scores[criterion.id] || 0;
+                    solution.weightedScore += score * (criterion.weight / 100);
+                });
+                const scoreCell = document.getElementById(`score-${solution.id}`);
+                if (scoreCell) {
+                    scoreCell.textContent = solution.weightedScore.toFixed(2);
+                }
+            });
+
+            if (trizMcdaData.mcdaSolutions.length > 0) {
+                trizMcdaData.mcdaSolutions.sort((a, b) => b.weightedScore - a.weightedScore);
+                trizMcdaData.mcdaBestSolution = trizMcdaData.mcdaSolutions[0];
+                mcdaBestSolutionText.textContent = `最佳方案推薦：${trizMcdaData.mcdaBestSolution.principleName} - 方案 ${trizMcdaData.mcdaBestSolution.conceptIndex + 1} (${trizMcdaData.mcdaBestSolution.conceptText.substring(0,30)}...)，總分：${trizMcdaData.mcdaBestSolution.weightedScore.toFixed(2)}`;
+                
+                let reason = `此方案在綜合評估中得分最高 (${trizMcdaData.mcdaBestSolution.weightedScore.toFixed(2)})。`;
+                mcdaRecommendationReason.textContent = reason;
+                mcdaResultOutput.style.display = 'block';
+            } else {
+                 mcdaBestSolutionText.textContent = `沒有可評估的方案。`;
+                 mcdaRecommendationReason.textContent = "";
+                 mcdaResultOutput.style.display = 'block';
+            }
+        }
+        
+        function saveTrizMcdaProgress() {
+            trizMcdaData.problemDescription = trizProblemDescriptionInput.value;
+            trizMcdaData.contradictionPhenomenon = trizContradictionPhenomenonInput.value;
+            handleSaveToLocalStorage(); 
+            alert("TRIZ-MCDA 分析進度已儲存。");
+        }
+
+        function loadTrizMcdaDataFromLocalStorage() {
+            const savedDataString = localStorage.getItem('rcaPlusData');
+            if (savedDataString) {
+                const parsedJson = JSON.parse(savedDataString);
+                if (parsedJson && parsedJson.trizMcdaData) {
+                    trizMcdaData = { ...initializeTrizMcdaDataObject(), ...parsedJson.trizMcdaData }; 
+                    renderTrizMcdaFromData();
+                }
+            }
+        }
+        
+        function renderTrizMcdaFromData() {
+            trizProblemDescriptionInput.value = trizMcdaData.problemDescription || "";
+            trizContradictionPhenomenonInput.value = trizMcdaData.contradictionPhenomenon || "";
+            if (trizMcdaData.improvingParameter) trizImprovingParameterSelect.value = trizMcdaData.improvingParameter;
+            if (trizMcdaData.worseningParameter) trizWorseningParameterSelect.value = trizMcdaData.worseningParameter;
+            
+            renderTrizPrinciplesOutput(); 
+            renderMcdaCriteriaInputs(); 
+            renderMcdaEvaluationTableHeaders();
+            renderMcdaSolutionsForEvaluation(); 
+
+            if (trizMcdaData.mcdaBestSolution && trizMcdaData.mcdaSolutions.length > 0) { 
+                mcdaBestSolutionText.textContent = `最佳方案推薦：${trizMcdaData.mcdaBestSolution.principleName} - 方案 ${trizMcdaData.mcdaBestSolution.conceptIndex + 1} (${trizMcdaData.mcdaBestSolution.conceptText.substring(0,30)}...)，總分：${trizMcdaData.mcdaBestSolution.weightedScore.toFixed(2)}`;
+                mcdaRecommendationReason.textContent = trizMcdaData.mcdaRecommendation || `此方案在綜合評估中得分最高 (${trizMcdaData.mcdaBestSolution.weightedScore.toFixed(2)})。`;
+                mcdaResultOutput.style.display = 'block';
+            } else {
+                mcdaResultOutput.style.display = 'none';
+                mcdaBestSolutionText.textContent = "";
+                mcdaRecommendationReason.textContent = "";
+            }
+            calculateAndDisplayTotalWeight(); 
+        }
+
+        function handleShowCauseEffectTable() {
+            causeEffectTableSection.style.display = 'block';
+            solutionTableSection.style.display = 'none'; 
+            trackingTableSection.style.display = 'none';
+            trizMcdaSection.style.display = 'none'; 
+            renderCauseEffectTable();
+            updateButtonStates();
+        }
+        function handleShowSolutionTable() {
+            solutionTableSection.style.display = 'block';
+            causeEffectTableSection.style.display = 'none'; 
+            trackingTableSection.style.display = 'none';
+            trizMcdaSection.style.display = 'none'; 
+            renderSolutionTable();
+            updateButtonStates();
+        }
+        function handleShowTrackingTable() { 
+            trackingTableSection.style.display = 'block';
+            causeEffectTableSection.style.display = 'none'; 
+            solutionTableSection.style.display = 'none';
+            trizMcdaSection.style.display = 'none'; 
+            renderTrackingTable();
+            updateButtonStates();
+        }
+        function handleHideAllTables() {
+            causeEffectTableSection.style.display = 'none';
+            solutionTableSection.style.display = 'none';
+            trackingTableSection.style.display = 'none';
+            updateButtonStates();
+        }
+        
         function createNode(text, type, parentId, isNonChangeable = false) { 
             nodeIdCounter++; 
             const node = { 
@@ -876,7 +1525,6 @@
             return node; 
         }
         
-        // --- Diagram Rendering ---
         function renderRcaDiagram() { 
             diagramContainer.innerHTML = ''; 
             if (rcaData) { 
@@ -891,24 +1539,53 @@
             nodeDiv.classList.add('rca-node', `rca-node-${nodeData.type}`); 
             nodeDiv.id = nodeData.id; 
             nodeDiv.dataset.nodeId = nodeData.id; 
+            
             const contentDiv = document.createElement('div'); 
             contentDiv.classList.add('rca-node-content'); 
+            
             const headerDiv = document.createElement('div'); 
             headerDiv.classList.add('rca-node-header'); 
-            const iconSpan = document.createElement('span'); 
-            iconSpan.classList.add('rca-node-icon'); 
+            
             const textSpan = document.createElement('span'); 
             textSpan.classList.add('rca-node-text'); 
             textSpan.textContent = nodeData.text; 
             headerDiv.appendChild(textSpan); 
+
             if (nodeData.type === 'cause' && nodeData.isNonChangeable) { 
                 const ncBadge = document.createElement('span'); 
                 ncBadge.classList.add('nc-badge'); 
                 ncBadge.textContent = 'NC'; 
                 headerDiv.appendChild(ncBadge); 
             } 
+            
+            const iconSpan = document.createElement('span'); 
+            iconSpan.classList.add('rca-node-icon'); 
+            let iconShouldBeDisplayed = true;
+            let isContradictory = false;
+
+            if (nodeData.type === 'initial-problem') iconSpan.textContent = '(-)'; 
+            else if (nodeData.type === 'cause') { 
+                const { hasPositiveChild, hasNegativeChild } = checkChildrenEffects(nodeData); 
+                if (hasPositiveChild && hasNegativeChild) { 
+                    iconSpan.textContent = '+/-'; 
+                    iconSpan.classList.add('contradictory'); 
+                    isContradictory = true;
+                } else { 
+                    iconShouldBeDisplayed = false; 
+                } 
+            } else if (nodeData.type === 'positive-effect') iconSpan.textContent = '(+)'; 
+            else if (nodeData.type === 'negative-effect') iconSpan.textContent = '(-)'; 
+            else { 
+                iconShouldBeDisplayed = false; 
+            } 
+
+            if (iconShouldBeDisplayed) {
+                iconSpan.style.display = 'flex';
+                headerDiv.appendChild(iconSpan); 
+            }
+            
             contentDiv.appendChild(headerDiv); 
-            nodeDiv.appendChild(iconSpan); 
+
             if (nodeData.effectParameters && nodeData.effectParameters.length > 0) { 
                 const paramsDiv = document.createElement('div'); 
                 paramsDiv.classList.add('selected-items-list'); 
@@ -926,19 +1603,6 @@
                 principlesDiv.innerHTML = principlesHtml; 
                 contentDiv.appendChild(principlesDiv); 
             } 
-            iconSpan.style.display = 'flex'; 
-            let isContradictory = false;
-            if (nodeData.type === 'initial-problem') iconSpan.textContent = '(-)'; 
-            else if (nodeData.type === 'cause') { 
-                const { hasPositiveChild, hasNegativeChild } = checkChildrenEffects(nodeData); 
-                if (hasPositiveChild && hasNegativeChild) { 
-                    iconSpan.textContent = '+/-'; 
-                    iconSpan.classList.add('contradictory'); 
-                    isContradictory = true;
-                } else { iconSpan.style.display = 'none'; } 
-            } else if (nodeData.type === 'positive-effect') iconSpan.textContent = '(+)'; 
-            else if (nodeData.type === 'negative-effect') iconSpan.textContent = '(-)'; 
-            else { iconSpan.style.display = 'none'; } 
             
             if (!isFinalizedView) { 
                 const actionsDiv = document.createElement('div'); 
@@ -953,7 +1617,6 @@
                     const ncButtonText = nodeData.isNonChangeable ? '取消NC標記' : '設為NC'; 
                     actionsDiv.appendChild(createActionButton(ncButtonText, 'toggle-nc', () => toggleNonChangeable(nodeData.id))); 
                     actionsDiv.appendChild(createActionButton('選擇發明原理', 'set-principles', () => openInventivePrincipleModal(nodeData.id, isContradictory))); 
-                    // The AI Suggest button was here, moved to openInventivePrincipleModal to show it conditionally
                     if (nodeData.parentId) { 
                         actionsDiv.appendChild(createActionButton('移除此原因', 'remove-button', () => removeNode(nodeData.id))); 
                     } 
@@ -980,7 +1643,6 @@
             return nodeWrapper; 
         }
         
-        // --- Node Editing and Modal Interactions ---
         function promptEditNode(nodeId, parentNodeContentDiv) { 
             if (isFinalizedView) return; 
             const nodeToEdit = findNodeById(rcaData, nodeId); 
@@ -1176,13 +1838,12 @@
                 inventivePrincipleOptionsContainer.appendChild(principleContainer); 
             }); 
 
-            // Show or hide AI suggestions section based on whether it's a contradictory cause
             if (isContradictoryCause) {
                 aiSuggestionsSection.style.display = 'block';
             } else {
                 aiSuggestionsSection.style.display = 'none';
             }
-            clearAiSuggestions(); // Clear previous suggestions
+            clearAiSuggestions(); 
             inventivePrincipleModal.style.display = 'flex'; 
         }
 
@@ -1213,7 +1874,7 @@
 
         function clearAiSuggestions() {
             aiSuggestionsList.innerHTML = '';
-            aiSuggestionsOutput.style.display = 'block'; // Ensure it's visible for new content
+            aiSuggestionsOutput.style.display = 'block'; 
             aiSuggestionsLoading.style.display = 'none';
         }
 
@@ -1232,7 +1893,7 @@
             }
 
             aiSuggestionsLoading.style.display = 'block';
-            aiSuggestionsList.innerHTML = ''; // Clear previous suggestions
+            aiSuggestionsList.innerHTML = ''; 
             getAiSuggestionsButton.disabled = true;
 
             const positiveEffects = targetNode.children.filter(c => c.type === 'positive-effect').map(c => c.text);
@@ -1251,10 +1912,10 @@
             prompt += `請針對此矛盾情況，提出3-5個具體的、可操作的改善方案建議。請以條列式清單方式呈現建議，每個建議包含簡短描述。`;
 
             try {
-                showLoadingSpinner(); // Show full page spinner
+                showLoadingSpinner(); 
                 let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                 const payload = { contents: chatHistory };
-                const apiKey = ""; // API key will be injected by the environment
+                const apiKey = ""; 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(apiUrl, {
@@ -1274,19 +1935,16 @@
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text;
-                    // Process and display suggestions
                     const suggestions = text.split('\n').map(s => s.trim()).filter(s => s.length > 0 && (s.startsWith('- ') || s.match(/^\d+\.\s/)));
                     if (suggestions.length > 0) {
                         suggestions.forEach(suggestionText => {
                             const li = document.createElement('li');
-                            li.textContent = suggestionText.replace(/^(- |\d+\.\s)/, ''); // Remove list prefix
+                            li.textContent = suggestionText.replace(/^(- |\d+\.\s)/, ''); 
                             li.onclick = () => {
-                                // Find the first empty solution input and fill it
                                 const firstEmptySolutionInput = Array.from(inventivePrincipleOptionsContainer.querySelectorAll('.principle-solution-input'))
                                     .find(input => input.style.display !== 'none' && input.value.trim() === '');
                                 if (firstEmptySolutionInput) {
                                     firstEmptySolutionInput.value = li.textContent;
-                                    // Optionally, check the corresponding principle checkbox if not already checked
                                     const principleName = firstEmptySolutionInput.dataset.principleName;
                                     const principleCheckbox = inventivePrincipleOptionsContainer.querySelector(`input[type="checkbox"][value="${principleName}"]`);
                                     if (principleCheckbox && !principleCheckbox.checked) {
@@ -1312,11 +1970,10 @@
             } finally {
                 aiSuggestionsLoading.style.display = 'none';
                 getAiSuggestionsButton.disabled = false;
-                hideLoadingSpinner(); // Hide full page spinner
+                hideLoadingSpinner(); 
             }
         }
         
-        // --- SVG Connector Drawing Logic ---
         function drawAllSvgConnectors(
             targetSvgLayer = svgLayer, 
             targetDiagramContainer = diagramContainer, 
@@ -1438,7 +2095,6 @@
             svg.appendChild(circle); 
         }
         
-        // --- Node Data Manipulation ---
         function checkChildrenEffects(nodeData) { 
             let hasPositiveChild = false; let hasNegativeChild = false; 
             if (nodeData.children) { 
@@ -1549,6 +2205,8 @@
                 toolButtonsContainer.style.display = 'flex'; 
                 causeEffectTableSection.style.display = 'none'; 
                 solutionTableSection.style.display = 'none'; 
+                trackingTableSection.style.display = 'none';
+                trizMcdaSection.style.display = 'none'; 
                 historyStack = []; 
                 historyIndex = -1; 
                 applyZoom(1.0); 
@@ -1556,6 +2214,7 @@
             renderRcaDiagram(); 
             renderCauseEffectTable(); 
             renderSolutionTable(); 
+            renderTrackingTable();
             updateButtonStates(); 
         }
         function findNodeById(node, id) { 
@@ -1570,25 +2229,6 @@
             return null; 
         }
         
-        // --- Table Display and Rendering Logic ---
-        function handleShowCauseEffectTable() {
-            causeEffectTableSection.style.display = 'block';
-            solutionTableSection.style.display = 'none'; 
-            renderCauseEffectTable();
-            updateButtonStates();
-        }
-        function handleShowSolutionTable() {
-            solutionTableSection.style.display = 'block';
-            causeEffectTableSection.style.display = 'none'; 
-            renderSolutionTable();
-            updateButtonStates();
-        }
-        function handleHideAllTables() {
-            causeEffectTableSection.style.display = 'none';
-            solutionTableSection.style.display = 'none';
-            updateButtonStates();
-        }
-
         function getCauseEffectTableData() { 
             const tableRowsData = []; 
             function collectDataRecursive(node) { 
@@ -1704,8 +2344,102 @@
             } 
             return solutionData; 
         }
+
+        function renderTrackingTable() {
+            trackingTableBody.innerHTML = '';
+            if (trackingData.length === 0) {
+                trackingTableBody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-500">目前沒有追蹤中的改善方案。</td></tr>';
+                return;
+            }
+            trackingData.forEach(item => {
+                const row = trackingTableBody.insertRow();
+                row.insertCell().textContent = item.solutionText;
+                row.insertCell().textContent = item.responsiblePerson;
+                row.insertCell().textContent = item.dueDate;
+                row.insertCell().textContent = item.status;
+                row.insertCell().textContent = item.actualOutcome;
+                row.insertCell().textContent = item.notes;
+                
+                const actionCell = row.insertCell();
+                actionCell.classList.add('action-cell');
+                const editButton = createActionButton('編輯', 'edit-node !py-1 !px-2', () => openTrackingItemModalForEdit(item.id));
+                const deleteButton = createActionButton('刪除', 'remove-button !py-1 !px-2 ml-1', () => handleDeleteTrackingItem(item.id));
+                actionCell.appendChild(editButton);
+                actionCell.appendChild(deleteButton);
+            });
+            updateButtonStates();
+        }
+
+        function openTrackingItemModalForAdd() {
+            currentEditingTrackingItemId = null;
+            trackingItemModalTitle.textContent = '新增追蹤項目';
+            trackingItemIdInput.value = '';
+            trackingSolutionTextInput.value = '';
+            trackingResponsiblePersonInput.value = '';
+            trackingDueDateInput.value = '';
+            trackingStatusSelect.value = '未開始';
+            trackingActualOutcomeInput.value = '';
+            trackingNotesInput.value = '';
+            trackingItemModal.style.display = 'flex';
+        }
+
+        function openTrackingItemModalForEdit(itemId) {
+            const item = trackingData.find(t => t.id === itemId);
+            if (!item) return;
+            currentEditingTrackingItemId = itemId;
+            trackingItemModalTitle.textContent = '編輯追蹤項目';
+            trackingItemIdInput.value = item.id;
+            trackingSolutionTextInput.value = item.solutionText;
+            trackingResponsiblePersonInput.value = item.responsiblePerson;
+            trackingDueDateInput.value = item.dueDate;
+            trackingStatusSelect.value = item.status;
+            trackingActualOutcomeInput.value = item.actualOutcome;
+            trackingNotesInput.value = item.notes;
+            trackingItemModal.style.display = 'flex';
+        }
+
+        function closeTrackingItemModal() {
+            trackingItemModal.style.display = 'none';
+            currentEditingTrackingItemId = null;
+        }
+
+        function handleSaveTrackingItem() {
+            const solutionText = trackingSolutionTextInput.value.trim();
+            if (!solutionText) {
+                alert('改善方案描述不能為空！');
+                return;
+            }
+            const itemData = {
+                solutionText: solutionText,
+                responsiblePerson: trackingResponsiblePersonInput.value.trim(),
+                dueDate: trackingDueDateInput.value,
+                status: trackingStatusSelect.value,
+                actualOutcome: trackingActualOutcomeInput.value.trim(),
+                notes: trackingNotesInput.value.trim()
+            };
+
+            if (currentEditingTrackingItemId) { 
+                const index = trackingData.findIndex(item => item.id === currentEditingTrackingItemId);
+                if (index > -1) {
+                    trackingData[index] = { ...trackingData[index], ...itemData };
+                }
+            } else { 
+                itemData.id = `track-${Date.now()}`; 
+                trackingData.push(itemData);
+            }
+            pushStateToHistory(rcaData); 
+            renderTrackingTable();
+            closeTrackingItemModal();
+        }
+
+        function handleDeleteTrackingItem(itemId) {
+            if (confirm('確定要刪除此追蹤項目嗎？')) {
+                trackingData = trackingData.filter(item => item.id !== itemId);
+                pushStateToHistory(rcaData); 
+                renderTrackingTable();
+            }
+        }
         
-        // --- Layout and Export ---
         function autoAdjustNodeLayout() { 
             if (!rcaData || isFinalizedView) {
                 alert('請先建立圖表或結束「完成圖表」模式以調整節點位置。');
@@ -1835,8 +2569,7 @@
             }
         }
         
-        // --- Initialize the Application ---
-        initialize();
+        initialize(); 
     </script>
 </body>
 </html>
