@@ -48,6 +48,8 @@
             text-align: center; 
             position: relative; 
             z-index: 1; 
+            /* Ensure background is transparent or set as needed for SVG export */
+            background-color: transparent; 
         }
 
         .rca-node-wrapper { 
@@ -413,6 +415,8 @@
                             <button id="export-solution-csv-button"><i class="fas fa-file-csv"></i> 匯出改善方案表 (CSV)</button>
                             <button id="export-tracking-csv-button"><i class="fas fa-file-csv"></i> 匯出改善追蹤表 (CSV)</button>
                             <hr class="my-1 border-gray-300">
+                            <button id="export-svg-button"><i class="fas fa-file-image"></i> 匯出圖表 (SVG)</button>
+                            <hr class="my-1 border-gray-300">
                             <button id="print-document-button"><i class="fas fa-print"></i> 列印文件</button>
                         </div>
                     </div>
@@ -710,6 +714,7 @@
         const exportCauseEffectCsvButton = document.getElementById('export-cause-effect-csv-button'); 
         const exportSolutionCsvButton = document.getElementById('export-solution-csv-button'); 
         const exportTrackingCsvButton = document.getElementById('export-tracking-csv-button'); 
+        const exportSvgButton = document.getElementById('export-svg-button');
         const printDocumentButton = document.getElementById('print-document-button'); 
 
 
@@ -833,6 +838,7 @@
             exportCauseEffectCsvButton.disabled = noData || causeEffectTableSection.style.display === 'none';
             exportSolutionCsvButton.disabled = noData || solutionTableSection.style.display === 'none';
             exportTrackingCsvButton.disabled = noData || trackingTableSection.style.display === 'none';
+            if (exportSvgButton) exportSvgButton.disabled = noData; 
             printDocumentButton.disabled = noData && trackingData.length === 0 && !hasTrizMcdaData(); 
             exportMenuButton.disabled = noData && trackingData.length === 0 && !hasTrizMcdaData(); 
 
@@ -1064,6 +1070,149 @@
             renderRcaDiagram(); 
             updateButtonStates(); 
         }
+
+        // --- SVG 匯出函式 (優化版) ---
+        function exportSVG(filename = 'RCA_矛盾分析圖.svg') {
+            const htmlContainer = document.getElementById('rca-diagram-container');
+            const svgLinesContainer = document.getElementById('svg-connector-layer');
+            const scalableWrapper = document.getElementById('scalable-content-wrapper'); // 用於取得 padding
+
+            if (!htmlContainer || !svgLinesContainer || !scalableWrapper) {
+                alert('錯誤：匯出 SVG 所需的圖表元素未找到。');
+                console.error('Error: Diagram elements for SVG export not found.');
+                return;
+            }
+            if (!rcaData) {
+                alert('沒有圖表資料可匯出。');
+                return;
+            }
+            
+            showLoadingSpinner();
+
+            // 暫時移除縮放以取得原始尺寸和樣式
+            const originalTransform = scalableWrapper.style.transform;
+            scalableWrapper.style.transform = 'scale(1)';
+            // 強制重繪以確保尺寸計算正確
+            void scalableWrapper.offsetHeight; 
+
+
+            // 計算 SVG 的實際內容區域尺寸 (HTML 節點容器的滾動尺寸)
+            const contentWidth = htmlContainer.scrollWidth;
+            const contentHeight = htmlContainer.scrollHeight;
+
+            // 建立新的 SVG 元素
+            const newSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            newSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            newSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+            newSvg.setAttribute('width', contentWidth);
+            newSvg.setAttribute('height', contentHeight);
+            newSvg.setAttribute('viewBox', `0 0 ${contentWidth} ${contentHeight}`);
+             // 添加一個白色背景，避免透明背景在某些檢視器中顯示不佳
+            const backgroundRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            backgroundRect.setAttribute('x', '0');
+            backgroundRect.setAttribute('y', '0');
+            backgroundRect.setAttribute('width', '100%'); // 使用百分比確保填滿
+            backgroundRect.setAttribute('height', '100%');
+            backgroundRect.setAttribute('fill', '#ffffff'); // 白色背景
+            newSvg.appendChild(backgroundRect);
+
+
+            // 嵌入 CSS 樣式
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const styleTag = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+            styleTag.setAttribute('type', 'text/css');
+            
+            let cssText = "";
+            // 確保字體也被嵌入 (如果瀏覽器允許)
+            cssText += `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');\n`;
+            
+            for (const styleSheet of Array.from(document.styleSheets)) {
+                try {
+                    if (styleSheet.cssRules) {
+                        for (const rule of Array.from(styleSheet.cssRules)) {
+                            cssText += rule.cssText + "\n";
+                        }
+                    } else if (styleSheet.href && styleSheet.href.includes('font-awesome')) {
+                         // 對於 Font Awesome CDN，嘗試手動加入基本樣式 (這是一個簡化，可能不完整)
+                        cssText += `
+                            .fas { font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+                            /* 您可能需要根據使用的圖示添加更多 Font Awesome 規則 */
+                        `;
+                    }
+                } catch (e) {
+                    console.warn("無法存取樣式表規則 (可能是CORS問題):", styleSheet.href, e);
+                }
+            }
+            styleTag.textContent = cssText;
+            defs.appendChild(styleTag);
+            newSvg.appendChild(defs);
+
+            // 嵌入 HTML 內容
+            const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+            foreignObject.setAttribute('x', '0');
+            foreignObject.setAttribute('y', '0');
+            foreignObject.setAttribute('width', contentWidth);
+            foreignObject.setAttribute('height', contentHeight);
+
+            // 複製 HTML 容器以避免修改原始 DOM，並確保其在 foreignObject 中正確渲染
+            const clonedHtmlContainer = htmlContainer.cloneNode(true);
+            // 移除可能影響 foreignObject 內部渲染的絕對定位相關樣式 (如果有的話)
+            // clonedHtmlContainer.style.position = 'static'; // 或 'relative'
+            // clonedHtmlContainer.style.left = 'auto';
+            // clonedHtmlContainer.style.top = 'auto';
+            // clonedHtmlContainer.style.transform = 'none'; // 移除任何 transform
+
+            const xhtmlDiv = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+            // 為了讓 Tailwind 等樣式能正確套用，有時需要確保 xhtmlDiv 也有基本的佈局屬性
+            xhtmlDiv.setAttribute('style', 'width: 100%; height: 100%;'); 
+            xhtmlDiv.appendChild(clonedHtmlContainer);
+            foreignObject.appendChild(xhtmlDiv);
+            newSvg.appendChild(foreignObject);
+
+            // 嵌入 SVG 連接線 (線條的座標已經是相對於 htmlContainer 的)
+            const linesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            linesGroup.setAttribute('id', 'connector-lines-group');
+            Array.from(svgLinesContainer.children).forEach(childLine => {
+                linesGroup.appendChild(childLine.cloneNode(true));
+            });
+            newSvg.appendChild(linesGroup);
+            
+            // 恢復原始縮放
+            scalableWrapper.style.transform = originalTransform;
+
+            // 序列化並下載
+            try {
+                const serializer = new XMLSerializer();
+                let svgString = serializer.serializeToString(newSvg);
+                
+                // 確保 xmlns 存在，有些瀏覽器可能不會自動加入到 clone 的元素上
+                if (!svgString.match(/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+                    svgString = svgString.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+                }
+                 if (!svgString.match(/xmlns:xlink="http:\/\/www\.w3\.org\/1999\/xlink"/)) {
+                    svgString = svgString.replace('<svg', '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+                }
+
+
+                const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                alert(`${filename} 已準備下載。`);
+            } catch (error) {
+                alert(`匯出 SVG 時發生錯誤： ${error.message}`);
+                console.error("Error exporting SVG:", error);
+            } finally {
+                hideLoadingSpinner();
+            }
+        }
+
 
         // --- TRIZ-MCDA 相關函數 ---
         function initializeTrizMcdaDataObject() {
@@ -2405,6 +2554,14 @@
             exportCauseEffectCsvButton.addEventListener('click', () => { exportTableToCSV('cause-effect-data-table', 'cause_effect_table.csv'); closeAllDropdowns(); });
             exportSolutionCsvButton.addEventListener('click', () => { exportTableToCSV('solution-data-table', 'solution_table.csv'); closeAllDropdowns(); });
             exportTrackingCsvButton.addEventListener('click', () => { exportTableToCSV('tracking-data-table', 'tracking_table.csv'); closeAllDropdowns(); });
+            
+            if (exportSvgButton) {
+                exportSvgButton.addEventListener('click', () => { 
+                    exportSVG('RCA_矛盾分析圖.svg'); 
+                    closeAllDropdowns(); 
+                });
+            }
+
             printDocumentButton.addEventListener('click', () => { 
                 if(rcaData || trackingData.length > 0 || hasTrizMcdaData()) { 
                     requestAnimationFrame(() => {
