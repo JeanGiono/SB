@@ -182,8 +182,7 @@
         .action-button.edit-node { background-color: #f59e0b; } .action-button.edit-node:hover:not(:disabled) { background-color: #d97706; }
         .action-button.set-parameters { background-color: #0ea5e9; } .action-button.set-parameters:hover:not(:disabled) { background-color: #0284c7; }
         .action-button.set-principles { background-color: #ec4899; } .action-button.set-principles:hover:not(:disabled) { background-color: #db2777; }
-        .action-button.ai-suggest { background-color: #7c3aed; } 
-        .action-button.ai-suggest:hover:not(:disabled) { background-color: #6d28d9; }
+        /* .action-button.ai-suggest class removed */
         .action-button.finalize-diagram { background-color: #059669; } .action-button.finalize-diagram:hover:not(:disabled) { background-color: #047857; }
         .action-button.edit-diagram { background-color: #d97706; } .action-button.edit-diagram:hover:not(:disabled) { background-color: #b45309; }
         .remove-button { background-color: #ef4444; } .remove-button:hover:not(:disabled) { background-color: #dc2626; }
@@ -211,10 +210,7 @@
         .modal-options-container h4 { font-weight:600; margin-top: 0.75rem; margin-bottom: 0.25rem; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem; }
         .modal-options-container h4:first-child { margin-top: 0; }
         .principle-solution-input { width: calc(100% - 2rem); margin-left: 1.5rem; margin-top: 0.25rem; margin-bottom: 0.5rem; padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.8rem; }
-        #ai-suggestions-container { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed #d1d5db; }
-        #ai-suggestions-list { list-style-type: decimal; margin-left: 1.5rem; font-size: 0.875rem; color: #374151; max-height: 150px; overflow-y: auto; }
-        #ai-suggestions-list li { margin-bottom: 0.5rem; padding: 0.25rem; border-radius: 0.25rem; }
-        #ai-suggestions-list li:hover { background-color: #e9d5ff; cursor: pointer; } 
+        /* AI Suggestion related styles removed */
         .loading-spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; display: none; }
         .loading-spinner { border: 8px solid #f3f3f3; border-top: 8px solid #7c3aed; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -271,19 +267,35 @@
         .triz-solution-concept textarea {
             min-height: 60px;
         }
-        #mcda-criteria-table th, #mcda-criteria-table td,
-        #mcda-evaluation-table th, #mcda-evaluation-table td {
+        #mcda-criteria-table th, #mcda-criteria-table td {
             padding: 0.5rem;
             font-size: 0.875rem;
-            text-align: left;
+            text-align: left; /* Keep left align for criterion name */
+            vertical-align: middle; /* Ensure vertical centering */
         }
         #mcda-criteria-table input[type="number"] {
             width: 60px;
             text-align: right;
         }
+         #mcda-evaluation-table th { /* Header cells in evaluation table */
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center; /* Center align header text */
+            vertical-align: middle;
+        }
+        #mcda-evaluation-table td { /* Data cells in evaluation table */
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center; /* Center align cell content (input boxes, scores) */
+            vertical-align: middle; /* Ensure vertical centering */
+        }
+        #mcda-evaluation-table td:first-child { /* First column (solution name) can be left aligned */
+             text-align: left;
+        }
          #mcda-evaluation-table input[type="number"] {
             width: 50px;
-            text-align: center;
+            text-align: center; /* Input text itself is centered */
+            margin: 0 auto; /* Center the input box within the cell */
         }
         .mcda-result {
             margin-top: 1rem;
@@ -292,24 +304,11 @@
             border: 1px solid #e5e7eb;
             border-radius: 0.25rem;
         }
-        #triz-ai-concepts-output { margin-top: 1rem; }
-        #triz-ai-concepts-output h5 { font-weight: 600; margin-bottom: 0.5rem; color: #4b5563; }
-        #triz-ai-concepts-list { list-style-type: none; padding-left: 0; }
-        #triz-ai-concepts-list li { 
-            background-color: #f3e8ff; /* Light purple background */
-            border: 1px solid #d8b4fe; /* Purple border */
-            padding: 0.5rem; 
-            margin-bottom: 0.5rem; 
-            border-radius: 0.25rem; 
-            cursor: pointer;
-            font-size: 0.875rem;
-        }
-        #triz-ai-concepts-list li:hover { background-color: #e9d5ff; }
-        #triz-ai-concepts-list li strong { color: #5b21b6; } /* Darker purple for principle name */
-
+       
         @media print { 
             body { background-color: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            header, #controls-section, .modal, .dropdown-content, #loading-spinner-overlay, .rca-node-actions, #toggle-triz-mcda-button, #export-menu-button, #view-tables-menu-button, #add-tracking-item-button, #save-triz-mcda-button, .remove-button, .edit-node /* in tracking table */ { 
+            header, #controls-section, .modal, .dropdown-content, #loading-spinner-overlay, .rca-node-actions, #toggle-triz-mcda-button, #export-menu-button, #view-tables-menu-button, #add-tracking-item-button, #save-triz-mcda-button, .remove-button, .edit-node 
+            { 
                 display: none !important; 
             }
             #rca-diagram-section, #cause-effect-table-section, #solution-table-section, #tracking-table-section, #triz-mcda-section {
@@ -359,7 +358,7 @@
     <div class="container mx-auto max-w-7xl"> 
         <header class="mb-6 text-center">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-700">RCA+矛盾分析繪圖工具</h1>
-            <p class="text-gray-500 mt-1">視覺化根本原因、矛盾，整合 TRIZ-MCDA 分析流程、AI建議方案，並包含改善方案追蹤。</p>
+            <p class="text-gray-500 mt-1">視覺化根本原因、矛盾，整合 TRIZ-MCDA 分析流程，並包含改善方案追蹤。</p> 
         </header>
 
         <section id="controls-section" class="mb-6 p-4 bg-white rounded-lg shadow">
@@ -464,19 +463,7 @@
                 </button>
                 <div id="triz-principles-output" class="mt-4">
                     </div>
-                 <div id="triz-ai-concepts-section" class="mt-4" style="display: none;">
-                    <button id="triz-get-ai-concepts-button" class="action-button ai-suggest text-white font-semibold py-2 px-4 rounded-md w-full mb-2">
-                        ✨ AI 構思方案雛形 (TRIZ)
-                    </button>
-                    <div id="triz-ai-concepts-loading" style="display: none;" class="text-center text-gray-500">
-                        <i class="fas fa-spinner fa-spin mr-2"></i>AI 正在構思方案雛形，請稍候...
-                    </div>
-                    <div id="triz-ai-concepts-output" class="p-3 bg-purple-50 border border-purple-200 rounded-md min-h-[50px]" style="display: none;">
-                        <h5 class="font-semibold mb-2 text-purple-700">AI 建議的方案雛形：</h5>
-                        <ul id="triz-ai-concepts-list"></ul>
-                    </div>
-                </div>
-            </div>
+                 </div>
 
             <div id="triz-phase-3" class="triz-mcda-phase">
                 <h3>階段三：MCDA 評估框架</h3>
@@ -509,12 +496,9 @@
                     <p id="mcda-best-solution-text" class="text-green-600 font-semibold"></p>
                     <div class="mt-2">
                         <label for="mcda-recommendation-reason-text" class="block text-sm font-medium text-gray-700">推薦理由：</label>
-                        <textarea id="mcda-recommendation-reason-text" rows="3" class="input-field w-full mt-1" placeholder="AI 輔助產生或手動輸入推薦理由..."></textarea>
+                        <textarea id="mcda-recommendation-reason-text" rows="3" class="input-field w-full mt-1" placeholder="手動輸入推薦理由..."></textarea>
                     </div>
-                     <button id="mcda-get-ai-reason-button" class="action-button ai-suggest text-white font-semibold py-2 px-3 rounded-md mt-2 text-sm">
-                        ✨ AI 產生推薦理由
-                    </button>
-                </div>
+                     </div>
             </div>
              <button id="save-triz-mcda-button" class="action-button bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md mt-6">
                 <i class="fas fa-save mr-2"></i>儲存 TRIZ-MCDA 分析進度
@@ -596,24 +580,12 @@
         </div>
         <div id="inventive-principle-modal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
             <div class="modal-content mx-auto p-5 border w-11/12 md:w-1/2 lg:w-2/5 shadow-lg rounded-md bg-white">
-                <button class="modal-close-button" onclick="document.getElementById('inventive-principle-modal').style.display='none'; currentPrincipleTargetNodeId = null; clearAiSuggestions();">&times;</button>
+                <button class="modal-close-button" onclick="document.getElementById('inventive-principle-modal').style.display='none'; currentPrincipleTargetNodeId = null;">&times;</button>
                 <div class="mt-3">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 text-center" id="inventive-principle-modal-title">選擇發明原理與改善方案</h3>
-                    <div class="mt-4 px-2 py-3 max-h-[calc(100vh-250px)] overflow-y-auto modal-options-container" id="inventive-principle-options-container">
+                    <div class="mt-4 px-2 py-3 max-h-[calc(100vh-200px)] overflow-y-auto modal-options-container" id="inventive-principle-options-container">
                     </div>
-                     <div id="ai-suggestions-section" style="display: none;" class="mt-4">
-                        <h4 class="text-md font-semibold text-gray-800 mb-2">✨ AI 方案建議</h4>
-                        <button id="get-ai-suggestions-button" class="action-button ai-suggest text-white font-semibold py-2 px-4 rounded-md w-full mb-2">
-                            <i class="fas fa-magic mr-2"></i>取得 AI 建議方案
-                        </button>
-                        <div id="ai-suggestions-loading" style="display: none;" class="text-center text-gray-500">
-                            <i class="fas fa-spinner fa-spin mr-2"></i>AI 正在思考中，請稍候...
-                        </div>
-                        <div id="ai-suggestions-output" class="p-3 bg-purple-50 border border-purple-200 rounded-md min-h-[50px]">
-                            <ul id="ai-suggestions-list"></ul>
-                        </div>
-                    </div>
-                    <div class="items-center px-4 py-3 mt-4 text-right">
+                     <div class="items-center px-4 py-3 mt-4 text-right">
                         <button id="cancel-inventive-principles-button" class="action-button mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">取消</button>
                         <button id="save-inventive-principles-button" class="action-button px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-700">儲存原理與方案</button>
                     </div>
@@ -735,7 +707,6 @@
 
         const exportMenuButton = document.getElementById('export-menu-button');
         const exportDropdownContent = document.getElementById('export-dropdown-content');
-        // const exportDiagramPngButton = document.getElementById('export-diagram-png-button'); // 已刪除
         const exportCauseEffectCsvButton = document.getElementById('export-cause-effect-csv-button'); 
         const exportSolutionCsvButton = document.getElementById('export-solution-csv-button'); 
         const exportTrackingCsvButton = document.getElementById('export-tracking-csv-button'); 
@@ -773,11 +744,6 @@
         const inventivePrincipleModalTitle = document.getElementById('inventive-principle-modal-title');
         const saveInventivePrinciplesButton = document.getElementById('save-inventive-principles-button');
         const cancelInventivePrinciplesButton = document.getElementById('cancel-inventive-principles-button');
-        const aiSuggestionsSection = document.getElementById('ai-suggestions-section');
-        const getAiSuggestionsButton = document.getElementById('get-ai-suggestions-button');
-        const aiSuggestionsLoading = document.getElementById('ai-suggestions-loading');
-        const aiSuggestionsOutput = document.getElementById('ai-suggestions-output');
-        const aiSuggestionsList = document.getElementById('ai-suggestions-list');
 
         const trackingItemModal = document.getElementById('tracking-item-modal');
         const trackingItemModalTitle = document.getElementById('tracking-item-modal-title');
@@ -805,14 +771,8 @@
         const mcdaCalculateScoresButton = document.getElementById('mcda-calculate-scores-button');
         const mcdaResultOutput = document.getElementById('mcda-result-output');
         const mcdaBestSolutionText = document.getElementById('mcda-best-solution-text');
-        const mcdaRecommendationReasonText = document.getElementById('mcda-recommendation-reason-text'); // 新增
-        const mcdaGetAiReasonButton = document.getElementById('mcda-get-ai-reason-button'); // 新增
+        const mcdaRecommendationReasonText = document.getElementById('mcda-recommendation-reason-text'); 
         const saveTrizMcdaButton = document.getElementById('save-triz-mcda-button');
-        const trizAiConceptsSection = document.getElementById('triz-ai-concepts-section'); // 新增
-        const trizGetAiConceptsButton = document.getElementById('triz-get-ai-concepts-button'); // 新增
-        const trizAiConceptsLoading = document.getElementById('triz-ai-concepts-loading'); // 新增
-        const trizAiConceptsOutput = document.getElementById('triz-ai-concepts-output'); // 新增
-        const trizAiConceptsList = document.getElementById('triz-ai-concepts-list'); // 新增
 
 
         const EFFECT_PARAMETERS = {
@@ -822,125 +782,14 @@
         }; 
         const INVENTIVE_PRINCIPLES = [
             "分割", "取出/分離", "改變局部特性", "非對稱性", "合併/整合", "多用性/多功能", "套疊/巢狀結構", "反制行動", 
-            "預先反制行動", "預先行動", "事先補償/預防", "消除緊張", "另一方向/反向操作", "非直線姓", "動態化", 
+            "預先反制行動", "預先作用", "事先補償/預防", "消除緊張", "另一方向/反向操作", "非直線姓", "動態化", 
             "稍微少些或多些(的動作)", "另外維度/空間", "共鳴(協調)", "週期行動", "連續的有利作用", "快速行動", 
             "轉有害為利", "回饋", "中介物/媒介", "自助/自我服務", "使用複製品或模型", "廉價與短期[拋棄式]", 
             "替換系統運作原理/使用其他原理", "流動性和靈活性", "改變邊界條件", "孔洞和網路", "改變外觀/可見度", 
             "同質性", "丟棄與恢復", "改變特性", "模範轉移", "相對變化", "增強的環境", "鈍性(惰性)環境", "組合(複合)結構"
         ];
         
-        function handleToggleFinalizeView() { 
-            isFinalizedView = !isFinalizedView; 
-            if (isFinalizedView) { 
-                finalizeDiagramButton.textContent = '編輯圖表'; 
-                finalizeDiagramButton.classList.remove('finalize-diagram'); 
-                finalizeDiagramButton.classList.add('edit-diagram'); 
-            } else { 
-                finalizeDiagramButton.textContent = '完成圖表'; 
-                finalizeDiagramButton.classList.remove('edit-diagram'); 
-                finalizeDiagramButton.classList.add('finalize-diagram'); 
-            } 
-            renderRcaDiagram(); 
-            updateButtonStates(); 
-        }
-        
-        function initialize() {
-            populateTrizParameters();
-            initializeTrizMatrix();
-
-            setProblemButton.addEventListener('click', handleSetInitialProblem);
-            problemInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSetInitialProblem(); });
-            
-            fileMenuButton.addEventListener('click', (event) => { 
-                event.stopPropagation(); 
-                toggleDropdown(fileDropdownContent, [exportDropdownContent, viewTablesDropdownContent]);
-                updateButtonStates(); 
-            });
-            saveWorkspaceButton.addEventListener('click', () => { handleSaveToLocalStorage(); closeAllDropdowns(); });
-            loadWorkspaceButton.addEventListener('click', () => { handleLoadFromLocalStorage(); closeAllDropdowns(); });
-            downloadBackupButton.addEventListener('click', () => { handleSaveToFile(); closeAllDropdowns(); });
-            loadBackupLabel.addEventListener('click', () => { loadBackupInput.click(); }); 
-            loadBackupInput.addEventListener('change', (event) => { handleLoadFromFile(event); closeAllDropdowns(); });
-
-            undoButton.addEventListener('click', handleUndo);
-            redoButton.addEventListener('click', handleRedo);
-
-            zoomInButton.addEventListener('click', () => applyZoom(currentZoom + ZOOM_STEP));
-            zoomOutButton.addEventListener('click', () => applyZoom(currentZoom - ZOOM_STEP));
-            resetZoomButton.addEventListener('click', () => applyZoom(1.0));
-
-            finalizeDiagramButton.addEventListener('click', handleToggleFinalizeView); 
-            autoAdjustLayoutButton.addEventListener('click', autoAdjustNodeLayout); 
-            toggleTrizMcdaButton.addEventListener('click', handleToggleTrizMcdaSection); 
-
-            exportMenuButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                toggleDropdown(exportDropdownContent, [fileDropdownContent, viewTablesDropdownContent]);
-                updateButtonStates();
-            });
-            exportCauseEffectCsvButton.addEventListener('click', () => { exportTableToCSV('cause-effect-data-table', 'cause_effect_table.csv'); closeAllDropdowns(); });
-            exportSolutionCsvButton.addEventListener('click', () => { exportTableToCSV('solution-data-table', 'solution_table.csv'); closeAllDropdowns(); });
-            exportTrackingCsvButton.addEventListener('click', () => { exportTableToCSV('tracking-data-table', 'tracking_table.csv'); closeAllDropdowns(); });
-            printDocumentButton.addEventListener('click', () => { 
-                if(rcaData || trackingData.length > 0 || hasTrizMcdaData()) { // 確保有內容才列印
-                    requestAnimationFrame(() => {
-                        if (rcaData) drawAllSvgConnectors(svgLayer, diagramContainer, scalableContentWrapper, currentZoom); 
-                        setTimeout(() => window.print(), 100); 
-                    });
-                } else {
-                     alert("沒有可列印的內容。");
-                }
-                closeAllDropdowns(); 
-            });
-            
-            viewTablesMenuButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                toggleDropdown(viewTablesDropdownContent, [fileDropdownContent, exportDropdownContent]);
-                updateButtonStates();
-            });
-            showCauseEffectTableButton.addEventListener('click', () => { handleShowCauseEffectTable(); closeAllDropdowns(); });
-            showSolutionTableButton.addEventListener('click', () => { handleShowSolutionTable(); closeAllDropdowns(); });
-            showTrackingTableButton.addEventListener('click', () => { handleShowTrackingTable(); closeAllDropdowns(); }); 
-            hideAllTablesButton.addEventListener('click', () => { handleHideAllTables(); closeAllDropdowns(); });
-            
-            addTrackingItemButton.addEventListener('click', openTrackingItemModalForAdd); 
-            saveTrackingItemButton.addEventListener('click', handleSaveTrackingItem); 
-
-            saveAndSourcesButton.addEventListener('click', handleSaveAndSources);
-            cancelAndSourcesButton.addEventListener('click', () => { andSourceModal.style.display = 'none'; currentAndTargetNodeId = null; });
-            saveEffectParametersButton.addEventListener('click', handleSaveEffectParameters);
-            cancelEffectParametersButton.addEventListener('click', () => { effectParameterModal.style.display = 'none'; currentParameterTargetNodeId = null; });
-            saveInventivePrinciplesButton.addEventListener('click', handleSaveInventivePrinciples);
-            cancelInventivePrinciplesButton.addEventListener('click', () => { inventivePrincipleModal.style.display = 'none'; currentPrincipleTargetNodeId = null; clearAiSuggestions(); });
-            
-            getAiSuggestionsButton.addEventListener('click', handleGetAiSuggestions); // RCA AI
-            trizGetAiConceptsButton.addEventListener('click', handleGetTrizAiSolutionConcepts); // TRIZ AI
-            mcdaGetAiReasonButton.addEventListener('click', handleGetMcdaAiReason); // MCDA AI
-
-
-            trizGeneratePrinciplesButton.addEventListener('click', handleTrizGeneratePrinciples);
-            mcdaAddCriterionButton.addEventListener('click', handleMcdaAddCriterion);
-            mcdaCalculateTotalWeightButton.addEventListener('click', calculateAndDisplayTotalWeight);
-            mcdaCalculateScoresButton.addEventListener('click', handleMcdaCalculateScores);
-            saveTrizMcdaButton.addEventListener('click', saveTrizMcdaProgress);
-
-            window.addEventListener('click', (event) => { 
-                if (!event.target.closest('.dropdown')) {
-                    closeAllDropdowns();
-                }
-            });
-
-            new ResizeObserver(() => { if(rcaData) drawAllSvgConnectors(); }).observe(scalableContentWrapper); 
-            toolButtonsContainer.style.display = 'flex'; 
-            applyZoom(1.0, true); 
-            updateButtonStates(); 
-            
-            scalableContentWrapper.addEventListener('contextmenu', (event) => {
-                event.preventDefault(); 
-            });
-             loadTrizMcdaDataFromLocalStorage(); 
-        }
-
+        // --- Helper Functions (Dropdown, Zoom, UI State, History, Persistence) ---
         function toggleDropdown(dropdownToShow, otherDropdownsToHide) {
             const currentDisplay = dropdownToShow.style.display;
             otherDropdownsToHide.forEach(dd => dd.style.display = 'none');
@@ -1201,6 +1050,21 @@
             updateButtonStates(); 
         } 
         
+        function handleToggleFinalizeView() { 
+            isFinalizedView = !isFinalizedView; 
+            if (isFinalizedView) { 
+                finalizeDiagramButton.textContent = '編輯圖表'; 
+                finalizeDiagramButton.classList.remove('finalize-diagram'); 
+                finalizeDiagramButton.classList.add('edit-diagram'); 
+            } else { 
+                finalizeDiagramButton.textContent = '完成圖表'; 
+                finalizeDiagramButton.classList.remove('edit-diagram'); 
+                finalizeDiagramButton.classList.add('finalize-diagram'); 
+            } 
+            renderRcaDiagram(); 
+            updateButtonStates(); 
+        }
+
         // --- TRIZ-MCDA 相關函數 ---
         function initializeTrizMcdaDataObject() {
             return {
@@ -1309,16 +1173,12 @@
             
             renderTrizPrinciplesOutput();
             updateMcdaSolutionsFromTriz(); 
-            trizAiConceptsSection.style.display = trizMcdaData.suggestedPrinciples.length > 0 ? 'block' : 'none'; // 顯示 AI 構思按鈕區塊
-            trizAiConceptsOutput.style.display = 'none'; // 先隱藏 AI 輸出區域
-            trizAiConceptsList.innerHTML = ''; // 清空舊的 AI 建議
         }
 
         function renderTrizPrinciplesOutput() {
             trizPrinciplesOutput.innerHTML = '';
             if (trizMcdaData.suggestedPrinciples.length === 0) {
                 trizPrinciplesOutput.innerHTML = '<p class="text-gray-500">未找到匹配的發明原理，或此組合無建議原理。請嘗試其他參數組合。</p>';
-                trizAiConceptsSection.style.display = 'none'; // 如果沒有原理，隱藏 AI 按鈕區
                 return;
             }
 
@@ -1338,6 +1198,8 @@
                     textarea.rows = 2;
                     textarea.placeholder = `基於「${principle.name}」的方案描述...`;
                     textarea.value = concept;
+                    textarea.dataset.principleId = principle.id; 
+                    textarea.dataset.conceptIndex = cIndex;      
                     textarea.oninput = (e) => { 
                         trizMcdaData.suggestedPrinciples[pIndex].concepts[cIndex] = e.target.value;
                         updateMcdaSolutionsFromTriz(); 
@@ -1538,9 +1400,8 @@
                 trizMcdaData.mcdaBestSolution = trizMcdaData.mcdaSolutions[0];
                 mcdaBestSolutionText.textContent = `最佳方案推薦：${trizMcdaData.mcdaBestSolution.principleName} - 方案 ${trizMcdaData.mcdaBestSolution.conceptIndex + 1} (${trizMcdaData.mcdaBestSolution.conceptText.substring(0,30)}...)，總分：${trizMcdaData.mcdaBestSolution.weightedScore.toFixed(2)}`;
                 
-                // 清空舊的AI推薦理由，讓使用者可以重新產生或手動輸入
                 mcdaRecommendationReasonText.value = ""; 
-                trizMcdaData.mcdaRecommendation = ""; // 也清空數據模型中的理由
+                trizMcdaData.mcdaRecommendation = ""; 
                 mcdaResultOutput.style.display = 'block';
             } else {
                  mcdaBestSolutionText.textContent = `沒有可評估的方案。`;
@@ -1552,7 +1413,7 @@
         function saveTrizMcdaProgress() {
             trizMcdaData.problemDescription = trizProblemDescriptionInput.value;
             trizMcdaData.contradictionPhenomenon = trizContradictionPhenomenonInput.value;
-            trizMcdaData.mcdaRecommendation = mcdaRecommendationReasonText.value; // 保存MCDA推薦理由
+            trizMcdaData.mcdaRecommendation = mcdaRecommendationReasonText.value; 
             handleSaveToLocalStorage(); 
             alert("TRIZ-MCDA 分析進度已儲存。");
         }
@@ -1581,7 +1442,7 @@
 
             if (trizMcdaData.mcdaBestSolution && trizMcdaData.mcdaSolutions.length > 0) { 
                 mcdaBestSolutionText.textContent = `最佳方案推薦：${trizMcdaData.mcdaBestSolution.principleName} - 方案 ${trizMcdaData.mcdaBestSolution.conceptIndex + 1} (${trizMcdaData.mcdaBestSolution.conceptText.substring(0,30)}...)，總分：${trizMcdaData.mcdaBestSolution.weightedScore.toFixed(2)}`;
-                mcdaRecommendationReasonText.value = trizMcdaData.mcdaRecommendation || ""; // 載入儲存的推薦理由
+                mcdaRecommendationReasonText.value = trizMcdaData.mcdaRecommendation || ""; 
                 mcdaResultOutput.style.display = 'block';
             } else {
                 mcdaResultOutput.style.display = 'none';
@@ -1589,201 +1450,8 @@
                 mcdaRecommendationReasonText.value = "";
             }
             calculateAndDisplayTotalWeight(); 
-             trizAiConceptsSection.style.display = trizMcdaData.suggestedPrinciples.length > 0 ? 'block' : 'none';
         }
-
-        async function handleGetTrizAiSolutionConcepts() {
-            if (trizMcdaData.suggestedPrinciples.length === 0) {
-                alert("請先透過矛盾矩陣產生建議的發明原理。");
-                return;
-            }
-
-            trizAiConceptsLoading.style.display = 'block';
-            trizAiConceptsList.innerHTML = '';
-            trizAiConceptsOutput.style.display = 'none';
-            trizGetAiConceptsButton.disabled = true;
-
-            const problemDesc = trizMcdaData.problemDescription || "未定義問題";
-            const contradiction = trizMcdaData.contradictionPhenomenon || "未定義矛盾";
-            const improvingParamName = TRIZ_PARAMETERS.find(p => p.id === trizMcdaData.improvingParameter)?.name || "未知改善參數";
-            const worseningParamName = TRIZ_PARAMETERS.find(p => p.id === trizMcdaData.worseningParameter)?.name || "未知惡化參數";
-
-            let prompt = `針對以下問題與矛盾情況，請為列出的每個TRIZ發明原理構思2-3個具體的解決方案雛形概念。\n`;
-            prompt += `問題描述：${problemDesc}\n`;
-            prompt += `矛盾現象：${contradiction} (改善 ${improvingParamName} 時，導致 ${worseningParamName} 惡化)\n\n`;
-            prompt += `建議的發明原理與方案雛形構思：\n`;
-
-            trizMcdaData.suggestedPrinciples.forEach(principle => {
-                prompt += `\n原理：${principle.name}\n`;
-                prompt += `- 方案概念1：\n`;
-                prompt += `- 方案概念2：\n`;
-            });
-            prompt += "\n請確保每個方案概念都是具體且可操作的，並與所列原理相關。";
-
-            try {
-                showLoadingSpinner();
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`TRIZ AI API 請求失敗: ${response.status} ${response.statusText}. ${errorData?.error?.message || ''}`);
-                }
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    // 解析AI回應並填充到對應的textarea
-                    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                    let currentPrincipleName = null;
-                    let conceptCountForPrinciple = 0;
-
-                    lines.forEach(line => {
-                        if (line.startsWith("原理：")) {
-                            currentPrincipleName = line.replace("原理：", "").trim();
-                            conceptCountForPrinciple = 0;
-                        } else if (currentPrincipleName && (line.startsWith("- 方案概念") || line.match(/^\d+\.\s/) || line.startsWith("* ") || line.startsWith("- "))) {
-                            const conceptText = line.replace(/^(- 方案概念\d+：|- |\d+\.\s|\*\s)/, "").trim();
-                            const principleToUpdate = trizMcdaData.suggestedPrinciples.find(p => p.name === currentPrincipleName);
-                            if (principleToUpdate && conceptCountForPrinciple < principleToUpdate.concepts.length) {
-                                // 嘗試填入現有的textarea，如果該textarea為空
-                                if (principleToUpdate.concepts[conceptCountForPrinciple].trim() === "") {
-                                     principleToUpdate.concepts[conceptCountForPrinciple] = conceptText;
-                                } else { // 如果不為空，則新增一個概念（或提示使用者）
-                                   // 為了簡化，這裡我們只更新第一個空的，或者如果都非空，則添加到列表供用戶選擇
-                                   const li = document.createElement('li');
-                                   li.innerHTML = `<strong>${currentPrincipleName}：</strong>${conceptText}`;
-                                   li.onclick = () => {
-                                       const targetTextarea = Array.from(trizPrinciplesOutput.querySelectorAll(`textarea`))
-                                           .find(ta => ta.placeholder.includes(currentPrincipleName) && ta.value.trim() === "");
-                                       if (targetTextarea) {
-                                           targetTextarea.value = conceptText;
-                                           // 手動觸發 oninput 以更新 trizMcdaData
-                                           const event = new Event('input', { bubbles: true, cancelable: true });
-                                           targetTextarea.dispatchEvent(event);
-                                       } else {
-                                           alert(`原理 "${currentPrincipleName}" 的方案雛形輸入框已滿或找不到。`);
-                                       }
-                                   };
-                                   trizAiConceptsList.appendChild(li);
-                                }
-                                conceptCountForPrinciple++;
-                            } else if (principleToUpdate) { // 如果現有textarea已滿，則將多餘的建議顯示在列表中
-                                const li = document.createElement('li');
-                                li.innerHTML = `<strong>${currentPrincipleName}：</strong>${conceptText}`;
-                                 li.onclick = () => { // 點擊列表項目以填入
-                                    const textareasForPrinciple = Array.from(trizPrinciplesOutput.querySelectorAll('textarea'))
-                                        .filter(ta => ta.placeholder.includes(currentPrincipleName));
-                                    const firstEmptyTextarea = textareasForPrinciple.find(ta => ta.value.trim() === "");
-                                    if (firstEmptyTextarea) {
-                                        firstEmptyTextarea.value = conceptText;
-                                        const event = new Event('input', { bubbles: true, cancelable: true });
-                                        firstEmptyTextarea.dispatchEvent(event);
-                                    } else if (textareasForPrinciple.length > 0) { // 如果沒有空的，就填入最後一個
-                                        textareasForPrinciple[textareasForPrinciple.length-1].value = conceptText;
-                                         const event = new Event('input', { bubbles: true, cancelable: true });
-                                        textareasForPrinciple[textareasForPrinciple.length-1].dispatchEvent(event);
-                                    }
-                                };
-                                trizAiConceptsList.appendChild(li);
-                            }
-                        }
-                    });
-                    renderTrizPrinciplesOutput(); // 重新渲染以顯示AI填入的內容
-                    updateMcdaSolutionsFromTriz(); // 更新MCDA表格
-                    if(trizAiConceptsList.children.length > 0) trizAiConceptsOutput.style.display = 'block';
-
-                } else {
-                    trizAiConceptsList.innerHTML = '<li>AI 未返回任何建議。</li>';
-                    trizAiConceptsOutput.style.display = 'block';
-                }
-
-            } catch (error) {
-                console.error('調用 TRIZ AI Concepts API 時發生錯誤:', error);
-                trizAiConceptsList.innerHTML = `<li>獲取 AI 方案雛形時出錯：${error.message}</li>`;
-                trizAiConceptsOutput.style.display = 'block';
-            } finally {
-                trizAiConceptsLoading.style.display = 'none';
-                trizGetAiConceptsButton.disabled = false;
-                hideLoadingSpinner();
-            }
-        }
-
-        async function handleGetMcdaAiReason() {
-            if (!trizMcdaData.mcdaBestSolution) {
-                alert("請先計算MCDA評估總分並選出最佳方案。");
-                return;
-            }
-            mcdaGetAiReasonButton.disabled = true;
-            const originalButtonText = mcdaGetAiReasonButton.innerHTML;
-            mcdaGetAiReasonButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>AI 思考中...';
-
-
-            const bestSolution = trizMcdaData.mcdaBestSolution;
-            let prompt = `這是一個多標準決策分析 (MCDA) 的結果。\n`;
-            prompt += `最佳方案是：「${bestSolution.principleName} - 方案 ${bestSolution.conceptIndex + 1} (${bestSolution.conceptText})」，其加權總分為 ${bestSolution.weightedScore.toFixed(2)}。\n`;
-            prompt += "評估標準及其權重如下：\n";
-            trizMcdaData.mcdaCriteria.forEach(crit => {
-                prompt += `- ${crit.name} (權重: ${crit.weight}%)：此方案得分 ${bestSolution.scores[crit.id] || 0}\n`;
-            });
-            
-            // 可選：加入次佳方案進行比較
-            if (trizMcdaData.mcdaSolutions.length > 1) {
-                const secondBest = trizMcdaData.mcdaSolutions[1];
-                if (secondBest) {
-                     prompt += `\n次佳方案是：「${secondBest.principleName} - 方案 ${secondBest.conceptIndex + 1} (${secondBest.conceptText})」，其加權總分為 ${secondBest.weightedScore.toFixed(2)}。\n`;
-                }
-            }
-            prompt += "\n請基於以上數據，產生一段簡潔且具說服力的推薦理由，說明為何選擇此最佳方案。";
-
-            try {
-                showLoadingSpinner();
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`MCDA AI API 請求失敗: ${response.status} ${response.statusText}. ${errorData?.error?.message || ''}`);
-                }
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const reasonText = result.candidates[0].content.parts[0].text;
-                    mcdaRecommendationReasonText.value = reasonText;
-                    trizMcdaData.mcdaRecommendation = reasonText; // 保存到數據模型
-                } else {
-                    mcdaRecommendationReasonText.value = "AI 未能產生推薦理由。";
-                }
-            } catch (error) {
-                console.error('調用 MCDA AI Reason API 時發生錯誤:', error);
-                mcdaRecommendationReasonText.value = `獲取 AI 推薦理由時出錯：${error.message}`;
-            } finally {
-                mcdaGetAiReasonButton.disabled = false;
-                mcdaGetAiReasonButton.innerHTML = originalButtonText;
-                hideLoadingSpinner();
-            }
-        }
-
-
+        
         function handleShowCauseEffectTable() {
             causeEffectTableSection.style.display = 'block';
             solutionTableSection.style.display = 'none'; 
@@ -1989,6 +1657,19 @@
             nodeInput.focus(); 
             nodeInput.select(); 
         }
+        function handleSaveAndSources() { 
+            if (!currentAndTargetNodeId) return; 
+            const targetNode = findNodeById(rcaData, currentAndTargetNodeId); 
+            if (!targetNode) return; 
+            const selectedSourceIds = []; 
+            const checkboxes = andSourceOptionsContainer.querySelectorAll('input[type="checkbox"]:checked'); 
+            checkboxes.forEach(chk => selectedSourceIds.push(chk.value)); 
+            targetNode.andSourceNodeIds = selectedSourceIds; 
+            pushStateToHistory(rcaData); 
+            andSourceModal.style.display = 'none'; 
+            currentAndTargetNodeId = null; 
+            renderRcaDiagram(); 
+        }
         function openAndSourceModal(targetNodeId) { 
             if (isFinalizedView) return; 
             currentAndTargetNodeId = targetNodeId; 
@@ -2040,17 +1721,17 @@
             } 
             return false; 
         }
-        function handleSaveAndSources() { 
-            if (!currentAndTargetNodeId) return; 
-            const targetNode = findNodeById(rcaData, currentAndTargetNodeId); 
+        function handleSaveEffectParameters() { 
+            if (!currentParameterTargetNodeId) return; 
+            const targetNode = findNodeById(rcaData, currentParameterTargetNodeId); 
             if (!targetNode) return; 
-            const selectedSourceIds = []; 
-            const checkboxes = andSourceOptionsContainer.querySelectorAll('input[type="checkbox"]:checked'); 
-            checkboxes.forEach(chk => selectedSourceIds.push(chk.value)); 
-            targetNode.andSourceNodeIds = selectedSourceIds; 
+            const selectedParameters = []; 
+            const checkboxes = effectParameterOptionsContainer.querySelectorAll('input[type="checkbox"]:checked'); 
+            checkboxes.forEach(chk => selectedParameters.push(chk.value)); 
+            targetNode.effectParameters = selectedParameters; 
             pushStateToHistory(rcaData); 
-            andSourceModal.style.display = 'none'; 
-            currentAndTargetNodeId = null; 
+            effectParameterModal.style.display = 'none'; 
+            currentParameterTargetNodeId = null; 
             renderRcaDiagram(); 
         }
         function openEffectParameterModal(targetNodeId) { 
@@ -2086,18 +1767,28 @@
             }); 
             effectParameterModal.style.display = 'flex'; 
         }
-        function handleSaveEffectParameters() { 
-            if (!currentParameterTargetNodeId) return; 
-            const targetNode = findNodeById(rcaData, currentParameterTargetNodeId); 
+        function handleSaveInventivePrinciples() { 
+            if (!currentPrincipleTargetNodeId) return; 
+            const targetNode = findNodeById(rcaData, currentPrincipleTargetNodeId); 
             if (!targetNode) return; 
-            const selectedParameters = []; 
-            const checkboxes = effectParameterOptionsContainer.querySelectorAll('input[type="checkbox"]:checked'); 
-            checkboxes.forEach(chk => selectedParameters.push(chk.value)); 
-            targetNode.effectParameters = selectedParameters; 
+            const selectedPrinciples = []; 
+            const principleCheckboxes = inventivePrincipleOptionsContainer.querySelectorAll('input[type="checkbox"]');
+            principleCheckboxes.forEach(chk => {
+                if (chk.checked) {
+                    const principleName = chk.value;
+                    const solutionInput = chk.closest('.my-2').querySelector('input[type="text"][data-principle-name]');
+                    selectedPrinciples.push({ 
+                        name: principleName, 
+                        solution: solutionInput ? solutionInput.value.trim() : '' 
+                    });
+                }
+            });
+            targetNode.inventivePrinciples = selectedPrinciples; 
             pushStateToHistory(rcaData); 
-            effectParameterModal.style.display = 'none'; 
-            currentParameterTargetNodeId = null; 
+            inventivePrincipleModal.style.display = 'none'; 
+            currentPrincipleTargetNodeId = null; 
             renderRcaDiagram(); 
+            renderSolutionTable(); 
         }
         function openInventivePrincipleModal(targetNodeId, isContradictoryCause) { 
             if (isFinalizedView) return; 
@@ -2143,325 +1834,9 @@
                 principleContainer.appendChild(solutionInput); 
                 inventivePrincipleOptionsContainer.appendChild(principleContainer); 
             }); 
-
-            if (isContradictoryCause) {
-                aiSuggestionsSection.style.display = 'block';
-            } else {
-                aiSuggestionsSection.style.display = 'none';
-            }
-            clearAiSuggestions(); 
             inventivePrincipleModal.style.display = 'flex'; 
         }
-
-        function handleSaveInventivePrinciples() { 
-            if (!currentPrincipleTargetNodeId) return; 
-            const targetNode = findNodeById(rcaData, currentPrincipleTargetNodeId); 
-            if (!targetNode) return; 
-            const selectedPrinciples = []; 
-            const principleCheckboxes = inventivePrincipleOptionsContainer.querySelectorAll('input[type="checkbox"]');
-            principleCheckboxes.forEach(chk => {
-                if (chk.checked) {
-                    const principleName = chk.value;
-                    const solutionInput = chk.closest('.my-2').querySelector('input[type="text"][data-principle-name]');
-                    selectedPrinciples.push({ 
-                        name: principleName, 
-                        solution: solutionInput ? solutionInput.value.trim() : '' 
-                    });
-                }
-            });
-            targetNode.inventivePrinciples = selectedPrinciples; 
-            pushStateToHistory(rcaData); 
-            inventivePrincipleModal.style.display = 'none'; 
-            currentPrincipleTargetNodeId = null; 
-            renderRcaDiagram(); 
-            renderSolutionTable(); 
-            clearAiSuggestions();
-        }
-
-        function clearAiSuggestions() {
-            aiSuggestionsList.innerHTML = '';
-            aiSuggestionsOutput.style.display = 'block'; 
-            aiSuggestionsLoading.style.display = 'none';
-        }
-
-        async function handleGetAiSuggestions() { // RCA 圖表節點的 AI 建議
-            if (!currentPrincipleTargetNodeId) return;
-            const targetNode = findNodeById(rcaData, currentPrincipleTargetNodeId);
-            if (!targetNode || targetNode.type !== 'cause') {
-                alert("AI 建議僅適用於原因節點。");
-                return;
-            }
-
-            const { hasPositiveChild, hasNegativeChild } = checkChildrenEffects(targetNode);
-            if (!hasPositiveChild || !hasNegativeChild) {
-                alert("AI 建議僅適用於具有正面和負面效果的矛盾原因。");
-                return;
-            }
-
-            aiSuggestionsLoading.style.display = 'block';
-            aiSuggestionsList.innerHTML = ''; 
-            getAiSuggestionsButton.disabled = true;
-
-            const positiveEffects = targetNode.children.filter(c => c.type === 'positive-effect').map(c => c.text);
-            const negativeEffects = targetNode.children.filter(c => c.type === 'negative-effect').map(c => c.text);
-            
-            let prompt = `這是一個根本原因分析 (RCA+) 中的矛盾點。\n`;
-            prompt += `主要原因：${targetNode.text}\n`;
-            prompt += `該原因導致的正面效果：\n${positiveEffects.map(e => `- ${e}`).join('\n')}\n`;
-            prompt += `該原因導致的負面效果：\n${negativeEffects.map(e => `- ${e}`).join('\n')}\n`;
-
-            const selectedPrincipleNames = Array.from(inventivePrincipleOptionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
-                                             .map(chk => chk.value);
-            if (selectedPrincipleNames.length > 0) {
-                prompt += `請參考以下已選擇的發明原理：${selectedPrincipleNames.join(', ')}\n`;
-            }
-            prompt += `請針對此矛盾情況，提出3-5個具體的、可操作的改善方案建議。請以條列式清單方式呈現建議，每個建議包含簡短描述。`;
-
-            try {
-                showLoadingSpinner(); 
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API 請求失敗: ${response.status} ${response.statusText}. ${errorData?.error?.message || ''}`);
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    const suggestions = text.split('\n').map(s => s.trim()).filter(s => s.length > 0 && (s.startsWith('- ') || s.match(/^\d+\.\s/)));
-                    if (suggestions.length > 0) {
-                        suggestions.forEach(suggestionText => {
-                            const li = document.createElement('li');
-                            li.textContent = suggestionText.replace(/^(- |\d+\.\s)/, ''); 
-                            li.onclick = () => {
-                                const firstEmptySolutionInput = Array.from(inventivePrincipleOptionsContainer.querySelectorAll('.principle-solution-input'))
-                                    .find(input => input.style.display !== 'none' && input.value.trim() === '');
-                                if (firstEmptySolutionInput) {
-                                    firstEmptySolutionInput.value = li.textContent;
-                                    const principleName = firstEmptySolutionInput.dataset.principleName;
-                                    const principleCheckbox = inventivePrincipleOptionsContainer.querySelector(`input[type="checkbox"][value="${principleName}"]`);
-                                    if (principleCheckbox && !principleCheckbox.checked) {
-                                        principleCheckbox.checked = true;
-                                        firstEmptySolutionInput.style.display = 'block';
-                                    }
-                                } else {
-                                    alert("沒有可用的改善方案輸入框來填入此建議，或者所有已選原理的方案都已填寫。");
-                                }
-                            };
-                            aiSuggestionsList.appendChild(li);
-                        });
-                    } else {
-                        aiSuggestionsList.innerHTML = '<li>AI 未能提供有效的建議格式。</li>';
-                    }
-                } else {
-                    aiSuggestionsList.innerHTML = '<li>AI 未返回任何建議。</li>';
-                    console.error("AI response structure unexpected:", result);
-                }
-            } catch (error) {
-                console.error('調用 Gemini API 時發生錯誤:', error);
-                aiSuggestionsList.innerHTML = `<li>獲取 AI 建議時出錯：${error.message}</li>`;
-            } finally {
-                aiSuggestionsLoading.style.display = 'none';
-                getAiSuggestionsButton.disabled = false;
-                hideLoadingSpinner(); 
-            }
-        }
         
-        async function handleGetTrizAiSolutionConcepts() {
-            if (trizMcdaData.suggestedPrinciples.length === 0) {
-                alert("請先透過矛盾矩陣產生建議的發明原理 (階段二)。");
-                trizAiConceptsLoading.style.display = 'none';
-                trizGetAiConceptsButton.disabled = false;
-                return;
-            }
-            if (!trizMcdaData.problemDescription || !trizMcdaData.contradictionPhenomenon) {
-                alert("請先完成階段一的問題描述與矛盾現象定義。");
-                return;
-            }
-
-
-            trizAiConceptsLoading.style.display = 'block';
-            trizAiConceptsList.innerHTML = '';
-            trizAiConceptsOutput.style.display = 'none';
-            trizGetAiConceptsButton.disabled = true;
-
-            const problemDesc = trizMcdaData.problemDescription;
-            const contradiction = trizMcdaData.contradictionPhenomenon;
-            const improvingParamName = TRIZ_PARAMETERS.find(p => p.id === trizMcdaData.improvingParameter)?.name || "未知改善參數";
-            const worseningParamName = TRIZ_PARAMETERS.find(p => p.id === trizMcdaData.worseningParameter)?.name || "未知惡化參數";
-
-            let prompt = `針對以下工業設計或工程問題情境，以及已識別的技術矛盾：\n`;
-            prompt += `問題描述：${problemDesc}\n`;
-            prompt += `矛盾現象：${contradiction} (即，嘗試改善「${improvingParamName}」時，會導致「${worseningParamName}」惡化)。\n\n`;
-            prompt += `目前已根據 TRIZ 矛盾矩陣建議了以下發明原理：\n`;
-            trizMcdaData.suggestedPrinciples.forEach(p => {
-                prompt += `- ${p.name}\n`;
-            });
-            prompt += `\n請為上述每一個發明原理，分別構思 2 到 3 個具體的、可操作的解決方案雛形概念。`;
-            prompt += `請以清晰的條列方式呈現，每個方案雛形前標註其對應的發明原理名稱。例如：\n`;
-            prompt += `原理：[原理名稱]\n`;
-            prompt += `  - 方案概念1：[具體描述]\n`;
-            prompt += `  - 方案概念2：[具體描述]\n`;
-
-            try {
-                showLoadingSpinner();
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`TRIZ AI Concepts API 請求失敗: ${response.status} ${response.statusText}. ${errorData?.error?.message || ''}`);
-                }
-                const result = await response.json();
-
-                trizAiConceptsList.innerHTML = ''; // 清空舊列表
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                    
-                    let currentPrincipleForDisplay = null;
-                    lines.forEach(line => {
-                        const principleMatch = line.match(/^原理：\s*(.+)/i);
-                        if (principleMatch) {
-                            currentPrincipleForDisplay = principleMatch[1].trim();
-                        } else if (line.match(/^(- 方案概念\d+：|- |\d+\.\s|\*\s)/) && currentPrincipleForDisplay) {
-                            const conceptText = line.replace(/^(- 方案概念\d+：|- |\d+\.\s|\*\s)/, "").trim();
-                            if (conceptText) {
-                                const li = document.createElement('li');
-                                li.innerHTML = `<strong>${currentPrincipleForDisplay}：</strong> ${conceptText}`;
-                                li.onclick = () => {
-                                    // 尋找對應原理下第一個空的 textarea
-                                    const principleToUpdate = trizMcdaData.suggestedPrinciples.find(p => p.name === currentPrincipleForDisplay);
-                                    if (principleToUpdate) {
-                                        const textareasForPrinciple = Array.from(trizPrinciplesOutput.querySelectorAll('textarea'))
-                                            .filter(ta => ta.placeholder.includes(currentPrincipleForDisplay));
-                                        
-                                        let filled = false;
-                                        for (let i = 0; i < principleToUpdate.concepts.length; i++) {
-                                            if (principleToUpdate.concepts[i].trim() === "" && textareasForPrinciple[i]) {
-                                                textareasForPrinciple[i].value = conceptText;
-                                                principleToUpdate.concepts[i] = conceptText; // 更新數據模型
-                                                filled = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!filled && textareasForPrinciple.length > 0) { // 如果都滿了，填入最後一個
-                                            const lastTextareaIndex = textareasForPrinciple.length - 1;
-                                            textareasForPrinciple[lastTextareaIndex].value = conceptText;
-                                             principleToUpdate.concepts[lastTextareaIndex] = conceptText;
-                                        } else if (!filled) {
-                                             alert(`原理 "${currentPrincipleForDisplay}" 的方案雛形輸入框已滿或找不到。`);
-                                        }
-                                        updateMcdaSolutionsFromTriz(); // 更新MCDA評估表
-                                    }
-                                };
-                                trizAiConceptsList.appendChild(li);
-                            }
-                        }
-                    });
-                     trizAiConceptsOutput.style.display = trizAiConceptsList.children.length > 0 ? 'block' : 'none';
-                } else {
-                    trizAiConceptsList.innerHTML = '<li>AI 未返回任何方案雛形建議。</li>';
-                    trizAiConceptsOutput.style.display = 'block';
-                }
-
-            } catch (error) {
-                console.error('調用 TRIZ AI Concepts API 時發生錯誤:', error);
-                trizAiConceptsList.innerHTML = `<li>獲取 AI 方案雛形時出錯：${error.message}</li>`;
-                trizAiConceptsOutput.style.display = 'block';
-            } finally {
-                trizAiConceptsLoading.style.display = 'none';
-                trizGetAiConceptsButton.disabled = false;
-                hideLoadingSpinner();
-            }
-        }
-
-        async function handleGetMcdaAiReason() {
-            if (!trizMcdaData.mcdaBestSolution) {
-                alert("請先計算MCDA評估總分並選出最佳方案。");
-                return;
-            }
-            mcdaGetAiReasonButton.disabled = true;
-            const originalButtonText = mcdaGetAiReasonButton.innerHTML;
-            mcdaGetAiReasonButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>AI 思考中...';
-
-            const bestSolution = trizMcdaData.mcdaBestSolution;
-            let prompt = `這是一個多標準決策分析 (MCDA) 的結果。\n`;
-            prompt += `最佳方案是：「${bestSolution.principleName} - 方案 ${bestSolution.conceptIndex + 1} (${bestSolution.conceptText})」，其加權總分為 ${bestSolution.weightedScore.toFixed(2)}。\n`;
-            prompt += "評估標準及其權重如下：\n";
-            trizMcdaData.mcdaCriteria.forEach(crit => {
-                prompt += `- ${crit.name} (權重: ${crit.weight}%)：此最佳方案在此標準的得分為 ${bestSolution.scores[crit.id] || 0}\n`;
-            });
-            
-            if (trizMcdaData.mcdaSolutions.length > 1 && trizMcdaData.mcdaSolutions[1]) {
-                const secondBest = trizMcdaData.mcdaSolutions[1];
-                prompt += `\n作為參考，次佳方案是：「${secondBest.principleName} - 方案 ${secondBest.conceptIndex + 1} (${secondBest.conceptText})」，其加權總分為 ${secondBest.weightedScore.toFixed(2)}。\n`;
-                 trizMcdaData.mcdaCriteria.forEach(crit => {
-                    prompt += `  - 次佳方案在「${crit.name}」的得分為 ${secondBest.scores[crit.id] || 0}\n`;
-                });
-            }
-            prompt += "\n請基於以上數據，產生一段簡潔（約100-150字）、客觀且具說服力的推薦理由，說明為何選擇此最佳方案。請強調其在重要標準上的表現，並可與次佳方案進行簡要比較（若有）。";
-
-            try {
-                showLoadingSpinner();
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`MCDA AI API 請求失敗: ${response.status} ${response.statusText}. ${errorData?.error?.message || ''}`);
-                }
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const reasonText = result.candidates[0].content.parts[0].text;
-                    mcdaRecommendationReasonText.value = reasonText;
-                    trizMcdaData.mcdaRecommendation = reasonText; 
-                } else {
-                    mcdaRecommendationReasonText.value = "AI 未能產生推薦理由。";
-                }
-            } catch (error) {
-                console.error('調用 MCDA AI Reason API 時發生錯誤:', error);
-                mcdaRecommendationReasonText.value = `獲取 AI 推薦理由時出錯：${error.message}`;
-            } finally {
-                mcdaGetAiReasonButton.disabled = false;
-                mcdaGetAiReasonButton.innerHTML = originalButtonText;
-                hideLoadingSpinner();
-            }
-        }
-
         function drawAllSvgConnectors(
             targetSvgLayer = svgLayer, 
             targetDiagramContainer = diagramContainer, 
@@ -2992,6 +2367,100 @@
             alert(`${filename} 已準備下載。`);
         }
         
+        // --- 初始化函數定義 ---
+        function initialize() {
+            populateTrizParameters();
+            initializeTrizMatrix();
+
+            setProblemButton.addEventListener('click', handleSetInitialProblem);
+            problemInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSetInitialProblem(); });
+            
+            fileMenuButton.addEventListener('click', (event) => { 
+                event.stopPropagation(); 
+                toggleDropdown(fileDropdownContent, [exportDropdownContent, viewTablesDropdownContent]);
+                updateButtonStates(); 
+            });
+            saveWorkspaceButton.addEventListener('click', () => { handleSaveToLocalStorage(); closeAllDropdowns(); });
+            loadWorkspaceButton.addEventListener('click', () => { handleLoadFromLocalStorage(); closeAllDropdowns(); });
+            downloadBackupButton.addEventListener('click', () => { handleSaveToFile(); closeAllDropdowns(); });
+            loadBackupLabel.addEventListener('click', () => { loadBackupInput.click(); }); 
+            loadBackupInput.addEventListener('change', (event) => { handleLoadFromFile(event); closeAllDropdowns(); });
+
+            undoButton.addEventListener('click', handleUndo);
+            redoButton.addEventListener('click', handleRedo);
+
+            zoomInButton.addEventListener('click', () => applyZoom(currentZoom + ZOOM_STEP));
+            zoomOutButton.addEventListener('click', () => applyZoom(currentZoom - ZOOM_STEP));
+            resetZoomButton.addEventListener('click', () => applyZoom(1.0));
+
+            finalizeDiagramButton.addEventListener('click', handleToggleFinalizeView); 
+            autoAdjustLayoutButton.addEventListener('click', autoAdjustNodeLayout); 
+            toggleTrizMcdaButton.addEventListener('click', handleToggleTrizMcdaSection); 
+
+            exportMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleDropdown(exportDropdownContent, [fileDropdownContent, viewTablesDropdownContent]);
+                updateButtonStates();
+            });
+            exportCauseEffectCsvButton.addEventListener('click', () => { exportTableToCSV('cause-effect-data-table', 'cause_effect_table.csv'); closeAllDropdowns(); });
+            exportSolutionCsvButton.addEventListener('click', () => { exportTableToCSV('solution-data-table', 'solution_table.csv'); closeAllDropdowns(); });
+            exportTrackingCsvButton.addEventListener('click', () => { exportTableToCSV('tracking-data-table', 'tracking_table.csv'); closeAllDropdowns(); });
+            printDocumentButton.addEventListener('click', () => { 
+                if(rcaData || trackingData.length > 0 || hasTrizMcdaData()) { 
+                    requestAnimationFrame(() => {
+                        if (rcaData) drawAllSvgConnectors(svgLayer, diagramContainer, scalableContentWrapper, currentZoom); 
+                        setTimeout(() => window.print(), 100); 
+                    });
+                } else {
+                     alert("沒有可列印的內容。");
+                }
+                closeAllDropdowns(); 
+            });
+            
+            viewTablesMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleDropdown(viewTablesDropdownContent, [fileDropdownContent, exportDropdownContent]);
+                updateButtonStates();
+            });
+            showCauseEffectTableButton.addEventListener('click', () => { handleShowCauseEffectTable(); closeAllDropdowns(); });
+            showSolutionTableButton.addEventListener('click', () => { handleShowSolutionTable(); closeAllDropdowns(); });
+            showTrackingTableButton.addEventListener('click', () => { handleShowTrackingTable(); closeAllDropdowns(); }); 
+            hideAllTablesButton.addEventListener('click', () => { handleHideAllTables(); closeAllDropdowns(); });
+            
+            addTrackingItemButton.addEventListener('click', openTrackingItemModalForAdd); 
+            saveTrackingItemButton.addEventListener('click', handleSaveTrackingItem); 
+
+            saveAndSourcesButton.addEventListener('click', handleSaveAndSources);
+            cancelAndSourcesButton.addEventListener('click', () => { andSourceModal.style.display = 'none'; currentAndTargetNodeId = null; });
+            saveEffectParametersButton.addEventListener('click', handleSaveEffectParameters);
+            cancelEffectParametersButton.addEventListener('click', () => { effectParameterModal.style.display = 'none'; currentParameterTargetNodeId = null; });
+            saveInventivePrinciplesButton.addEventListener('click', handleSaveInventivePrinciples);
+            cancelInventivePrinciplesButton.addEventListener('click', () => { inventivePrincipleModal.style.display = 'none'; currentPrincipleTargetNodeId = null; });
+            
+            trizGeneratePrinciplesButton.addEventListener('click', handleTrizGeneratePrinciples);
+            mcdaAddCriterionButton.addEventListener('click', handleMcdaAddCriterion);
+            mcdaCalculateTotalWeightButton.addEventListener('click', calculateAndDisplayTotalWeight);
+            mcdaCalculateScoresButton.addEventListener('click', handleMcdaCalculateScores);
+            saveTrizMcdaButton.addEventListener('click', saveTrizMcdaProgress);
+
+            window.addEventListener('click', (event) => { 
+                if (!event.target.closest('.dropdown')) {
+                    closeAllDropdowns();
+                }
+            });
+
+            new ResizeObserver(() => { if(rcaData) drawAllSvgConnectors(); }).observe(scalableContentWrapper); 
+            toolButtonsContainer.style.display = 'flex'; 
+            applyZoom(1.0, true); 
+            updateButtonStates(); 
+            
+            scalableContentWrapper.addEventListener('contextmenu', (event) => {
+                event.preventDefault(); 
+            });
+             loadTrizMcdaDataFromLocalStorage(); 
+        }
+        
+        // --- 初始化應用程式 ---
         initialize(); 
     </script>
 </body>
