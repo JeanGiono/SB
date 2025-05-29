@@ -113,6 +113,7 @@
        }
         .content-text ol > li > ul { 
            margin-top: 0.25rem;
+           margin-bottom: 0.5rem; 
        }
        .content-text code {
            background-color: #f1f5f9;
@@ -183,7 +184,7 @@
            opacity: 0;
        }
        .section-visible {
-           display: block; /* or flex, grid, etc., depending on the section's layout */
+           display: block; 
            animation: fadeInAnimation 0.5s ease-in-out forwards;
        }
        @keyframes fadeInAnimation {
@@ -202,10 +203,22 @@
            opacity: 0 !important;
            transform: translateX(100%) !important;
        }
-       /* Initial state for messageBox before animation */
        .message-box-initial {
            opacity: 0;
            transform: translateX(100%);
+       }
+       
+       /* 針對 MathJax 渲染的區塊公式進行大小和間距調整 */
+       mjx-container[jax="CHTML"][display="true"] {
+            display: block !important; /* 確保是區塊顯示 */
+            font-size: 0.85em !important; /* 相對周圍文字縮小公式，可調整此值 (例如 0.8em 到 0.9em) */
+            margin-top: 0.3em !important; /* 調整公式上方的間距 */
+            margin-bottom: 0.3em !important; /* 調整公式下方的間距 */
+            text-align: center !important; /* 確保公式在區塊內居中 */
+       }
+       /* 如果需要，可以為行內公式也做一些微調，但通常 baseline 對齊已足夠 */
+       .mjx-chtml {
+           vertical-align: baseline !important;
        }
 
    </style>
@@ -226,53 +239,44 @@
 
                <h3 class="subsection-title">一、DEMATEL 演算法步驟</h3>
                <ol class="list-decimal ml-6">
-                   <li class="mb-2">
+                   <li> 
                        <strong>建立直接關係矩陣（Initial Direct-Relation Matrix, $$S$$）</strong>
                        <p>由專家對所有因素兩兩間的影響程度進行評分，常用 0~4 或 1~4 等等級（如：0=無影響，1=低度，2=中度，3=高度，4=極高度影響），自我影響設為 0。</p>
                    </li>
-                   <li class="mb-2">
+                   <li>
                        <strong>正規化直接關係矩陣（Normalization）</strong>
-                       <p>將每個元素除以所有行元素和的最大值，得到正規化矩陣 $$X$$：</p>
-                       <p>$$ X = \frac{S}{\max_{i} \sum_{j} S_{ij}} $$</p>
-                       <p>確保所有元素值介於 0~1 之間。</p>
+                       <p>將每個元素除以所有行元素和的最大值，得到正規化矩陣 $$X$$：$$ X = \frac{S}{\max_{i} \sum_{j} S_{ij}} $$確保所有元素值介於 0~1 之間。</p>
                    </li>
-                   <li class="mb-2">
+                   <li>
                        <strong>計算總關係矩陣（Total-Relation Matrix, $$T$$）</strong>
-                       <p>利用下式計算總關係矩陣：</p>
-                       <p>$$ T = X (I - X)^{-1} $$</p>
-                       <p>其中 $$I$$ 為單位矩陣。$$T$$ 包含直接及所有間接影響。</p>
+                       <p>利用下式計算總關係矩陣：$$ T = X (I - X)^{-1} $$其中 $$I$$ 為單位矩陣。$$T$$ 包含直接及所有間接影響。</p>
                    </li>
-                   <li class="mb-2">
-                       <strong>計算各因素的影響度（D）與受影響度（R）</strong>
-                       <p>$$D_i$$：第 $$i$$ 行元素總和，表示因素 $$i$$ 對其他因素的總影響（row sum）。</p>
-                       <p>$$R_j$$：第 $$j$$ 列元素總和，表示因素 $$j$$ 被其他因素影響的總和（column sum）。</p>
+                   <li>
+                       <strong>計算各因素的影響度（$$D$$）與受影響度（$$R$$）</strong>
+                       <p>$$D_i$$：第 $$i$$ 行元素總和，表示因素 $$i$$ 對其他因素的總影響（row sum）。$$R_j$$：第 $$j$$ 列元素總和，表示因素 $$j$$ 被其他因素影響的總和（column sum）。</p>
                    </li>
-                   <li class="mb-2">
+                   <li>
                        <strong>計算中心度（Prominence, $$D+R$$）與原因度（Relation, $$D-R$$）</strong>
-                       <p>中心度 $$D+R$$：表示該因素在系統中的重要性。</p>
-                       <p>原因度 $$D-R$$：若為正，屬於「原因」因素（Cause）；為負則屬於「結果」因素（Effect）。</p>
+                       <p>中心度 $$D+R$$：表示該因素在系統中的重要性。原因度 $$D-R$$：若為正，屬於「原因」因素（Cause）；為負則屬於「結果」因素（Effect）。</p>
                    </li>
-                   <li class="mb-3"> 
+                   <li>  
                        <strong>（可選）設定臨界值（Threshold）</strong>
                        <p>在 DEMATEL 分析中，臨界值是用來篩選全關係矩陣（Total-Relation Matrix, $$T$$）中顯著影響的標準。其目的是過濾掉影響力較弱的連結，讓因果圖（Causal Diagram）更加清晰、聚焦於主要關係，避免圖形過於複雜難以解讀。</p>
                        
                        <h4 class="h4-custom">臨界值的設定方式</h4>
                        <p>常見的臨界值設定方法有：</p>
                        <ul class="list-disc ml-6 mt-1">
-                           <li class="mb-1"><strong>平均值法：</strong>設定臨界值為 $$T$$ 矩陣所有元素的平均值。
-                               $$ \text{Threshold} = \frac{1}{n^2} \sum_{i=1}^{n} \sum_{j=1}^{n} T_{ij} $$
-                               只顯示 $$ T_{ij} > \text{Threshold} $$ 的關係線。
-                           </li>
-                           <li class="mb-1"><strong>中位數法：</strong>以 $$T$$ 矩陣所有元素的中位數作為臨界值。</li>
-                           <li class="mb-1"><strong>自訂百分位：</strong>例如設定在前 25% 或 50% 最大值的分界點作為臨界值。</li>
-                           <li class="mb-1"><strong>專家判斷法：</strong>由領域專家根據經驗選擇一個合適的數值。</li>
+                           <li><strong>平均值法：</strong>設定臨界值為 $$T$$ 矩陣所有元素的平均值。$$ \text{Threshold} = \frac{1}{n^2} \sum_{i=1}^{n} \sum_{j=1}^{n} T_{ij} $$只顯示 $$ T_{ij} > \text{Threshold} $$ 的關係線。</li>
+                           <li><strong>中位數法：</strong>以 $$T$$ 矩陣所有元素的中位數作為臨界值。</li>
+                           <li><strong>自訂百分位：</strong>例如設定在前 25% 或 50% 最大值的分界點作為臨界值。</li>
+                           <li><strong>專家判斷法：</strong>由領域專家根據經驗選擇一個合適的數值。</li>
                        </ul>
                        
                        <h4 class="h4-custom">實作流程建議</h4>
                        <ul class="list-disc ml-6 mt-1">
-                           <li class="mb-1"><strong>計算臨界值：</strong>使用上述任一方式計算 $$T$$ 的臨界值。(本工具目前提供平均值、中位數及自訂選項)</li>
-                           <li class="mb-1"><strong>篩選關係：</strong>只保留 $$T_{ij} > \text{Threshold}$$ 的元素，並將這些關係繪製於因果圖上。(此功能為進階選項，目前圖表顯示所有點，關係線的繪製可基於此臨界值考量)</li>
-                           <li class="mb-1"><strong>簡化因果圖：</strong>這樣可以大幅減少線條數量，讓圖形聚焦於主要影響路徑。</li>
+                           <li><strong>計算臨界值：</strong>使用上述任一方式計算 $$T$$ 的臨界值。(本工具目前提供平均值、中位數及自訂選項)</li>
+                           <li><strong>篩選關係：</strong>只保留 $$T_{ij} > \text{Threshold}$$ 的元素，並將這些關係繪製於因果圖上。(此功能為進階選項，目前圖表顯示所有點，關係線的繪製可基於此臨界值考量)</li>
+                           <li><strong>簡化因果圖：</strong>這樣可以大幅減少線條數量，讓圖形聚焦於主要影響路徑。</li>
                        </ul>
                    </li>
                </ol>
@@ -280,21 +284,21 @@
                <hr class="my-4">
 
                <h3 class="subsection-title">二、因果圖繪製方法</h3>
-               <ul>
+               <ul class="list-disc ml-6"> 
                    <li><strong>橫軸：中心度 $$D+R$$</strong></li>
                    <li><strong>縱軸：原因度 $$D-R$$</strong></li>
                    <li>每個因素在座標上以點表示，點的位置即為該因素的中心度與原因度。</li>
                    <li>圖表將為每個因素分配不同顏色，並提供圖例以茲識別。</li>
                    <li>可用箭頭或線條標示顯著（大於臨界值）的因果關係（此為進階繪圖功能）。</li>
                </ul>
-               <blockquote>
-                   <p class="pl-4 border-l-4 border-gray-300 italic">「繪製因果圖時，以中心度(D+R)為橫軸，原因度(D–R)為縱軸，構成一個座標圖形。正值偏向為原因類，負值偏向為結果類。」</p>
+               <blockquote class="mt-2"> 
+                   <p class="pl-4 border-l-4 border-gray-300 italic">「繪製因果圖時，以中心度($$D+R$$)為橫軸，原因度($$D–R$$)為縱軸，構成一個座標圖形。正值偏向為原因類，負值偏向為結果類。」</p>
                </blockquote>
 
                <hr class="my-4">
 
                <h3 class="subsection-title">三、前端實作建議（含因果圖繪製）</h3>
-               <ul>
+               <ul class="list-disc ml-6"> 
                    <li><strong>矩陣計算：</strong> 可用 JavaScript 進行矩陣運算（如 math.js）。</li>
                    <li><strong>因果圖繪製：</strong> 建議使用 D3.js、Chart.js 或 Plotly.js，將每個因素以點標示於座標圖，橫軸為 $$D+R$$，縱軸為 $$D-R$$，並可用線條或箭頭連接因果關係強的因素。</li>
                    <li><strong>自動計算與繪圖流程：</strong>
@@ -310,7 +314,7 @@
                <hr class="my-4">
 
                <h3 class="subsection-title">四、參考 R 套件函數流程（供前端移植參考）</h3>
-               <ul>
+               <ul class="list-disc ml-6"> 
                    <li><code>normalize()</code>：正規化直接關係矩陣</li>
                    <li><code>total_relationship_matrix()</code>：計算總關係矩陣</li>
                    <li><code>relationships_between_criteria()</code>：回傳各因素 $$D$$、$$R$$、$$D+R$$、$$D-R$$</li>
@@ -378,7 +382,8 @@
                                <option value="custom">自訂 (Custom)</option>
                            </select>
                        </div>
-                       <div id="customThresholdInputContainer" class="hidden"> <label for="customThresholdValue" class="block text-sm font-medium text-gray-700">自訂臨界值:</label>
+                       <div id="customThresholdInputContainer" class="hidden"> 
+                           <label for="customThresholdValue" class="block text-sm font-medium text-gray-700">自訂臨界值:</label>
                            <input type="number" id="customThresholdValue" step="0.001" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="手動輸入數值">
                        </div>
                    </div>
@@ -461,38 +466,23 @@
            'rgba(179, 157, 219, 0.8)', 'rgba(255, 183, 77, 0.8)', 'rgba(144, 164, 174, 0.8)'
        ];
 
-       // --- Helper function to show/hide sections with animation ---
        function setSectionVisibility(sectionElement, isVisible) {
            if (isVisible) {
                sectionElement.classList.remove('section-hidden');
                sectionElement.classList.add('section-visible');
-               // Ensure display is set correctly if it was 'none'
-               if (sectionElement.tagName === 'SECTION') { // Common case
-                    sectionElement.style.display = 'block'; // Or 'flex', 'grid' if needed by specific section
+               if (sectionElement.tagName === 'SECTION') {
+                    sectionElement.style.display = 'block'; 
                }
            } else {
                sectionElement.classList.remove('section-visible');
                sectionElement.classList.add('section-hidden');
-               // After animation (if any), set display to none
                 setTimeout(() => {
-                    if (!sectionElement.classList.contains('section-visible')) { // Check if it wasn't re-shown quickly
+                    if (!sectionElement.classList.contains('section-visible')) { 
                         sectionElement.style.display = 'none';
                     }
-                }, 500); // Match animation duration
+                }, 500); 
            }
        }
-
-
-       // --- 檔案上傳與解析 ---
-       uploadButton.addEventListener('click', handleFileUpload);
-       excelFileInput.addEventListener('change', (event) => {
-           const file = event.target.files[0];
-           if (file) {
-               fileNameDisplay.textContent = `已選擇檔案：${file.name}`;
-           } else {
-               fileNameDisplay.textContent = '';
-           }
-       });
 
        function handleFileUpload() {
            const file = excelFileInput.files[0];
@@ -500,7 +490,6 @@
                showMessage("請先選擇一個 Excel 檔案。");
                return;
            }
-
            const reader = new FileReader();
            reader.onload = function(event) {
                try {
@@ -514,7 +503,6 @@
                        showMessage("Excel 檔案格式錯誤：至少需要包含因素名稱列和一行影響數據。");
                        return;
                    }
-
                    factors = jsonData[0].slice(1).map(String).filter(f => f && f.trim() !== ""); 
                    originalMatrix_S = jsonData.slice(1)
                                        .filter(row => row.slice(1, factors.length + 1).some(cell => cell !== null && cell !== undefined && cell !== "")) 
@@ -522,7 +510,6 @@
                                            const num = Number(cell);
                                            return isNaN(num) ? 0 : num; 
                                        }));
-                   
                    if (factors.length === 0 ) {
                         showMessage("Excel 檔案格式錯誤：未能解析到有效的因素名稱。請確保第一行包含因素名稱。");
                         return;
@@ -531,14 +518,12 @@
                        showMessage("Excel 檔案格式錯誤：未能解析到有效的數據。請確保因素名稱下方有對應的影響值。");
                        return;
                    }
-
                    if (originalMatrix_S.length !== factors.length || originalMatrix_S.some(row => row.length !== factors.length)) {
                        showMessage(`Excel 檔案格式錯誤：因素數量 (${factors.length}) 與數據矩陣維度 (${originalMatrix_S.length}x${originalMatrix_S[0] ? originalMatrix_S[0].length : 0}) 不符。請確保資料為方陣且與因素數量一致。`);
                        factors = []; 
                        originalMatrix_S = [];
                        return;
                    }
-                   
                    let diagonalOk = true;
                    for (let i = 0; i < originalMatrix_S.length; i++) {
                        if (originalMatrix_S[i][i] !== 0) {
@@ -554,7 +539,6 @@
                    if (!diagonalOk) {
                         showMessage("警告：直接關係矩陣的對角線元素應為 0。請檢查並修正資料，或確認後系統將以0計算。", "warn");
                    }
-
                    displayMatrix(originalMatrixContainer, originalMatrix_S, factors, true, "S");
                    setSectionVisibility(matrixDisplaySection, true);
                    setSectionVisibility(resultsSection, false); 
@@ -565,6 +549,7 @@
                    }
                    causalDiagramMessage.textContent = ""; 
                    calculatedThresholdDisplay.textContent = ""; 
+                   typesetMathJax(); 
                } catch (error) {
                    console.error("檔案解析錯誤:", error);
                    showMessage("檔案解析失敗，請確認檔案格式是否正確。錯誤：" + error.message);
@@ -578,23 +563,19 @@
            reader.readAsArrayBuffer(file);
        }
 
-       // --- 顯示矩陣 ---
        function displayMatrix(container, matrix, labels, editable = false, matrixName = "") {
            container.innerHTML = ''; 
            if (!matrix || matrix.length === 0 || !labels || labels.length === 0) {
                container.innerHTML = '<p class="text-gray-500 p-4">沒有資料可顯示。</p>';
                return;
            }
-
            const table = document.createElement('table');
            const thead = document.createElement('thead');
            const tbody = document.createElement('tbody');
-
            let headerRowHTML = `<tr><th>${matrixName}</th>`; 
            labels.forEach(label => headerRowHTML += `<th>${label}</th>`);
            headerRowHTML += '</tr>';
            thead.innerHTML = headerRowHTML;
-
            let tbodyHTML = '';
            matrix.forEach((row, i) => {
                const rowLabel = labels[i] !== undefined ? labels[i] : `因素 ${i+1}`;
@@ -609,11 +590,9 @@
                tbodyHTML += '</tr>';
            });
            tbody.innerHTML = tbodyHTML;
-
            table.appendChild(thead);
            table.appendChild(tbody);
            container.appendChild(table);
-
            if (editable) {
                document.querySelectorAll('.matrix-input').forEach(input => {
                    input.addEventListener('change', (e) => {
@@ -634,7 +613,6 @@
            }
        }
 
-       // --- 確認矩陣並執行 DEMATEL 計算 ---
        confirmMatrixButton.addEventListener('click', () => {
            if (originalMatrix_S.length === 0) {
                showMessage("沒有有效的矩陣資料可以計算。");
@@ -653,15 +631,15 @@
            if (diagonalCorrected) {
                displayMatrix(originalMatrixContainer, originalMatrix_S, factors, true, "S"); 
            }
-
            performDematelCalculations(); 
            if (totalRelationshipMatrix_T && totalRelationshipMatrix_T.length > 0 && !totalRelationshipMatrix_T.flat().some(isNaN)) {
                 setSectionVisibility(resultsSection, true);
                 showMessage("DEMATEL 計算完成！", "success");
                 updateThresholdValue(); 
                 drawCausalDiagram(factors, D_plus_R, D_minus_R); 
+                typesetMathJax(); 
            } else {
-               setSectionVisibility(resultsSection, true); // Show section but with error messages
+               setSectionVisibility(resultsSection, true); 
                normalizedMatrixContainer.innerHTML = '<p class="text-red-500 p-4">正規化矩陣計算失敗或包含無效數據。</p>';
                totalRelationshipMatrixContainer.innerHTML = '<p class="text-red-500 p-4">全關係矩陣計算失敗或包含無效數據。</p>';
                indicatorsContainer.innerHTML = '<p class="text-red-500 p-4">指標計算失敗。</p>';
@@ -671,15 +649,12 @@
            }
        });
 
-       // --- DEMATEL 計算邏輯 (核心演算法) ---
        function performDematelCalculations() {
            if (originalMatrix_S.length === 0) return; 
            const n = originalMatrix_S.length;
-
            try {
                const rowSums = originalMatrix_S.map(row => row.reduce((sum, val) => sum + val, 0));
                const maxRowSum = Math.max(...rowSums);
-
                if (maxRowSum === 0 && originalMatrix_S.flat().every(val => val === 0)) {
                     showMessage("注意：原始矩陣所有元素均為零。正規化結果將為全零矩陣。", "warn");
                     normalizedMatrix_X = originalMatrix_S.map(row => row.map(() => 0));
@@ -689,8 +664,7 @@
                } else if (maxRowSum < 0) { 
                     showMessage("錯誤：原始矩陣行和的最大值為負數，不符合DEMATEL影響程度定義。請檢查數據。", "error");
                    normalizedMatrix_X = originalMatrix_S.map(row => row.map(() => NaN));
-               }
-                else {
+               } else {
                    normalizedMatrix_X = originalMatrix_S.map(row =>
                        row.map(cell => cell / maxRowSum)
                    );
@@ -701,7 +675,6 @@
                totalRelationshipMatrix_T = []; 
            }
            displayMatrix(normalizedMatrixContainer, normalizedMatrix_X, factors, false, "X");
-
            if (normalizedMatrix_X.length > 0 && !normalizedMatrix_X.flat().some(isNaN)) { 
                try {
                    const I = math.identity(n).toArray(); 
@@ -712,7 +685,6 @@
                    }
                    const I_minus_X_inv = math.inv(I_minus_X);
                    totalRelationshipMatrix_T = math.multiply(normalizedMatrix_X, I_minus_X_inv);
-
                    if (totalRelationshipMatrix_T.some(row => row.some(val => isNaN(val) || !isFinite(val)))) {
                        showMessage("錯誤：計算出的全關係矩陣 T 包含無效值 (NaN/Infinity)。這通常意味著 (I-X) 矩陣不可逆或計算不穩定。請檢查原始數據的合理性。", "error");
                         totalRelationshipMatrix_T = normalizedMatrix_X.map(row => row.map(() => NaN)); 
@@ -732,7 +704,6 @@
            calculateAndDisplayIndicators(totalRelationshipMatrix_T);
        }
 
-       // --- 計算並顯示指標 ---
        function calculateAndDisplayIndicators(matrixT) {
            if (!matrixT || matrixT.length === 0 || matrixT.flat().some(isNaN)) {
                indicatorsContainer.innerHTML = '<p class="text-red-500 p-4">無法計算指標，全關係矩陣 T 包含無效數據或計算失敗。</p>';
@@ -744,7 +715,6 @@
            R_values = math.transpose(matrixT).map(col => col.reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0));
            D_plus_R = D_values.map((d, i) => d + R_values[i]);
            D_minus_R = D_values.map((d, i) => d - R_values[i]);
-
            const indicatorsTable = document.createElement('table');
            let tableHTML = `<thead><tr class="text-xs text-gray-700 uppercase bg-gray-50">
                                <th>因素</th>
@@ -768,15 +738,14 @@
            indicatorsContainer.appendChild(indicatorsTable);
        }
 
-       // --- 臨界值處理 ---
        thresholdTypeSelect.addEventListener('change', function() {
            if (this.value === 'custom') {
-               customThresholdInputContainer.classList.remove('hidden'); // Use Tailwind class
+               customThresholdInputContainer.classList.remove('hidden'); 
                customThresholdValueInput.value = ''; 
                calculatedThresholdDisplay.textContent = '請輸入自訂臨界值'; 
                currentThresholdValue = null; 
            } else {
-               customThresholdInputContainer.classList.add('hidden'); // Use Tailwind class
+               customThresholdInputContainer.classList.add('hidden'); 
                updateThresholdValue(); 
            }
        });
@@ -800,18 +769,15 @@
                currentThresholdValue = null;
                return;
            }
-
            const allValues = totalRelationshipMatrix_T.flat().filter(v => !isNaN(v) && isFinite(v) && v !== null); 
            if (allValues.length === 0) {
                calculatedThresholdDisplay.textContent = "無法計算臨界值 (T矩陣無有效數據)";
                currentThresholdValue = null;
                return;
            }
-
            const type = thresholdTypeSelect.value;
            let threshold;
            let displayText = "計算方式: ";
-
            if (type === 'average') {
                threshold = allValues.reduce((sum, val) => sum + val, 0) / allValues.length;
                displayText += `平均值 = ${threshold.toFixed(4)}`;
@@ -839,8 +805,6 @@
            calculatedThresholdDisplay.textContent = displayText;
        }
 
-
-       // --- 繪製因果圖 ---
        function drawCausalDiagram(labels, dPlusRData, dMinusRData) {
            if (causalChart) { 
                causalChart.destroy(); 
@@ -852,7 +816,6 @@
            }
            causalDiagramCanvas.style.display = 'block'; 
            causalDiagramMessage.textContent = ""; 
-
            const datasets = labels.map((label, index) => {
                return {
                    label: label, 
@@ -869,11 +832,9 @@
                    pointStyle: 'circle' 
                };
            });
-
            const data = {
                datasets: datasets
            };
-
            const config = {
                type: 'scatter',
                data: data,
@@ -930,7 +891,6 @@
            causalChart = new Chart(causalDiagramCanvas, config);
        }
 
-       // --- 其他按鈕事件 ---
        reUploadButton.addEventListener('click', () => {
            excelFileInput.value = ''; 
            fileNameDisplay.textContent = '';
@@ -940,19 +900,16 @@
            normalizedMatrixContainer.innerHTML = '';
            totalRelationshipMatrixContainer.innerHTML = '';
            indicatorsContainer.innerHTML = '';
-           
            thresholdTypeSelect.value = 'average'; 
            customThresholdInputContainer.classList.add('hidden');
            customThresholdValueInput.value = '';
            calculatedThresholdDisplay.textContent = '';
            currentThresholdValue = null;
-
            factors = [];
            originalMatrix_S = [];
            normalizedMatrix_X = [];
            totalRelationshipMatrix_T = [];
            D_values = []; R_values = []; D_plus_R = []; D_minus_R = [];
-           
            if (causalChart) { 
                causalChart.destroy();
                causalChart = null;
@@ -966,17 +923,14 @@
            reUploadButton.click(); 
        });
 
-       // --- 結果匯出 ---
        exportResultsButton.addEventListener('click', () => {
            if (factors.length === 0) {
                showMessage("沒有可匯出的結果。");
                return;
            }
-
            try {
                const wb = XLSX.utils.book_new(); 
                const formatNumber = (val) => (typeof val === 'number' && !isNaN(val) && isFinite(val)) ? val.toFixed(4) : (isNaN(val) ? "計算錯誤" : (val === undefined || val === null ? "" : val) );
-
                if (originalMatrix_S.length > 0) {
                    const ws_data_s = [
                        ['原始關係矩陣 S', ...factors], 
@@ -985,7 +939,6 @@
                    const ws_s = XLSX.utils.aoa_to_sheet(ws_data_s);
                    XLSX.utils.book_append_sheet(wb, ws_s, "1. 原始關係矩陣S");
                }
-
                if (normalizedMatrix_X.length > 0) {
                    const ws_data_x = [
                        ['正規化矩陣 X', ...factors],
@@ -994,7 +947,6 @@
                    const ws_x = XLSX.utils.aoa_to_sheet(ws_data_x);
                    XLSX.utils.book_append_sheet(wb, ws_x, "2. 正規化矩陣X");
                }
-
                if (totalRelationshipMatrix_T.length > 0) {
                    const ws_data_t = [
                        ['全關係矩陣 T', ...factors],
@@ -1003,7 +955,6 @@
                    const ws_t = XLSX.utils.aoa_to_sheet(ws_data_t);
                    XLSX.utils.book_append_sheet(wb, ws_t, "3. 全關係矩陣T");
                }
-
                if (D_values.length > 0) {
                    const indicatorsData = [
                        ['因素', '影響度 (D)', '受影響度 (R)', '中心度 (D+R)', '原因度 (D-R)'],
@@ -1018,10 +969,8 @@
                    const ws_indicators = XLSX.utils.aoa_to_sheet(indicatorsData);
                    XLSX.utils.book_append_sheet(wb, ws_indicators, "4. 各項指標");
                }
-
                let thresholdToExportDisplayValue;
                let thresholdTypeToExport = thresholdTypeSelect.options[thresholdTypeSelect.selectedIndex].text;
-
                if (currentThresholdValue === null || isNaN(currentThresholdValue)) {
                    if (thresholdTypeSelect.value === 'custom' && customThresholdValueInput.value.trim() === '') {
                        thresholdToExportDisplayValue = "自訂值未輸入";
@@ -1033,30 +982,24 @@
                } else {
                    thresholdToExportDisplayValue = formatNumber(currentThresholdValue); 
                }
-               
                const ws_data_threshold = [['參數', '數值'], [`臨界值計算方式 (${thresholdTypeToExport})`, thresholdToExportDisplayValue]];
                const ws_threshold = XLSX.utils.aoa_to_sheet(ws_data_threshold);
                XLSX.utils.book_append_sheet(wb, ws_threshold, "5. 臨界值");
-               
                const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
                const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
                saveAs(dataBlob, "DEMATEL分析結果.xlsx");
                showMessage("結果已成功匯出為 Excel 檔案。", "success");
-
            } catch (error) {
                console.error("匯出 Excel 失敗:", error);
                showMessage("匯出 Excel 失敗：" + error.message);
            }
        });
 
-       // --- 訊息提示 ---
        let messageTimeout;
-       function showMessage(message, type = "error") { // types: error, success, info, warn
+       function showMessage(message, type = "error") { 
            messageText.textContent = message;
-           
            messageBox.classList.remove('bg-green-500', 'bg-blue-500', 'bg-yellow-500', 'text-black', 'bg-red-500', 'message-box-exit', 'message-box-initial');
-           messageBox.style.display = 'block'; // Make it visible before animation starts
-
+           messageBox.style.display = 'block'; 
            if (type === "success") {
                messageBox.classList.add('bg-green-500');
            } else if (type === "info") {
@@ -1066,37 +1009,36 @@
            } else { 
                messageBox.classList.add('bg-red-500');
            }
-           
-           requestAnimationFrame(() => { // Ensure initial styles are applied before animation
+           requestAnimationFrame(() => { 
             messageBox.classList.add('message-box-enter');
            });
-
            clearTimeout(messageTimeout); 
            messageTimeout = setTimeout(() => {
                messageBox.classList.remove('message-box-enter');
                messageBox.classList.add('message-box-exit');
-               // Hide after animation
                 setTimeout(() => {
                     messageBox.style.display = 'none';
-                    messageBox.classList.remove('message-box-exit'); // Clean up for next time
-                    messageBox.classList.add('message-box-initial'); // Reset to initial off-screen state
-                }, 300); // Match animation duration
-           }, 4700); // Total visible time before starting exit animation (5000 - 300)
+                    messageBox.classList.remove('message-box-exit'); 
+                    messageBox.classList.add('message-box-initial'); 
+                }, 300); 
+           }, 4700); 
        }
 
        function typesetMathJax() {
-           if (window.MathJax) {
-               MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-           }
-       }
-       // Initialize sections that should be hidden
+            if (window.MathJax && MathJax.Hub && MathJax.Hub.Queue) {
+                const methodologySection = document.getElementById('methodologySection');
+                if (methodologySection) {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, methodologySection]);
+                }
+            }
+        }
        document.addEventListener('DOMContentLoaded', () => {
             setSectionVisibility(matrixDisplaySection, false);
             setSectionVisibility(resultsSection, false);
-            messageBox.classList.add('message-box-initial'); // Ensure it's initially off-screen
-            messageBox.style.display = 'none'; // And not taking up space
+            messageBox.classList.add('message-box-initial'); 
+            messageBox.style.display = 'none'; 
+            typesetMathJax(); 
        });
-
    </script>
 </body>
 </html>
