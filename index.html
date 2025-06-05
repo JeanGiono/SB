@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,11 @@
             font-family: 'Inter', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
         }
         .aspect-cell {
-            min-width: 60px; /* 確保評分單元格有足夠寬度 */
+            min-width: 60px;
             text-align: center;
         }
         .input-cell {
-            width: 4em; /* 調整輸入框寬度 */
+            width: 4em;
             padding: 0.3rem;
             text-align: center;
             border: 1px solid #cbd5e1;
@@ -28,31 +28,29 @@
         th, td {
             padding: 0.5rem;
             text-align: center;
-            border: 1px solid #e2e8f0; /* 更淺的邊框顏色 */
+            border: 1px solid #e2e8f0;
         }
-        /* Style for sticky headers */
-        .dematel-table thead th { /* Column headers */
+        .dematel-table thead th {
             position: sticky;
             top: 0;
-            background-color: #f1f5f9; /* Tailwind's slate-100 */
-            z-index: 20; /* Higher than row headers */
+            background-color: #f1f5f9;
+            z-index: 20;
         }
-        .dematel-table tbody td:first-child { /* Row headers */
+        .dematel-table tbody td:first-child {
             position: sticky;
             left: 0;
-            background-color: #f8fafc; /* Tailwind's slate-50 */
-            z-index: 10; /* Higher than normal cells, lower than column headers */
-            font-weight: 600; /* semibold */
+            background-color: #f8fafc;
+            z-index: 10;
+            font-weight: 600;
         }
-        .dematel-table thead th:first-child { /* Top-left corner cell */
+        .dematel-table thead th:first-child {
             left: 0;
-            z-index: 30; /* Highest z-index */
+            z-index: 30;
         }
-
         .diagonal-cell {
-            background-color: #4b5563; /* 深灰色背景，模擬反黑 */
-            color: #4b5563; /* 文字顏色與背景相同，使其不可見 */
-            user-select: none; /* 防止選取文字 */
+            background-color: #4b5563;
+            color: #4b5563;
+            user-select: none;
             vertical-align: middle;
         }
         .custom-alert {
@@ -62,39 +60,114 @@
             top: 20px;
             transform: translateX(-50%);
             padding: 1rem 1.5rem;
-            background-color: #fef2f2; /* Red-100 */
-            color: #b91c1c; /* Red-700 */
-            border: 1px solid #fecaca; /* Red-300 */
-            border-radius: 0.375rem; /* rounded-md */
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 0.375rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             z-index: 1000;
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem;
         }
         .custom-alert button {
             margin-left: 1rem;
             background-color: transparent;
             border: none;
-            color: #b91c1c; /* Red-700 */
+            color: #b91c1c;
             font-weight: bold;
             cursor: pointer;
         }
+        .radio-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+        }
+        /* 列印樣式 */
+        @media print {
+            body {
+                font-size: 10pt; /* 列印時調整字型大小 */
+                margin: 0;
+                padding: 0;
+                background-color: #fff;
+            }
+            .max-w-4xl {
+                max-width: 100%;
+                box-shadow: none;
+                border: none;
+                padding: 1cm; /* 列印邊距 */
+            }
+            header, section:not(#printSection), form > div:last-of-type, footer, #customAlert, .dematel-table-container {
+                 /* 在列印時隱藏不需要的元素, DEMATEL 表格由 #printSection 控制 */
+            }
+             #printSectionDematalTable {
+                display: block !important; /* 確保列印DEMATEL表格 */
+                margin-bottom: 20px;
+                overflow: visible; /* 確保表格內容完整顯示 */
+            }
+            #printSectionDematalTable table {
+                width: 100%;
+                font-size: 8pt; /* 調整表格字體大小以適應列印 */
+                border-collapse: collapse;
+            }
+            #printSectionDematalTable th, #printSectionDematalTable td {
+                border: 1px solid #000 !important; /* 列印時使用黑色邊框 */
+                padding: 2px;
+                min-width: auto !important; /* 移除最小寬度限制 */
+                background-color: #fff !important; /* 移除背景色 */
+            }
+             .diagonal-cell {
+                 background-color: #ccc !important; /* 列印時對角線設為灰色 */
+                 color: #ccc !important;
+             }
+
+            #printSectionPersonalData {
+                display: block !important; /* 確保列印個人資料 */
+                margin-top: 20px;
+            }
+            #printSectionPersonalData h2 {
+                font-size: 12pt;
+                margin-bottom: 10px;
+            }
+            #printSectionPersonalData p {
+                font-size: 10pt;
+                margin-bottom: 5px;
+            }
+
+            /* 隱藏表單提交按鈕和一些互動提示 */
+            button[type="submit"], .bg-sky-50, .bg-emerald-50, .bg-indigo-50, .bg-gray-50, .text-sky-700, .text-emerald-700, .text-indigo-700, .border-sky-200, .border-emerald-200, .border-indigo-200, .border-gray-200 {
+                display: none !important;
+            }
+            .dematel-table-container { /* 取消原來的 overflow */
+                 overflow: visible !important;
+            }
+            .dematel-table th, .dematel-table td:first-child { /* 取消sticky效果 */
+                position: static !important;
+            }
+        }
+        /* 用於放置列印內容的隱藏區域 */
+        #printSectionDematalTable, #printSectionPersonalData {
+            display: none;
+        }
+
 
         @media (max-width: 768px) {
             .dematel-table-container {
-                overflow-x: auto; /* 在小螢幕上啟用水平滾動 */
-                max-height: 500px; /* 增加一個最大高度以便測試垂直滾動 */
+                overflow-x: auto;
+                max-height: 500px;
             }
             .dematel-table th, .dematel-table td {
-                min-width: 80px; /* 小螢幕上調整最小寬度 */
-                font-size: 0.875rem; /* 調整字體大小 */
+                min-width: 80px;
+                font-size: 0.875rem;
             }
-            .dematel-table .aspect-name-col { /* Class for the first th/td in a row */
-                min-width: 100px; /* 小螢幕上構面名稱列的最小寬度 */
-                white-space: normal; /* 允許換行 */
+            .dematel-table .aspect-name-col {
+                min-width: 100px;
+                white-space: normal;
             }
             .input-cell {
                 width: 3.5em;
                 font-size: 0.875rem;
+            }
+            .radio-options-grid {
+                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
         }
     </style>
@@ -128,42 +201,6 @@
                 <li><strong>3：</strong>高度影響</li>
                 <li><strong>4：</strong>極高度影響</li>
             </ul>
-            <p class="text-sm text-gray-700 mb-2"><strong>舉例說明：</strong>若您認為 A 構面對 B 構面之影響程度為「高影響」(3)，則在 A 列 B 行的儲存格中輸入 3。</p>
-            <p class="text-sm text-gray-700 font-medium bg-amber-100 p-2 rounded-md border border-amber-300">
-                <span class="font-bold text-red-600">請特別注意：</span>構面間互相影響並不一定相等。
-                例如：A 構面對 B 構面之影響程度為「極高影響」(4)；而 B 構面對 A 構面之影響程度可能為「高影響」(3)。
-            </p>
-        </section>
-
-        <section class="mb-8 p-4 bg-emerald-50 rounded-md border border-emerald-200">
-            <h2 class="text-lg font-semibold text-emerald-700 mb-3">貳、填答問卷之範例</h2>
-            <p class="text-sm text-gray-700 mb-2">(0：無影響；1：低影響；2：中影響；3：高影響；4：極高影響)</p>
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-xs border-collapse border border-gray-300">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="border border-gray-300 p-1">影響構面↓ \ 被影響構面→</th>
-                            <th class="border border-gray-300 p-1">A</th>
-                            <th class="border border-gray-300 p-1">B</th>
-                            <th class="border border-gray-300 p-1">C</th>
-                            <th class="border border-gray-300 p-1">D</th>
-                            <th class="border border-gray-300 p-1">E</th>
-                            <th class="border border-gray-300 p-1">F</th>
-                            <th class="border border-gray-300 p-1">G</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><strong>A</strong></td><td class="diagonal-cell p-1 align-middle">██</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">2</td><td class="p-1">0</td><td class="p-1">1</td><td class="p-1">2</td></tr>
-                        <tr><td><strong>B</strong></td><td class="p-1">0</td><td class="diagonal-cell p-1 align-middle">██</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">2</td><td class="p-1">1</td><td class="p-1">1</td></tr>
-                        <tr><td><strong>C</strong></td><td class="p-1">2</td><td class="p-1">4</td><td class="diagonal-cell p-1 align-middle">██</td><td class="p-1">3</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">0</td></tr>
-                        <tr><td><strong>D</strong></td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">1</td><td class="diagonal-cell p-1 align-middle">██</td><td class="p-1">3</td><td class="p-1">2</td><td class="p-1">4</td></tr>
-                        <tr><td><strong>E</strong></td><td class="p-1">1</td><td class="p-1">3</td><td class="p-1">1</td><td class="p-1">2</td><td class="diagonal-cell p-1 align-middle">██</td><td class="p-1">4</td><td class="p-1">4</td></tr>
-                        <tr><td><strong>F</strong></td><td class="p-1">0</td><td class="p-1">4</td><td class="p-1">2</td><td class="p-1">1</td><td class="p-1">3</td><td class="diagonal-cell p-1 align-middle">██</td><td class="p-1">3</td></tr>
-                        <tr><td><strong>G</strong></td><td class="p-1">3</td><td class="p-1">3</td><td class="p-1">4</td><td class="p-1">0</td><td class="p-1">3</td><td class="p-1">4</td><td class="diagonal-cell p-1 align-middle">██</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p class="text-xs text-gray-600 mt-2"><em>(填答時請注意：此表格右上方與左下方之答案不一定對稱)</em></p>
         </section>
 
         <form id="dematelForm">
@@ -205,61 +242,59 @@
                 </ul>
             </section>
 
-            <section class="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+            <section id="personalDataSection" class="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">肆、個人基本資料</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">1. 性別：</label>
-                        <div class="flex items-center space-x-4">
-                            <label class="flex items-center"><input type="radio" name="gender" value="male" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 生理男</label>
-                            <label class="flex items-center"><input type="radio" name="gender" value="female" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 生理女</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">1. 性別：</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="flex items-center"><input type="radio" name="gender" value="生理男" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 生理男</label>
+                            <label class="flex items-center"><input type="radio" name="gender" value="生理女" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 生理女</label>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">2. 年資：</label>
-                        <select name="experience" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm">
-                            <option value="">請選擇</option>
-                            <option value="0-5">0-5年</option>
-                            <option value="5-10">5-10年</option>
-                            <option value="10-15">10-15年</option>
-                            <option value="15-20">15-20年</option>
-                            <option value="20+">20-25年(含以上)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">3. 教育程度：</label>
-                        <select name="education" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm">
-                            <option value="">請選擇</option>
-                            <option value="high_school">高中</option>
-                            <option value="junior_college">專科</option>
-                            <option value="university">大學</option>
-                            <option value="postgraduate">研究所(含以上)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">4. 階級：</label>
-                        <div class="flex items-center space-x-4">
-                            <label class="flex items-center"><input type="radio" name="rank" value="soldier" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 士兵</label>
-                            <label class="flex items-center"><input type="radio" name="rank" value="nco" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 士官</label>
-                            <label class="flex items-center"><input type="radio" name="rank" value="officer" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 軍官</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">2. 年資：</label>
+                        <div class="radio-options-grid mt-1">
+                            <label class="flex items-center"><input type="radio" name="experience" value="0-5年" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 0-5年</label>
+                            <label class="flex items-center"><input type="radio" name="experience" value="5-10年" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 5-10年</label>
+                            <label class="flex items-center"><input type="radio" name="experience" value="10-15年" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 10-15年</label>
+                            <label class="flex items-center"><input type="radio" name="experience" value="15-20年" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 15-20年</label>
+                            <label class="flex items-center"><input type="radio" name="experience" value="20-25年(含以上)" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 20-25年(含以上)</label>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">5. 職務類型：</label>
-                        <div class="flex items-center space-x-4">
-                            <label class="flex items-center"><input type="radio" name="job_type" value="leadership" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 領導職</label>
-                            <label class="flex items-center"><input type="radio" name="job_type" value="non_leadership" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 非領導職</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">3. 教育程度：</label>
+                        <div class="radio-options-grid mt-1">
+                            <label class="flex items-center"><input type="radio" name="education" value="高中" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 高中</label>
+                            <label class="flex items-center"><input type="radio" name="education" value="專科" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 專科</label>
+                            <label class="flex items-center"><input type="radio" name="education" value="大學" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 大學</label>
+                            <label class="flex items-center"><input type="radio" name="education" value="研究所(含以上)" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 研究所(含以上)</label>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">6. 兵役情況：</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">4. 階級：</label>
+                        <div class="radio-options-grid mt-1">
+                            <label class="flex items-center"><input type="radio" name="rank" value="士兵" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 士兵</label>
+                            <label class="flex items-center"><input type="radio" name="rank" value="士官" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 士官</label>
+                            <label class="flex items-center"><input type="radio" name="rank" value="軍官" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 軍官</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">5. 職務類型：</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="flex items-center"><input type="radio" name="job_type" value="領導職" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 領導職</label>
+                            <label class="flex items-center"><input type="radio" name="job_type" value="非領導職" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 非領導職</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">6. 兵役情況：</label>
                         <div class="flex flex-col space-y-2">
-                             <label class="flex items-center"><input type="radio" name="military_service_status" value="active" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 現役</label>
+                             <label class="flex items-center"><input type="radio" name="military_service_status" value="現役" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 現役</label>
                              <div class="ml-0">
-                                <label class="flex items-center mt-1"><input type="radio" name="military_service_status" value="retired" id="retired_radio" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 已退役</label>
+                                <label class="flex items-center mt-1"><input type="radio" name="military_service_status" value="已退役" id="retired_radio" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 已退役</label>
                                 <div id="retired_options" class="ml-6 mt-1 space-y-1 hidden">
-                                   <label class="flex items-center"><input type="radio" name="military_service_detail" value="retired_completed" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 服滿役期</label>
-                                   <label class="flex items-center"><input type="radio" name="military_service_detail" value="retired_incomplete" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1"> 未服滿役期</label>
+                                   <label class="flex items-center"><input type="radio" name="military_service_detail" value="服滿役期" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 服滿役期</label>
+                                   <label class="flex items-center"><input type="radio" name="military_service_detail" value="未服滿役期" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 未服滿役期</label>
                                 </div>
                              </div>
                         </div>
@@ -273,6 +308,17 @@
                 </button>
             </div>
         </form>
+
+        <!-- 隱藏的列印區域 -->
+        <div id="printSectionDematalTable" style="display: none;">
+             <h2 style="text-align:center; font-size:14pt; margin-bottom:15px;">DEMATEL 影響程度評估結果</h2>
+            <!-- DEMATEL 表格的列印版本將由JS動態生成於此 -->
+        </div>
+        <div id="printSectionPersonalData" style="display: none;">
+            <h2 style="font-size:12pt; margin-bottom:10px;">個人基本資料</h2>
+            <!-- 個人資料的列印版本將由JS動態生成於此 -->
+        </div>
+
 
         <footer class="mt-12 text-center text-sm text-gray-600 border-t pt-6">
             <p>此份問卷到此結束，感謝您在百忙之中撥冗填答，衷心感謝您對本研究之支持！</p>
@@ -290,34 +336,29 @@
         const headerRow = dematelTable.querySelector('thead tr');
         const tbody = dematelTable.querySelector('tbody');
 
-        // Function to show custom alert
         function showAlert(message) {
             const alertBox = document.getElementById('customAlert');
             const alertMessage = document.getElementById('customAlertMessage');
-            alertMessage.textContent = message;
+            alertMessage.textContent = message; // 確保使用繁體中文
             alertBox.style.display = 'block';
             setTimeout(() => {
                 alertBox.style.display = 'none';
             }, 3000);
         }
 
-        // 生成表頭 - JavaScript動態添加的部分
-        // 移除靜態HTML中第一列表頭的 sticky 和 z-index 相關class，統一由CSS控制
         const firstHeaderCell = headerRow.querySelector('th');
-        firstHeaderCell.className = 'p-2 border aspect-name-col'; // 基本樣式
+        firstHeaderCell.className = 'p-2 border aspect-name-col';
 
         aspects.forEach(aspect => {
             const th = document.createElement('th');
-            th.className = 'p-1 md:p-2 border aspect-cell'; // 基本樣式，sticky由CSS class .dematel-table thead th 控制
+            th.className = 'p-1 md:p-2 border aspect-cell';
             th.textContent = aspect;
             headerRow.appendChild(th);
         });
 
-        // 生成表格內容
         aspects.forEach((rowAspect, rowIndex) => {
             const tr = document.createElement('tr');
             const firstTd = document.createElement('td');
-            // classname 由 CSS .dematel-table tbody td:first-child 控制 sticky
             firstTd.className = 'p-1 md:p-2 border aspect-name-col'; 
             firstTd.textContent = rowAspect;
             tr.appendChild(firstTd);
@@ -342,7 +383,7 @@
                     input.addEventListener('input', function(e) {
                         const value = parseInt(e.target.value, 10);
                         if (e.target.value !== "" && (isNaN(value) || value < 0 || value > 4)) {
-                            showAlert('輸入錯誤！請輸入 0 到 4 之間的數字。');
+                            showAlert('輸入錯誤！請輸入 0 到 4 之間的數字。'); // 繁體中文
                             e.target.value = '';
                         }
                     });
@@ -360,45 +401,148 @@
         
         const retiredRadio = document.getElementById('retired_radio');
         const retiredOptions = document.getElementById('retired_options');
-        const activeRadio = document.querySelector('input[name="military_service_status"][value="active"]');
+        const activeRadio = document.querySelector('input[name="military_service_status"][value="現役"]'); // 更新value以匹配HTML
         const retiredDetailRadios = document.querySelectorAll('input[name="military_service_detail"]');
 
         function toggleRetiredOptions() {
-            if (retiredRadio.checked) {
-                retiredOptions.classList.remove('hidden');
+            if (retiredRadio && retiredRadio.checked) { // 增加檢查 retiredRadio 是否存在
+                if(retiredOptions) retiredOptions.classList.remove('hidden');
             } else {
-                retiredOptions.classList.add('hidden');
-                retiredDetailRadios.forEach(radio => radio.checked = false);
+                if(retiredOptions) retiredOptions.classList.add('hidden');
+                if(retiredDetailRadios) retiredDetailRadios.forEach(radio => radio.checked = false);
             }
         }
         
         if(activeRadio) activeRadio.addEventListener('change', toggleRetiredOptions);
         if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
+        // 初始化 retired_options 的可見性
+        toggleRetiredOptions();
+
+
+        function generatePrintableDematalTable(data) {
+            const tableContainer = document.getElementById('printSectionDematalTable');
+            tableContainer.innerHTML = '<h2 style="text-align:center; font-size:14pt; margin-bottom:15px;">DEMATEL 影響程度評估結果</h2>'; // 清空並添加標題
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.style.fontSize = '8pt';
+
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+            let th = headerRow.insertCell();
+            th.textContent = '影響構面↓ \\ 被影響構面→';
+            th.style.border = '1px solid black';
+            th.style.padding = '2px';
+            th.style.backgroundColor = '#f0f0f0';
+
+
+            aspects.forEach(aspect => {
+                th = headerRow.insertCell();
+                th.textContent = aspect;
+                th.style.border = '1px solid black';
+                th.style.padding = '2px';
+                th.style.backgroundColor = '#f0f0f0';
+            });
+
+            const tbody = table.createTBody();
+            aspects.forEach((rowAspect, rowIndex) => {
+                const tr = tbody.insertRow();
+                let td = tr.insertCell();
+                td.textContent = rowAspect;
+                td.style.border = '1px solid black';
+                td.style.padding = '2px';
+                td.style.fontWeight = 'bold';
+                td.style.backgroundColor = '#f0f0f0';
+
+                aspects.forEach((colAspect, colIndex) => {
+                    td = tr.insertCell();
+                    if (rowIndex === colIndex) {
+                        td.textContent = '██';
+                        td.style.backgroundColor = '#cccccc'; // 對角線設為灰色
+                        td.style.color = '#cccccc';
+                    } else {
+                        const key = `${rowAspect}_影響_${colAspect}`;
+                        td.textContent = data[key] !== null && data[key] !== "無效輸入" ? data[key] : '-';
+                    }
+                    td.style.border = '1px solid black';
+                    td.style.padding = '2px';
+                    td.style.textAlign = 'center';
+                });
+            });
+            tableContainer.appendChild(table);
+        }
+
+        function generatePrintablePersonalData(data) {
+            const container = document.getElementById('printSectionPersonalData');
+            container.innerHTML = '<h2 style="font-size:12pt; margin-bottom:10px;">個人基本資料</h2>'; // 清空並添加標題
+            const personalDataMap = {
+                gender: "1. 性別",
+                experience: "2. 年資",
+                education: "3. 教育程度",
+                rank: "4. 階級",
+                job_type: "5. 職務類型",
+                military_service_status: "6. 兵役情況",
+                military_service_detail: "   - 詳細情況"
+            };
+            for (const key in personalDataMap) {
+                if (data[key] !== undefined && data[key] !== null) {
+                    // 特別處理兵役詳細情況，只有在已退役時才顯示
+                    if (key === 'military_service_detail' && data['military_service_status'] !== '已退役') {
+                        continue;
+                    }
+                    const p = document.createElement('p');
+                    p.style.fontSize = '10pt';
+                    p.style.marginBottom = '5px';
+                    p.textContent = `${personalDataMap[key]}：${data[key] || '未填寫'}`;
+                    container.appendChild(p);
+                }
+            }
+        }
+
+
+        function generateCSV(data) {
+            let csvContent = "影響構面\\被影響構面," + aspects.join(',') + "\n";
+            aspects.forEach((rowAspect, rowIndex) => {
+                let row = rowAspect;
+                aspects.forEach((colAspect, colIndex) => {
+                    if (rowIndex === colIndex) {
+                        row += ",-"; // 對角線用 '-' 表示
+                    } else {
+                        const key = `${rowAspect}_影響_${colAspect}`;
+                        const value = data[key] !== null && data[key] !== "無效輸入" ? data[key] : ''; // 空白表示未填或無效
+                        row += "," + value;
+                    }
+                });
+                csvContent += row + "\n";
+            });
+            return csvContent;
+        }
 
         document.getElementById('dematelForm').addEventListener('submit', function(event) {
             event.preventDefault();
             
             const formData = new FormData(this);
-            const data = {};
+            const collectedData = {}; // 使用新名稱以避免與全域 data 衝突
             let allValid = true;
             let firstInvalidElement = null;
 
+            // 收集DEMATEL評分
             aspects.forEach((rowAspect, rowIndex) => {
                 aspects.forEach((colAspect, colIndex) => {
                     if (rowIndex !== colIndex) {
                         const inputField = document.querySelector(`input[name="rating_${rowIndex}_${colIndex}"]`);
                         const valueStr = inputField.value;
                         if (valueStr === "") {
-                            data[`${rowAspect}_影響_${colAspect}`] = null;
+                            collectedData[`${rowAspect}_影響_${colAspect}`] = null;
                         } else {
                             const value = parseInt(valueStr, 10);
                             if (isNaN(value) || value < 0 || value > 4) {
                                 allValid = false;
                                 inputField.classList.add('border-red-500');
                                 if (!firstInvalidElement) firstInvalidElement = inputField;
-                                data[`${rowAspect}_影響_${colAspect}`] = "無效輸入";
+                                collectedData[`${rowAspect}_影響_${colAspect}`] = "無效輸入";
                             } else {
-                                data[`${rowAspect}_影響_${colAspect}`] = value;
+                                collectedData[`${rowAspect}_影響_${colAspect}`] = value;
                                 inputField.classList.remove('border-red-500');
                             }
                         }
@@ -407,27 +551,85 @@
             });
 
             if (!allValid) {
-                showAlert('部分DEMATEL評分輸入無效或超出範圍 (0-4)，請檢查標紅的欄位。');
+                showAlert('部分DEMATEL評分輸入無效或超出範圍 (0-4)，請檢查標紅的欄位。'); // 繁體中文
                 if (firstInvalidElement) firstInvalidElement.focus();
                 return;
             }
 
-            data.gender = formData.get('gender');
-            data.experience = formData.get('experience');
-            data.education = formData.get('education');
-            data.rank = formData.get('rank');
-            data.job_type = formData.get('job_type');
+            // 收集個人資料
+            collectedData.gender = formData.get('gender') || "未填寫";
+            collectedData.experience = formData.get('experience') || "未填寫";
+            collectedData.education = formData.get('education') || "未填寫";
+            collectedData.rank = formData.get('rank') || "未填寫";
+            collectedData.job_type = formData.get('job_type') || "未填寫";
             
-            const militaryStatus = formData.get('military_service_status');
-            data.military_service_status = militaryStatus;
-            if (militaryStatus === 'retired') {
-                data.military_service_detail = formData.get('military_service_detail');
+            const militaryStatus = formData.get('military_service_status') || "未填寫";
+            collectedData.military_service_status = militaryStatus;
+            if (militaryStatus === '已退役') {
+                collectedData.military_service_detail = formData.get('military_service_detail') || "未選擇詳細情況";
             } else {
-                data.military_service_detail = null;
+                collectedData.military_service_detail = null; // 或 '不適用'
             }
 
-            console.log("表單資料:", data);
-            showAlert('問卷資料已在主控台打印，通常此處會提交至伺服器。');
+            console.log("表單資料（準備列印與郵寄）:", collectedData); // 繁體中文
+
+            // 1. 準備列印內容
+            generatePrintableDematalTable(collectedData);
+            generatePrintablePersonalData(collectedData);
+            
+            // 2. 觸發列印
+            // 短暫延遲確保DOM更新後再列印
+            setTimeout(() => {
+                window.print();
+
+                // 3. 列印後（假設）準備並觸發 mailto
+                // 由於無法確知列印何時完成，這裡會在列印對話框關閉後立即執行
+                // 可以考慮增加一個確認對話框詢問使用者是否已完成列印並準備寄送郵件
+
+                const csvData = generateCSV(collectedData);
+                let mailBody = "DEMATEL 問卷填答結果 (CSV 格式):\n"; // 繁體中文
+                mailBody += "```csv\n"; // 使用```來嘗試保持CSV格式，但郵件客戶端支援不一
+                mailBody += csvData;
+                mailBody += "```\n\n";
+                mailBody += "個人基本資料:\n"; // 繁體中文
+                mailBody += `性別: ${collectedData.gender}\n`;
+                mailBody += `年資: ${collectedData.experience}\n`;
+                mailBody += `教育程度: ${collectedData.education}\n`;
+                mailBody += `階級: ${collectedData.rank}\n`;
+                mailBody += `職務類型: ${collectedData.job_type}\n`;
+                mailBody += `兵役情況: ${collectedData.military_service_status}`;
+                if (collectedData.military_service_status === '已退役') {
+                    mailBody += ` (${collectedData.military_service_detail || '未選擇詳細情況'})\n`;
+                } else {
+                    mailBody += "\n";
+                }
+                
+                const mailToLink = `mailto:ts9074@gmail.com` +
+                                   `?subject=${encodeURIComponent("DEMATEL 問卷填答結果")}` + // 繁體中文
+                                   `&body=${encodeURIComponent(mailBody)}`;
+
+                // 檢查 mailto 連結長度
+                if (mailToLink.length > 2000) { // 2000 是一個相對保守的限制
+                    showAlert("郵件內容過長，可能無法完整透過 mailto 傳送。建議手動複製主控台的資料。"); // 繁體中文
+                    console.log("CSV 資料 (請手動複製):\n", csvData);
+                    console.log("個人基本資料 (請手動複製):\n", 
+                                `性別: ${collectedData.gender}\n` +
+                                `年資: ${collectedData.experience}\n` +
+                                `教育程度: ${collectedData.education}\n` +
+                                `階級: ${collectedData.rank}\n` +
+                                `職務類型: ${collectedData.job_type}\n` +
+                                `兵役情況: ${collectedData.military_service_status}` +
+                                (collectedData.military_service_status === '已退役' ? ` (${collectedData.military_service_detail || '未選擇詳細情況'})\n` : "\n")
+                    );
+                } else {
+                     // 為了避免列印對話框可能阻塞 mailto 的立即觸發，可以再加一個短延遲
+                     // 或者提供一個按鈕讓使用者在列印完成後手動點擊以寄送郵件
+                    setTimeout(() => {
+                         window.location.href = mailToLink;
+                    }, 1000); // 延遲1秒，給列印對話框一些時間
+                }
+                showAlert('問卷資料已準備完成，即將嘗試開啟郵件客戶端。'); // 繁體中文
+            }, 500); // 延遲以確保列印內容渲染完成
         });
     </script>
 </body>
