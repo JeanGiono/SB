@@ -117,12 +117,18 @@
                 width: 100%;
                 font-size: 8pt;
                 border-collapse: collapse;
+                table-layout: fixed; /* 為了更好地控制換行 */
             }
             #printSectionDematalTable th, #printSectionDematalTable td {
                 border: 1px solid #000 !important;
                 padding: 2px;
                 min-width: auto !important;
                 background-color: #fff !important;
+                word-break: break-all; /* 允許在任意字符間換行，配合JS處理中文換行 */
+                vertical-align: middle;
+            }
+            #printSectionDematalTable th.aspect-header-print { /* 列印時的構面標頭 */
+                height: 3em; /* 給予足夠高度以容納兩行文字 */
             }
              .diagonal-cell { /* 列印時對角線的樣式 */
                  background-color: #ccc !important;
@@ -199,7 +205,7 @@
             <div class="mt-2 text-xs text-gray-500">
                 <p>國立台北大學企業管理研究所</p>
                 <p>指導教授：劉仲矩 老師</p>
-                <p>研究生：張靖興 學生</p>
+                <p>研究生：張靖興 學生</p> <!-- 已修改姓名 -->
             </div>
         </header>
 
@@ -473,6 +479,13 @@
         if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
         toggleRetiredOptions();
 
+        // Helper function to format aspect names for printing (two characters per line if 4 chars)
+        function formatAspectNameForPrint(name) {
+            if (name.length === 4) {
+                return name.substring(0, 2) + '<br>' + name.substring(2, 4);
+            }
+            return name;
+        }
 
         function generatePrintableDematalTable(data) {
             const tableContainer = document.getElementById('printSectionDematalTable');
@@ -481,33 +494,41 @@
              table.style.width = '100%';
             table.style.borderCollapse = 'collapse';
             table.style.fontSize = '8pt';
+            table.style.tableLayout = 'fixed'; // Important for word wrapping in cells
 
             const thead = table.createTHead();
             const headerRowPrint = thead.insertRow(); 
             let thPrint = headerRowPrint.insertCell(); 
-            thPrint.textContent = '影響構面↓ \\ 被影響構面→';
+            thPrint.innerHTML = '影響構面↓<br>被影響構面→'; // 允許換行
             thPrint.style.border = '1px solid black';
             thPrint.style.padding = '2px';
             thPrint.style.backgroundColor = '#f0f0f0';
+            thPrint.style.verticalAlign = 'middle';
 
 
             aspects.forEach(aspect => {
                 thPrint = headerRowPrint.insertCell(); 
-                thPrint.textContent = aspect;
+                thPrint.innerHTML = formatAspectNameForPrint(aspect); // 使用換行函數
                 thPrint.style.border = '1px solid black';
                 thPrint.style.padding = '2px';
                 thPrint.style.backgroundColor = '#f0f0f0';
+                thPrint.classList.add('aspect-header-print'); // CSS class for height
+                thPrint.style.textAlign = 'center';
+                thPrint.style.verticalAlign = 'middle';
             });
 
             const tbodyPrint = table.createTBody();
             aspects.forEach((rowAspect, rowIndex) => {
                 const trPrint = tbodyPrint.insertRow(); 
                 let tdPrint = trPrint.insertCell(); 
-                tdPrint.textContent = rowAspect;
+                tdPrint.innerHTML = formatAspectNameForPrint(rowAspect); // 影響構面也可能需要換行
                 tdPrint.style.border = '1px solid black';
                 tdPrint.style.padding = '2px';
                 tdPrint.style.fontWeight = 'bold';
                 tdPrint.style.backgroundColor = '#f0f0f0';
+                tdPrint.style.textAlign = 'center';
+                tdPrint.style.verticalAlign = 'middle';
+
 
                 aspects.forEach((colAspect, colIndex) => {
                     tdPrint = trPrint.insertCell(); 
@@ -522,6 +543,7 @@
                     tdPrint.style.border = '1px solid black';
                     tdPrint.style.padding = '2px';
                     tdPrint.style.textAlign = 'center';
+                    tdPrint.style.verticalAlign = 'middle';
                 });
             });
             tableContainer.appendChild(table);
