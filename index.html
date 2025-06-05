@@ -10,7 +10,7 @@
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
         }
-        /* --- 一般畫面樣式 (與前版相同) --- */
+        /* --- 一般畫面樣式 --- */
         .rating-table th, .rating-table td {
             width: 5rem; 
             height: 5rem; 
@@ -90,114 +90,84 @@
         @media print {
             body {
                 font-family: 'Noto Sans TC', sans-serif;
-                margin: 15mm !important; 
+                margin: 20px !important; 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
             }
-            /* 隱藏不需要列印的元素 */
-            header, 
-            footer,
-            form button[type="submit"], 
-            form button[type="reset"],
-            #definitionsSection, /* 隱藏構面意義說明區塊 */
-            #ratingSection .bg-sky-50.p-3.rounded-md.mb-4.text-sm /* 隱藏評比區塊的填寫指標說明 */
-             {
+            header, footer, form button, #definitionsSection,
+            .bg-sky-50.p-3.rounded-md.mb-4.text-sm {
                 display: none !important;
             }
-
             .max-w-6xl.mx-auto.bg-white.p-6.sm\:p-8.rounded-lg.shadow-xl {
                 box-shadow: none !important; border: none !important;
                 padding: 0 !important; margin: 0 !important;
-                max-width: 100% !important; width: 100% !important;
+                max-width: 100% !important;
             }
-            
             h2 { 
-                font-size: 14pt !important; 
-                margin-top: 20px !important; margin-bottom: 10px !important;
-                border-bottom: 1px solid #333 !important;
-                padding-bottom: 5px !important; 
-                page-break-after: avoid !important; 
+                font-size: 1.1rem !important; margin-top: 1.5rem !important;
+                margin-bottom: 0.8rem !important; border-bottom: 1px solid #ccc !important;
+                padding-bottom: 0.3rem !important; page-break-after: avoid !important; 
             }
-
-            /* 讓評比表格的容器在列印時可以完整展開 */
-            #ratingSection .overflow-auto.rounded-lg.border.border-gray-300 {
-                overflow: visible !important; 
-                max-height: none !important; /* 移除最大高度限制 */
-                height: auto !important; /* 高度自動，以容納內容 */
+            .overflow-auto.rounded-lg.border.border-gray-300 {
+                overflow: visible !important; max-height: none !important;
                 border: none !important; 
             }
             .rating-table {
-                width: 100% !important; 
-                border-collapse: collapse !important; 
-                table-layout: fixed; 
+                width: 100% !important; border-collapse: collapse !important; 
             }
             .rating-table th, .rating-table td {
-                border: 1px solid #333 !important; 
-                padding: 4px !important; 
-                font-size: 8pt !important; /* 可能需要再縮小字體以容納更多內容在一頁 */
-                word-wrap: break-word; 
+                border: 1px solid #666 !important; padding: 0.3rem !important;
+                font-size: 0.75rem !important; width: auto !important; height: auto !important;
             }
              .rating-table th.top-left-header-cell,
              .rating-table th.aspect-label.sticky-row,
              .rating-table th.aspect-label.sticky-col {
-                position: static !important; /* 列印時移除 sticky 定位 */
-                background-color: #eaeaea !important; 
+                position: static !important; 
+                background-color: #f0f0f0 !important; 
              }
-            .rating-table td input[type="number"] {
-                border: none !important; 
+            .rating-table td input[type="number"] { /* 嘗試直接列印輸入框的值 */
+                border: 1px solid #bbb !important; /* 淡化邊框 */
                 box-shadow: none !important;
                 background-color: transparent !important;
                 color: black !important;
-                padding: 0 !important;
-                margin: 0 auto !important; 
-                font-size: 9pt !important; 
-                width: 100% !important; 
+                padding: 1px !important;
+                font-size: 0.85em !important;
+                width: auto !important; /* 讓內容決定寬度 */
                 height: auto !important;
-                display: block !important; 
+                display: inline-block !important;
                 text-align: center !important;
-                -webkit-appearance: none; 
-                -moz-appearance: textfield; 
-                appearance: textfield; 
+                -webkit-appearance: none; /* 盡可能移除預設樣式 */
+                -moz-appearance: textfield; /* Firefox需要這個才能移除上下箭頭 */
+                appearance: textfield;
             }
              .rating-table td.diagonal-cell {
-                background-color: #bdbdbd !important; 
-                color: #bdbdbd !important; 
+                background-color: #ccc !important; 
              }
-
             #personalInfoContainer .grid { 
                 display: block !important; 
             }
             #personalInfoContainer .grid > div {
                 page-break-inside: avoid !important; 
-                margin-bottom: 8px !important;
-                font-size: 10pt !important;
-            }
-            #personalInfoContainer label {
-                font-weight: bold !important;
+                margin-bottom: 0.5rem !important;
             }
             input[type="radio"] {
-                margin-right: 3px !important; 
+                margin-right: 5px !important; vertical-align: middle !important;
+                opacity: 0.5; /* 淡化原始按鈕 */
+            }
+            input[type="radio"] + label {
                 vertical-align: middle !important;
-                opacity: 0; 
-                width: 0; 
-                position: absolute; 
             }
-            input[type="radio"] + label::before { 
-                content: "○";
-                font-size: 1.1em;
-                margin-right: 0.3em;
-                color: black;
-                display: inline-block;
-                vertical-align: middle;
-            }
-            input[type="radio"]:checked + label::before { 
-                content: "◉";
+            input[type="radio"]:checked::before {
+                content: "◉"; 
+                font-size: 1.2em; color: black; display: inline-block;
+                width: 1em; text-align: center; position: relative;
+                left: -1.4em; top: -0.15em;
             }
         }
     </style>
 </head>
 <body class="bg-gray-100 p-4 sm:p-6 md:p-8">
-    <div class="max-w-6xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-xl" id="questionnaireContainerToPrint">
+    <div class="max-w-6xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-xl">
         <header class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-sky-700">影響空軍修護人員離職因素之研究 問卷</h1>
             <p class="mt-3 text-sm text-gray-600 max-w-2xl mx-auto">
@@ -213,7 +183,7 @@
         <form id="questionnaireForm">
             <section class="mb-10" id="ratingSection">
                 <h2 class="text-xl font-semibold text-sky-600 border-b-2 border-sky-200 pb-2 mb-4">壹、十五項構面影響關係之評比</h2>
-                <div class="bg-sky-50 p-3 rounded-md mb-4 text-sm"> <!-- 此區塊會在列印時隱藏 -->
+                <div class="bg-sky-50 p-3 rounded-md mb-4 text-sm">
                     <p class="text-gray-700 mb-1"><strong>填寫指標說明：</strong> 請填入 0 至 4 的數字。</p>
                     <ul class="list-disc list-inside ml-4 text-gray-600">
                         <li>0：無影響</li>
@@ -241,7 +211,7 @@
                 </div>
             </section>
 
-            <section class="mb-10" id="definitionsSection"> 
+            <section class="mb-10" id="definitionsSection">
                 <h2 class="text-xl font-semibold text-sky-600 border-b-2 border-sky-200 pb-2 mb-4">貳、各構面意義說明</h2>
                 <ol id="definitionsContainer" class="list-decimal list-inside space-y-3 text-sm text-gray-700">
                 </ol>
@@ -316,7 +286,7 @@
 
             <div class="mt-10 text-center space-x-4">
                 <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50">
-                    提交問卷 (列印/儲存PDF)
+                    提交問卷 (列印)
                 </button>
                 <button type="reset" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
                     清除重填
@@ -394,6 +364,7 @@
                                 }
                             });
                             td.appendChild(input);
+                            // 移除之前為 mailto 準備的 print-only-value span，直接嘗試列印 input
                         }
                         tr.appendChild(td);
                     });
@@ -447,6 +418,7 @@
             }
             
             function validateAndFocusFirstError() {
+                console.log("validateAndFocusFirstError 開始執行");
                 const formData = new FormData(questionnaireForm);
                 const personalInfoSections = [
                     { name: 'gender', sectionId: 'genderSection', label: '性別'},
@@ -458,9 +430,13 @@
                 ];
 
                 for (const section of personalInfoSections) {
+                    console.log(`正在驗證區塊: ${section.label} (name: ${section.name})`);
                     const selectedValue = formData.get(section.name);
+                    console.log(`欄位 ${section.name} 的值: ${selectedValue}`);
                     const sectionElement = questionnaireForm.querySelector(`#${section.sectionId}`);
+                    
                     if (!selectedValue) {
+                        console.log(`驗證失敗: ${section.label} 未選擇。`);
                         if (sectionElement) {
                             sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             sectionElement.classList.add('highlight-error');
@@ -469,9 +445,13 @@
                         alert(`提醒：「${section.label}」尚未填寫，請檢查後再提交。`);
                         return false; 
                     }
+                    
                     if (section.name === 'military_service_status' && selectedValue === '已退役') {
+                        console.log("檢查「已退役」的子選項...");
                         const retiredStatusValue = formData.get('retired_status');
+                        console.log(`欄位 retired_status 的值: ${retiredStatusValue}`);
                         if (!retiredStatusValue) {
+                            console.log("驗證失敗: 「已退役」的子選項未選擇。");
                             const retiredContainer = questionnaireForm.querySelector('#retired_options_container');
                              if (retiredContainer) {
                                 retiredContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -482,14 +462,16 @@
                             return false;
                         }
                     }
+                    console.log(`區塊 ${section.label} 驗證通過。`);
                 }
+                console.log("所有個人基本資料區塊驗證通過。");
                 return true; 
             }
 
             if (questionnaireForm) {
                 questionnaireForm.addEventListener('submit', function(event) {
                     event.preventDefault(); 
-                    console.log("「提交問卷 (列印/儲存PDF)」按鈕被點擊，開始驗證...");
+                    console.log("「提交問卷 (列印)」按鈕被點擊，開始驗證...");
                     
                     if (!validateAndFocusFirstError()) {
                         console.log("驗證未通過，不執行列印。");
@@ -497,12 +479,8 @@
                     }
 
                     console.log("驗證通過，準備執行列印。");
-                    alert('問卷已填寫完成，即將開啟列印預覽。\n您可以在此選擇「另存為PDF」或您的印表機。');
+                    alert('問卷已填寫完成，即將開啟列印預覽。\n請確認列印設定，您可以選擇列印成紙本或儲存為 PDF。');
                     
-                    questionnaireForm.querySelectorAll('.rating-table input[type="number"]').forEach(inputEl => {
-                        inputEl.setAttribute('value', inputEl.value);
-                    });
-
                     console.log("正在呼叫 window.print()...");
                     try {
                         window.print();
@@ -516,9 +494,6 @@
                 questionnaireForm.addEventListener('reset', function() {
                     questionnaireForm.querySelectorAll('.highlight-error').forEach(el => {
                         el.classList.remove('highlight-error');
-                    });
-                     questionnaireForm.querySelectorAll('.rating-table input[type="number"]').forEach(inputEl => {
-                        inputEl.removeAttribute('value');
                     });
                     setTimeout(() => { 
                         if(retiredOptionsDiv) retiredOptionsDiv.classList.add('hidden');
