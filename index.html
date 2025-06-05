@@ -90,144 +90,45 @@
         @media print {
             body {
                 font-family: 'Noto Sans TC', sans-serif !important;
-                margin: 5mm !important; /* 再縮小頁邊距 */
+                margin: 5mm !important;
                 color: #000 !important;
                 background-color: #fff !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-
             header, footer {
-                text-align: left !important;
-                margin-bottom: 0.5em !important;
+                text-align: left !important; margin-bottom: 0.5em !important;
             }
             header h1 { font-size: 14pt !important; color: #000 !important; }
             header p { font-size: 8pt !important; color: #000 !important; margin-top: 0.3em !important;}
             header .text-xs { font-size: 7pt !important; color: #333 !important; margin-top: 0.2em !important; }
             footer p { font-size: 7pt !important; color: #333 !important; margin-top: 0.8em !important;}
-
-            form button[type="submit"],
-            form button[type="reset"],
-            #definitionsSection,
-            .bg-sky-50.p-3.rounded-md.mb-4 {
-                display: none !important;
-            }
-             p.text-xs.text-red-600 {
-                font-size: 6pt !important;
-                color: #444 !important;
-                margin-bottom: 0.3em !important;
-            }
-
-            .max-w-6xl {
-                max-width: 100% !important; padding: 0 !important; margin: 0 !important;
-                box-shadow: none !important; border: none !important; background-color: #fff !important;
-            }
-            #questionnaireContainerToPrint {
-                 padding: 0 !important; box-shadow: none !important; border: none !important;
-            }
-
-            .overflow-auto[style*="max-height"] {
-                max-height: none !important; overflow: visible !important; border: none !important;
-            }
-
-            .rating-table {
-                width: 100% !important; border-collapse: collapse !important;
-                table-layout: fixed; margin-bottom: 0.8em;
-            }
-
-            .rating-table th, .rating-table td {
-                font-size: 4.5pt !important; /* 極度縮小字體 */
-                padding: 0.5px !important;   /* 最小化內邊距 */
-                border: 0.5px solid #888 !important; /* 更細的邊框 */
-                text-align: center !important; vertical-align: middle !important;
-                word-break: break-all !important;
-                height: auto !important;
-                line-height: 1 !important;     /* 最緊湊行高 */
-                box-sizing: border-box !important;
-            }
-
-            .rating-table th.top-left-header-cell {
-                background-color: #eee !important; /* 稍淺背景 */
-                font-weight: normal; /* 不加粗以節省空間 */
-                position: static !important;
-                font-size: 3.5pt !important; /* 左上角標題極小 */
-                display: table-cell !important;
-                vertical-align: middle !important;
-            }
-
-            .rating-table th.aspect-label {
-                font-weight: normal;
-                background-color: #f5f5f5 !important; /* 淺灰背景 */
-            }
-            .rating-table th.aspect-label br {
-                display: block !important;
-                margin-bottom: -5px !important; /* 嘗試負值拉近距離 */
-                line-height: 0.8 !important; /* 嘗試更小的行高 */
-            }
-
+            form button[type="submit"], form button[type="reset"], #definitionsSection,
+            .bg-sky-50.p-3.rounded-md.mb-4 { display: none !important; }
+            p.text-xs.text-red-600 { font-size: 6pt !important; color: #444 !important; margin-bottom: 0.3em !important; }
+            .max-w-6xl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; background-color: #fff !important; }
+            #questionnaireContainerToPrint { padding: 0 !important; box-shadow: none !important; border: none !important; }
+            .overflow-auto[style*="max-height"] { max-height: none !important; overflow: visible !important; border: none !important; }
+            .rating-table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed; margin-bottom: 0.8em; }
+            .rating-table th, .rating-table td { font-size: 4.5pt !important; padding: 0.5px !important; border: 0.5px solid #888 !important; text-align: center !important; vertical-align: middle !important; word-break: break-all !important; height: auto !important; line-height: 1 !important; box-sizing: border-box !important; }
+            .rating-table th.top-left-header-cell { background-color: #eee !important; font-weight: normal; position: static !important; font-size: 3.5pt !important; display: table-cell !important; vertical-align: middle !important; }
+            .rating-table th.aspect-label { font-weight: normal; background-color: #f5f5f5 !important; }
+            .rating-table th.aspect-label br { display: block !important; margin-bottom: -5px !important; line-height: 0.8 !important; }
             .rating-table th.aspect-label.sticky-row,
-            .rating-table th.aspect-label.sticky-col {
-                background-color: #f0f0f0 !important; /* 統一表頭背景 */
-                position: static !important;
-            }
-
-            .rating-table td input[type="number"] {
-                width: 98% !important;
-                height: 1.4em !important; /* 配合極小字體調整高度 */
-                font-size: inherit !important; /* 繼承儲存格的極小字體 */
-                border: 0.5px solid #aaa !important; /* 細邊框 */
-                padding: 0 !important; /* 無內邊距 */
-                -moz-appearance: textfield !important;
-                appearance: textfield !important;
-                text-align: center !important;
-                border-radius: 0 !important;
-                background-color: #fff !important;
-                color: #000 !important;
-                box-sizing: border-box !important;
-                display: block;
-                margin: auto;
-                line-height: 1 !important; /* 確保數字在框內垂直居中 */
-            }
-            input[type=number]::-webkit-inner-spin-button,
-            input[type=number]::-webkit-outer-spin-button {
-                -webkit-appearance: none !important; margin: 0 !important;
-            }
-
-            .rating-table td.diagonal-cell {
-                background-color: #ccc !important;
-            }
-
-            #personalInfoContainer h2, #ratingSection h2 {
-                font-size: 11pt !important; margin-top: 0.8em !important; margin-bottom: 0.4em !important;
-                border-bottom: 1px solid #ccc !important; padding-bottom: 0.15em !important;
-            }
+            .rating-table th.aspect-label.sticky-col { background-color: #f0f0f0 !important; position: static !important; }
+            .rating-table td input[type="number"] { width: 98% !important; height: 1.4em !important; font-size: inherit !important; border: 0.5px solid #aaa !important; padding: 0 !important; -moz-appearance: textfield !important; appearance: textfield !important; text-align: center !important; border-radius: 0 !important; background-color: #fff !important; color: #000 !important; box-sizing: border-box !important; display: block; margin: auto; line-height: 1 !important; }
+            input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none !important; margin: 0 !important; }
+            .rating-table td.diagonal-cell { background-color: #ccc !important; }
+            #personalInfoContainer h2, #ratingSection h2 { font-size: 11pt !important; margin-top: 0.8em !important; margin-bottom: 0.4em !important; border-bottom: 1px solid #ccc !important; padding-bottom: 0.15em !important; }
             #ratingSection h2 { margin-top: 0.3em !important; }
-
-            #personalInfoContainer .grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; /* 縮小最小寬度 */
-                gap: 0.2rem !important;
-            }
+            #personalInfoContainer .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; gap: 0.2rem !important; }
             #personalInfoContainer > div > div { margin-bottom: 0.2em; }
-
-            #personalInfoContainer div,
-            #personalInfoContainer label,
-            #personalInfoContainer input[type="radio"] + label {
-                font-size: 8pt !important; margin-bottom: 0.1em !important; line-height: 1.1 !important;
-            }
+            #personalInfoContainer div, #personalInfoContainer label, #personalInfoContainer input[type="radio"] + label { font-size: 8pt !important; margin-bottom: 0.1em !important; line-height: 1.1 !important; }
             #personalInfoContainer label.block { margin-bottom: 0.15em !important; font-weight: bold; }
-
-            #personalInfoContainer input[type="radio"] {
-                 width: 0.8em; height: 0.8em; vertical-align: middle;
-            }
-            input[type="radio"]:checked::before {
-                font-size: 1em; left: -1.25em; top: -0.1em;
-            }
-             input[type="radio"] { opacity: 1 !important; }
-            #retired_options_container label,
-            #retired_options_container input[type="radio"] + label {
-                font-size: 7pt !important;
-            }
-
+            #personalInfoContainer input[type="radio"] { width: 0.8em; height: 0.8em; vertical-align: middle; }
+            input[type="radio"]:checked::before { font-size: 1em; left: -1.25em; top: -0.1em; }
+            input[type="radio"] { opacity: 1 !important; }
+            #retired_options_container label, #retired_options_container input[type="radio"] + label { font-size: 7pt !important; }
             .highlight-error { outline: none !important; box-shadow: none !important; }
         }
     </style>
@@ -388,7 +289,7 @@
             const topLeftHeaderCell = questionnaireForm.querySelector('.top-left-header-cell');
 
             if (topLeftHeaderCell) {
-                topLeftHeaderCell.innerHTML = '影響來源<br>(欄) ↓<br>受影響因素<br>(列) →'; // 更新左上角標題的文字
+                topLeftHeaderCell.innerHTML = '影響來源<br>(欄) ↓<br>受影響因素<br>(列) →';
             }
 
             if (tableHeadRow) {
@@ -442,7 +343,7 @@
             }
 
             if (definitionsList) {
-                definitionsList.innerHTML = ''; // 清空
+                definitionsList.innerHTML = '';
                 aspectDefinitions.forEach((definition, index) => {
                     const li = document.createElement('li');
                     li.innerHTML = `<strong>${index + 1}. ${aspects[index]}：</strong>${definition}`;
@@ -455,7 +356,6 @@
                 if (!container) { console.error(`容器 ID '${containerId}' 未找到`); return; }
                 container.innerHTML = '';
                 container.className = `grid grid-cols-2 ${gridColsClass} gap-2`;
-
                 optionsArray.forEach((opt, index) => {
                     const div = document.createElement('div');
                     const inputId = `${groupName}_${index}`;
@@ -533,16 +433,17 @@
                     event.preventDefault();
                     if (!validateAndFocusFirstError()) { return; }
 
-                    alert('問卷驗證通過。\n\n即將準備列印問卷填答內容。\n在接下來的列印預覽視窗中，請務必：\n  1. 將「版面設定」調整為「橫向 (Landscape)」。\n  2. 調整「縮放 (Scale)」比例 (例如：「符合頁面大小」或手動設定一個較小百分比，如 50%-70%)，直到整個表格能完整顯示於一頁。\n\n列印完成或取消列印後，才會繼續進行郵件寄送步驟。');
+                    alert('問卷驗證通過。\n\n郵件內容將包含純文字摘要及CSV格式資料。\n\n若需列印，請在接下來的列印預覽視窗中：\n  1. 將「版面設定」調整為「橫向 (Landscape)」。\n  2. 調整「縮放 (Scale)」比例 (例如：「符合頁面大小」或手動設定一個較小百分比，如 50%-70%)，直到整個表格能完整顯示於一頁。\n\n列印完成或取消列印後，才會繼續進行郵件寄送步驟。');
                     window.print();
 
                     setTimeout(() => {
-                        let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果：\n\n";
+                        const formDataForMail = new FormData(questionnaireForm);
+                        let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果（純文字摘要）：\n\n";
                         mailBody += "==========================================\n";
                         mailBody += "壹、十五項構面影響關係之評比：\n";
                         mailBody += "(格式：影響來源構面 -> 受影響構面：評分值)\n";
                         mailBody += "==========================================\n";
-                        const formDataForMail = new FormData(questionnaireForm);
+
                         let ratingDataExists = false;
                         let ratingSectionOutput = "";
                         aspects.forEach((rowAspect, rowIndex) => {
@@ -561,27 +462,78 @@
                         mailBody += "\n==========================================\n";
                         mailBody += "肆、個人基本資料：\n";
                         mailBody += "==========================================\n";
-                        const pInfo = [
+                        const pInfoPlain = [
                             {key: 'gender', label: '1. 性別'}, {key: 'year_service', label: '2. 年資'},
                             {key: 'education_level', label: '3. 教育程度'}, {key: 'rank', label: '4. 階級'},
                             {key: 'job_type', label: '5. 職務類型'}
                         ];
-                        pInfo.forEach(info => {
+                        pInfoPlain.forEach(info => {
                             const val = formDataForMail.get(info.key);
                             if (val) mailBody += `${info.label}： ${val}\n`;
                         });
-                        const militaryServiceStatus = formDataForMail.get('military_service_status');
-                        if (militaryServiceStatus) {
-                            mailBody += `6. 兵役情況： ${militaryServiceStatus}`;
-                            if (militaryServiceStatus === '已退役') {
-                                const retiredStatus = formDataForMail.get('retired_status');
-                                mailBody += retiredStatus ? ` (${retiredStatus})\n` : " (退役狀況未選擇)\n";
+                        const militaryServiceStatusPlain = formDataForMail.get('military_service_status');
+                        if (militaryServiceStatusPlain) {
+                            mailBody += `6. 兵役情況： ${militaryServiceStatusPlain}`;
+                            if (militaryServiceStatusPlain === '已退役') {
+                                const retiredStatusPlain = formDataForMail.get('retired_status');
+                                mailBody += retiredStatusPlain ? ` (${retiredStatusPlain})\n` : " (退役狀況未選擇)\n";
                             } else { mailBody += "\n"; }
                         }
-                        mailBody += "\n感謝您的填答！\n";
+                        mailBody += "\n感謝您的填答！\n\n";
+                        mailBody += "------------------------------------------------------------\n";
+                        mailBody += "以下為 CSV 格式資料，您可以複製此區塊文字，\n貼到純文字檔案中並儲存為 .csv 檔案，即可用試算表軟體開啟：\n";
+                        mailBody += "------------------------------------------------------------\n\n";
+
+                        // --- 開始產生 CSV 格式資料 ---
+                        let csvData = "";
+                        // 1. 評分表格 CSV
+                        csvData += "影響關係評比 (列影響欄)\n"; // 標題行
+                        // 表頭 (Column Headers)
+                        csvData += "," + aspects.join(",") + "\n";
+                        // 資料列
+                        aspects.forEach((rowAspect, rowIndex) => {
+                            let csvRow = `"${rowAspect.replace(/"/g, '""')}"`; // 列標題，處理雙引號
+                            aspects.forEach((colAspect, colIndex) => {
+                                if (rowIndex === colIndex) {
+                                    csvRow += ",X"; // 對角線用 X 表示
+                                } else {
+                                    const inputName = `rating_${rowIndex}_${colIndex}`;
+                                    const inputValue = formDataForMail.get(inputName);
+                                    csvRow += `,${inputValue !== null && inputValue.trim() !== "" ? inputValue.trim() : ""}`;
+                                }
+                            });
+                            csvData += csvRow + "\n";
+                        });
+                        csvData += "\n"; // 空一行分隔
+
+                        // 2. 個人基本資料 CSV
+                        csvData += "個人基本資料\n"; // 標題行
+                        csvData += "項目,內容\n";
+                        const pInfoCsv = [
+                            {key: 'gender', label: '性別'}, {key: 'year_service', label: '年資'},
+                            {key: 'education_level', label: '教育程度'}, {key: 'rank', label: '階級'},
+                            {key: 'job_type', label: '職務類型'},
+                            {key: 'military_service_status', label: '兵役情況'}
+                        ];
+                        pInfoCsv.forEach(info => {
+                            const val = formDataForMail.get(info.key);
+                            if (val) csvData += `"${info.label.replace(/"/g, '""')}","${val.replace(/"/g, '""')}"\n`;
+                        });
+                        if (formDataForMail.get('military_service_status') === '已退役') {
+                            const retiredStatusCsv = formDataForMail.get('retired_status');
+                            if (retiredStatusCsv) csvData += `"退役狀況","${retiredStatusCsv.replace(/"/g, '""')}"\n`;
+                        }
+                        // --- CSV 格式資料結束 ---
+
+                        mailBody += csvData; // 將 CSV 資料附加到郵件正文
+
                         const recipientEmail = "ts9074@gmail.com";
-                        const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究";
+                        const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究 (含CSV)";
                         const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+
+                        console.log("Mail body length (with CSV):", mailBody.length);
+                        // console.log("Mail body content (with CSV):\n", mailBody); // 可取消註解以調試郵件內容
+
                         try {
                              window.location.href = mailtoLink;
                         } catch (e) {
