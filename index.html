@@ -96,6 +96,10 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+            @page {
+                size: A4 landscape; /* 嘗試建議瀏覽器預設為橫向，但最終仍由使用者控制 */
+                margin: 5mm;
+            }
             header, footer {
                 text-align: left !important; margin-bottom: 0.5em !important;
             }
@@ -433,9 +437,16 @@
                     event.preventDefault();
                     if (!validateAndFocusFirstError()) { return; }
 
-                    alert('問卷驗證通過。\n\n郵件內容將包含純文字摘要及CSV格式資料。\n\n若需列印，請在接下來的列印預覽視窗中：\n  1. 將「版面設定」調整為「橫向 (Landscape)」。\n  2. 調整「縮放 (Scale)」比例 (例如：「符合頁面大小」或手動設定一個較小百分比，如 50%-70%)，直到整個表格能完整顯示於一頁。\n\n列印完成或取消列印後，才會繼續進行郵件寄送步驟。');
-                    window.print();
+                    // 更新提示訊息，更強調手動設定橫向和縮放
+                    alert('問卷驗證通過。\n\n【重要：列印設定提醒】\n接下來將開啟列印預覽視窗，請務必進行以下手動設定：\n  1. 版面設定 (Layout/Orientation)：選擇「橫向 (Landscape)」。\n  2. 縮放 (Scale)：調整比例 (例如：「符合頁面大小」或手動設為 50%-70%)，確保表格完整顯示。\n\n在您完成列印 (或取消列印) 後，才會跳轉至郵件寄送步驟。\n郵件內容將包含純文字摘要及CSV格式資料。');
 
+                    window.print(); // 此操作會暫停JS執行，直到列印對話框關閉
+
+                    // 列印對話框關閉後，此處的程式碼才會繼續執行
+                    console.log("列印對話框已關閉，準備寄送郵件。");
+
+                    // 使用 setTimeout 可確保郵件邏輯在某些瀏覽器可能發生的微小延遲後執行，
+                    // 但理論上 window.print() 結束後應可立即執行。
                     setTimeout(() => {
                         const formDataForMail = new FormData(questionnaireForm);
                         let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果（純文字摘要）：\n\n";
@@ -484,18 +495,14 @@
                         mailBody += "以下為 CSV 格式資料，您可以複製此區塊文字，\n貼到純文字檔案中並儲存為 .csv 檔案，即可用試算表軟體開啟：\n";
                         mailBody += "------------------------------------------------------------\n\n";
 
-                        // --- 開始產生 CSV 格式資料 ---
                         let csvData = "";
-                        // 1. 評分表格 CSV
-                        csvData += "影響關係評比 (列影響欄)\n"; // 標題行
-                        // 表頭 (Column Headers)
+                        csvData += "影響關係評比 (列影響欄)\n";
                         csvData += "," + aspects.join(",") + "\n";
-                        // 資料列
                         aspects.forEach((rowAspect, rowIndex) => {
-                            let csvRow = `"${rowAspect.replace(/"/g, '""')}"`; // 列標題，處理雙引號
+                            let csvRow = `"${rowAspect.replace(/"/g, '""')}"`;
                             aspects.forEach((colAspect, colIndex) => {
                                 if (rowIndex === colIndex) {
-                                    csvRow += ",X"; // 對角線用 X 表示
+                                    csvRow += ",X";
                                 } else {
                                     const inputName = `rating_${rowIndex}_${colIndex}`;
                                     const inputValue = formDataForMail.get(inputName);
@@ -504,10 +511,8 @@
                             });
                             csvData += csvRow + "\n";
                         });
-                        csvData += "\n"; // 空一行分隔
-
-                        // 2. 個人基本資料 CSV
-                        csvData += "個人基本資料\n"; // 標題行
+                        csvData += "\n";
+                        csvData += "個人基本資料\n";
                         csvData += "項目,內容\n";
                         const pInfoCsv = [
                             {key: 'gender', label: '性別'}, {key: 'year_service', label: '年資'},
@@ -523,24 +528,22 @@
                             const retiredStatusCsv = formDataForMail.get('retired_status');
                             if (retiredStatusCsv) csvData += `"退役狀況","${retiredStatusCsv.replace(/"/g, '""')}"\n`;
                         }
-                        // --- CSV 格式資料結束 ---
-
-                        mailBody += csvData; // 將 CSV 資料附加到郵件正文
+                        mailBody += csvData;
 
                         const recipientEmail = "ts9074@gmail.com";
                         const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究 (含CSV)";
                         const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
 
                         console.log("Mail body length (with CSV):", mailBody.length);
-                        // console.log("Mail body content (with CSV):\n", mailBody); // 可取消註解以調試郵件內容
 
                         try {
                              window.location.href = mailtoLink;
+                             // 可以在此處或郵件客戶端開啟後再提示，目前由瀏覽器處理 mailto
                         } catch (e) {
                             console.error("無法開啟郵件客戶端:", e);
                             alert('開啟郵件客戶端失敗。\n\n您可以手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
                         }
-                    }, 100);
+                    }, 50); // 縮短延遲，理論上 print() 結束後就可以執行
                 });
 
                 questionnaireForm.addEventListener('reset', function() {
