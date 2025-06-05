@@ -86,29 +86,27 @@
             transition: outline 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
         }
 
-        /* --- 列印專用樣式 (大幅簡化，主要保留基本可讀性) --- */
+        /* --- 列印專用樣式 (簡化，主要保留基本可讀性) --- */
         @media print {
             body {
                 font-family: 'Noto Sans TC', sans-serif;
-                margin: 20mm !important; /* 基本列印邊界 */
+                margin: 20mm !important; 
                 color: #000 !important;
                 background-color: #fff !important;
             }
-            /* 隱藏不希望列印的按鈕等 */
             form button[type="submit"], 
             form button[type="reset"] {
                 display: none !important;
             }
-            /* 確保輸入框和選項的值可以被列印 */
             input {
                 color: #000 !important;
                 background-color: #fff !important;
-                border: 1px solid #ccc !important; /* 讓輸入框邊框可見 */
+                border: 1px solid #ccc !important; 
             }
             input[type="radio"] {
-                opacity: 1 !important; /* 確保 radio 可見 */
+                opacity: 1 !important; 
             }
-            input[type="radio"]:checked::before { /* 簡單標示選中 */
+            input[type="radio"]:checked::before { 
                 content: "◉"; 
                 font-size: 1.2em; 
                 color: black; 
@@ -245,7 +243,7 @@
 
             <div class="mt-10 text-center space-x-4">
                 <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50">
-                    提交問卷 (寄送郵件)
+                    提交問卷 (產生郵件內容)
                 </button>
                 <button type="reset" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
                     清除重填
@@ -418,7 +416,7 @@
             if (questionnaireForm) {
                 questionnaireForm.addEventListener('submit', function(event) {
                     event.preventDefault(); 
-                    console.log("「提交問卷 (寄送郵件)」按鈕被點擊，開始驗證...");
+                    console.log("「提交問卷 (產生郵件內容)」按鈕被點擊，開始驗證...");
                     
                     if (!validateAndFocusFirstError()) {
                         console.log("驗證未通過，不執行郵件產生。");
@@ -427,70 +425,74 @@
 
                     console.log("驗證通過，準備組裝郵件內容。");
                     
-                    let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果：\n\n";
-                    mailBody += "==========================================\n";
-                    mailBody += "壹、十五項構面影響關係之評比：\n";
-                    mailBody += "(格式：影響來源 -> 受影響構面：評分值)\n";
-                    mailBody += "==========================================\n";
+                    // --- 組裝CSV格式的評比表格資料 ---
+                    let csvContent = "";
+                    // CSV Header Row
+                    csvContent += "," + aspects.map(aspect => `"${aspect.replace(/"/g, '""')}"`).join(",") + "\n"; // 加上引號以處理逗號等特殊字元
                     
                     const formDataForMail = new FormData(questionnaireForm); 
-                    let ratingDataExists = false;
                     aspects.forEach((rowAspect, rowIndex) => {
-                        let rowOutput = "";
+                        let csvRow = `"${rowAspect.replace(/"/g, '""')}"`; // Row label with quotes
                         aspects.forEach((colAspect, colIndex) => {
-                            if (rowIndex !== colIndex) {
+                            csvRow += ","; 
+                            if (rowIndex === colIndex) {
+                                // 對角線儲存格留空
+                            } else {
                                 const inputName = `rating_${rowIndex}_${colIndex}`;
                                 const inputValue = formDataForMail.get(inputName);
                                 if (inputValue !== null && inputValue.trim() !== "") {
-                                    rowOutput += `${rowAspect} -> ${colAspect}: ${inputValue}\n`;
-                                    ratingDataExists = true;
+                                    csvRow += `"${inputValue.trim().replace(/"/g, '""')}"`;
                                 }
                             }
                         });
-                        if (rowOutput) { 
-                           mailBody += `\n影響來源：${rowAspect}\n${rowOutput}`;
-                        }
+                        csvContent += csvRow + "\n";
                     });
 
-                    if (!ratingDataExists) {
-                        mailBody += "(此部分無填答資料)\n";
-                    }
-                    mailBody += "\n";
-
-                    mailBody += "==========================================\n";
-                    mailBody += "肆、個人基本資料：\n";
-                    mailBody += "==========================================\n";
+                    // --- 組裝個人基本資料 ---
+                    let personalInfoText = "==========================================\n";
+                    personalInfoText += "肆、個人基本資料：\n";
+                    personalInfoText += "==========================================\n";
                     
                     const gender = formDataForMail.get('gender');
-                    if (gender) mailBody += `1. 性別： ${gender}\n`;
+                    if (gender) personalInfoText += `1. 性別： ${gender}\n`;
 
                     const yearService = formDataForMail.get('year_service');
-                    if (yearService) mailBody += `2. 年資： ${yearService}\n`;
+                    if (yearService) personalInfoText += `2. 年資： ${yearService}\n`;
                     
                     const educationLevel = formDataForMail.get('education_level');
-                    if (educationLevel) mailBody += `3. 教育程度： ${educationLevel}\n`;
+                    if (educationLevel) personalInfoText += `3. 教育程度： ${educationLevel}\n`;
 
                     const rank = formDataForMail.get('rank');
-                    if (rank) mailBody += `4. 階級： ${rank}\n`;
+                    if (rank) personalInfoText += `4. 階級： ${rank}\n`;
 
                     const jobType = formDataForMail.get('job_type');
-                    if (jobType) mailBody += `5. 職務類型： ${jobType}\n`;
+                    if (jobType) personalInfoText += `5. 職務類型： ${jobType}\n`;
                     
                     const militaryServiceStatus = formDataForMail.get('military_service_status');
                     if (militaryServiceStatus) {
-                        mailBody += `6. 兵役情況： ${militaryServiceStatus}`;
+                        personalInfoText += `6. 兵役情況： ${militaryServiceStatus}`;
                         if (militaryServiceStatus === '已退役') {
                             const retiredStatus = formDataForMail.get('retired_status');
                             if (retiredStatus) {
-                                mailBody += ` (${retiredStatus})\n`;
+                                personalInfoText += ` (${retiredStatus})\n`;
                             } else {
-                                mailBody += " (退役狀況未選擇)\n";
+                                personalInfoText += " (退役狀況未選擇)\n";
                             }
                         } else {
-                            mailBody += "\n";
+                            personalInfoText += "\n";
                         }
                     }
-                    mailBody += "\n感謝您的填答！\n";
+                    personalInfoText += "\n感謝您的填答！\n";
+
+                    // --- 組合最終郵件內文 ---
+                    let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果：\n\n";
+                    mailBody += "==========================================\n";
+                    mailBody += "壹、十五項構面影響關係之評比 (CSV格式)：\n";
+                    mailBody += "==========================================\n";
+                    mailBody += csvContent;
+                    mailBody += "\n"; // CSV內容後換行
+                    mailBody += personalInfoText;
+
 
                     const recipientEmail = "ts9074@gmail.com";
                     const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究";
@@ -501,14 +503,14 @@
                     const mailtoLink = `mailto:${recipientEmail}?subject=${encodedSubject}&body=${encodedBody}`;
 
                     console.log("Mailto link:", mailtoLink);
-                    console.log("Mail body length:", mailBody.length);
+                    console.log("Mail body length (approx):", mailBody.length); // 近似長度，URL編碼後會更長
 
                     try {
                          window.location.href = mailtoLink;
-                         alert('即將開啟您的電子郵件應用程式以寄送問卷。\n請檢查內容並手動按下「傳送/寄出」按鈕。\n\n若郵件程式未自動開啟，請檢查瀏覽器設定或是否有預設郵件應用程式。');
+                         alert('即將開啟您的電子郵件應用程式以寄送問卷。\n郵件內文已包含CSV格式的評比資料及個人基本資料。\n請檢查內容並手動按下「傳送/寄出」按鈕。\n\n若郵件程式未自動開啟，請檢查瀏覽器設定或是否有預設郵件應用程式。');
                     } catch (e) {
                         console.error("無法開啟郵件客戶端:", e);
-                        alert('開啟郵件客戶端失敗。\n\n請手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
+                        alert('開啟郵件客戶端失敗。\n\n您可以手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
                     }
                 });
 
