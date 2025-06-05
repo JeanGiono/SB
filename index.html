@@ -96,8 +96,9 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+            /* 嘗試建議瀏覽器預設為橫向A4，但最終仍由使用者在列印預覽中控制 */
             @page {
-                size: A4 landscape; /* 嘗試建議瀏覽器預設為橫向，但最終仍由使用者控制 */
+                size: A4 landscape;
                 margin: 5mm;
             }
             header, footer {
@@ -435,19 +436,29 @@
             if (questionnaireForm) {
                 questionnaireForm.addEventListener('submit', function(event) {
                     event.preventDefault();
-                    if (!validateAndFocusFirstError()) { return; }
+                    if (!validateAndFocusFirstError()) {
+                        console.log("驗證未通過，已中止提交。");
+                        return;
+                    }
+                    console.log("問卷驗證通過。");
 
-                    // 更新提示訊息，更強調手動設定橫向和縮放
-                    alert('問卷驗證通過。\n\n【重要：列印設定提醒】\n接下來將開啟列印預覽視窗，請務必進行以下手動設定：\n  1. 版面設定 (Layout/Orientation)：選擇「橫向 (Landscape)」。\n  2. 縮放 (Scale)：調整比例 (例如：「符合頁面大小」或手動設為 50%-70%)，確保表格完整顯示。\n\n在您完成列印 (或取消列印) 後，才會跳轉至郵件寄送步驟。\n郵件內容將包含純文字摘要及CSV格式資料。');
+                    alert(
+                        '即將開啟列印預覽視窗，以便您儲存問卷副本為PDF。\n\n' +
+                        '【重要列印設定】請在列印預覽中務必：\n' +
+                        '  1. 目的地/印表機：選擇「另存為 PDF」或您的PDF印表機。\n' +
+                        '  2. 版面設定：調整為「橫向 (Landscape)」。\n' +
+                        '  3. 更多設定 > 縮放：調整比例 (例如「符合頁面大小」或手動調整至 50%-70%)，確保表格完整顯示。\n\n' +
+                        '在您完成「儲存PDF」(或取消列印) 後，程式將自動繼續處理郵件寄送。'
+                    );
 
+                    console.log("準備呼叫 window.print()...");
                     window.print(); // 此操作會暫停JS執行，直到列印對話框關閉
 
                     // 列印對話框關閉後，此處的程式碼才會繼續執行
-                    console.log("列印對話框已關閉，準備寄送郵件。");
+                    console.log("window.print() 已結束 (使用者已完成列印/儲存PDF/取消)。準備寄送郵件...");
 
-                    // 使用 setTimeout 可確保郵件邏輯在某些瀏覽器可能發生的微小延遲後執行，
-                    // 但理論上 window.print() 結束後應可立即執行。
                     setTimeout(() => {
+                        console.log("開始組裝郵件內容...");
                         const formDataForMail = new FormData(questionnaireForm);
                         let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果（純文字摘要）：\n\n";
                         mailBody += "==========================================\n";
@@ -534,16 +545,17 @@
                         const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究 (含CSV)";
                         const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
 
-                        console.log("Mail body length (with CSV):", mailBody.length);
+                        console.log("郵件內容已組裝完成，準備跳轉 mailto link...");
+                        // console.log("Mail body content:\n", mailBody); // 取消註解以在控制台查看完整郵件內容
 
                         try {
                              window.location.href = mailtoLink;
-                             // 可以在此處或郵件客戶端開啟後再提示，目前由瀏覽器處理 mailto
+                             console.log("已嘗試跳轉至郵件客戶端。");
                         } catch (e) {
                             console.error("無法開啟郵件客戶端:", e);
                             alert('開啟郵件客戶端失敗。\n\n您可以手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
                         }
-                    }, 50); // 縮短延遲，理論上 print() 結束後就可以執行
+                    }, 50); // 短暫延遲，確保UI更新後執行
                 });
 
                 questionnaireForm.addEventListener('reset', function() {
@@ -555,6 +567,8 @@
                         if(currentRetiredStatusRadios) currentRetiredStatusRadios.forEach(radio => { radio.checked = false; radio.required = false; });
                     }, 0);
                 });
+            } else {
+                console.error("錯誤：問卷表單 (questionnaireForm) 未在DOM中找到！");
             }
         });
     </script>
