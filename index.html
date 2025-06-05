@@ -86,60 +86,112 @@
             transition: outline 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
         }
 
-        /* --- 列印專用樣式 (大幅簡化，以接近螢幕顯示) --- */
+        /* --- 列印專用樣式 --- */
         @media print {
             body {
-                -webkit-print-color-adjust: exact !important; /* 盡可能保留螢幕顏色 */
-                print-color-adjust: exact !important;
-                margin: 10mm !important; /* 可以保留一個基本的列印邊界 */
+                font-family: 'Noto Sans TC', sans-serif;
+                margin: 15mm !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
             }
-
-            /* 不再隱藏 header, footer, 按鈕, 說明區塊等，因為要列印 "完整畫面" */
-            /* header, footer, form button, #definitionsSection,
-             .bg-sky-50.p-3.rounded-md.mb-4.text-sm {
-                display: none !important; // REMOVED
-            } */
+            /* 隱藏不需要列印的元素 */
+            header, 
+            footer,
+            form button[type="submit"], 
+            form button[type="reset"],
+            #definitionsSection, /* 隱藏構面意義說明區塊 */
+            #ratingSection .bg-sky-50.p-3.rounded-md.mb-4.text-sm /* 隱藏評比區塊的填寫指標說明 */
+             {
+                display: none !important;
+            }
 
             .max-w-6xl.mx-auto.bg-white.p-6.sm\:p-8.rounded-lg.shadow-xl {
-                box-shadow: none !important; /* 列印時通常不需要陰影 */
-                border: 1px solid #eee !important; /* 可以加一個淺色邊框標示內容區域 */
-                /* 保持螢幕上的 padding 和 margin */
+                box-shadow: none !important; border: none !important;
+                padding: 0 !important; margin: 0 !important;
+                max-width: 100% !important; width: 100% !important;
             }
             
-            /* 表格捲動容器的樣式在列印時保持不變，這樣會印出螢幕可見部分 */
-            /* .overflow-auto.rounded-lg.border.border-gray-300 {
+            h2 { 
+                font-size: 14pt !important; 
+                margin-top: 20px !important; margin-bottom: 10px !important;
+                border-bottom: 1px solid #333 !important;
+                padding-bottom: 5px !important; 
+                page-break-after: avoid !important; 
+            }
+
+            /* 讓評比表格的容器在列印時可以完整展開 */
+            #ratingSection .overflow-auto.rounded-lg.border.border-gray-300 {
                 overflow: visible !important; 
-                max-height: none !important;
-            } */
-
-
-            /* 確保輸入框和選項在列印時能顯示其值 */
+                max-height: none !important; /* 移除最大高度限制 */
+                height: auto !important; /* 高度自動，以容納內容 */
+                border: none !important; 
+            }
+            .rating-table {
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                table-layout: fixed; 
+            }
+            .rating-table th, .rating-table td {
+                border: 1px solid #333 !important; 
+                padding: 4px !important; 
+                font-size: 8pt !important; /* 可能需要再縮小字體以容納更多內容在一頁 */
+                word-wrap: break-word; 
+            }
+             .rating-table th.top-left-header-cell,
+             .rating-table th.aspect-label.sticky-row,
+             .rating-table th.aspect-label.sticky-col {
+                position: static !important; /* 列印時移除 sticky 定位 */
+                background-color: #eaeaea !important; 
+             }
             .rating-table td input[type="number"] {
-                color: black !important; /* 確保文字為黑色 */
-                background-color: white !important; /* 確保背景為白色 */
-                border: 1px solid #888 !important; /* 讓邊框可見 */
-                 -webkit-appearance: none; /* 嘗試移除預設樣式以顯示值 */
-                -moz-appearance: textfield;
-                appearance: textfield; /* 移除上下箭頭 */
+                border: none !important; 
+                box-shadow: none !important;
+                background-color: transparent !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 auto !important; 
+                font-size: 9pt !important; 
+                width: 100% !important; 
+                height: auto !important;
+                display: block !important; 
+                text-align: center !important;
+                -webkit-appearance: none; 
+                -moz-appearance: textfield; 
+                appearance: textfield; 
             }
+             .rating-table td.diagonal-cell {
+                background-color: #bdbdbd !important; 
+                color: #bdbdbd !important; 
+             }
 
+            #personalInfoContainer .grid { 
+                display: block !important; 
+            }
+            #personalInfoContainer .grid > div {
+                page-break-inside: avoid !important; 
+                margin-bottom: 8px !important;
+                font-size: 10pt !important;
+            }
+            #personalInfoContainer label {
+                font-weight: bold !important;
+            }
             input[type="radio"] {
-                 -webkit-appearance: radio !important; /* 嘗試恢復預設外觀 */
-                 -moz-appearance: radio !important;
-                 appearance: radio !important;
-                 opacity: 1 !important;
+                margin-right: 3px !important; 
+                vertical-align: middle !important;
+                opacity: 0; 
+                width: 0; 
+                position: absolute; 
             }
-            input[type="radio"]:checked {
-                /* 依賴瀏覽器預設的列印選中樣式 */
+            input[type="radio"] + label::before { 
+                content: "○";
+                font-size: 1.1em;
+                margin-right: 0.3em;
+                color: black;
+                display: inline-block;
+                vertical-align: middle;
             }
-            /* 移除之前用偽元素自訂 radio 選中樣式的 CSS，以更接近螢幕的原始樣式 */
-            /* input[type="radio"] + label::before { content: none !important; } */
-            /* input[type="radio"]:checked + label::before { content: none !important; } */
-
-
-            /* 避免不必要的跨頁 */
-            section, .rating-table tbody tr, #personalInfoContainer .grid > div {
-                page-break-inside: avoid !important;
+            input[type="radio"]:checked + label::before { 
+                content: "◉";
             }
         }
     </style>
@@ -161,7 +213,7 @@
         <form id="questionnaireForm">
             <section class="mb-10" id="ratingSection">
                 <h2 class="text-xl font-semibold text-sky-600 border-b-2 border-sky-200 pb-2 mb-4">壹、十五項構面影響關係之評比</h2>
-                <div class="bg-sky-50 p-3 rounded-md mb-4 text-sm">
+                <div class="bg-sky-50 p-3 rounded-md mb-4 text-sm"> <!-- 此區塊會在列印時隱藏 -->
                     <p class="text-gray-700 mb-1"><strong>填寫指標說明：</strong> 請填入 0 至 4 的數字。</p>
                     <ul class="list-disc list-inside ml-4 text-gray-600">
                         <li>0：無影響</li>
@@ -264,7 +316,7 @@
 
             <div class="mt-10 text-center space-x-4">
                 <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50">
-                    提交 (列印目前畫面/儲存PDF)
+                    提交問卷 (列印/儲存PDF)
                 </button>
                 <button type="reset" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
                     清除重填
@@ -437,7 +489,7 @@
             if (questionnaireForm) {
                 questionnaireForm.addEventListener('submit', function(event) {
                     event.preventDefault(); 
-                    console.log("「提交問卷 (列印目前畫面/儲存PDF)」按鈕被點擊，開始驗證...");
+                    console.log("「提交問卷 (列印/儲存PDF)」按鈕被點擊，開始驗證...");
                     
                     if (!validateAndFocusFirstError()) {
                         console.log("驗證未通過，不執行列印。");
@@ -445,9 +497,8 @@
                     }
 
                     console.log("驗證通過，準備執行列印。");
-                    alert('問卷已填寫完成，即將開啟列印預覽。\n您可以在此選擇「另存為PDF」或您的印表機來列印目前畫面。');
+                    alert('問卷已填寫完成，即將開啟列印預覽。\n您可以在此選擇「另存為PDF」或您的印表機。');
                     
-                    // 為了確保列印樣式能正確應用輸入框的值
                     questionnaireForm.querySelectorAll('.rating-table input[type="number"]').forEach(inputEl => {
                         inputEl.setAttribute('value', inputEl.value);
                     });
