@@ -89,182 +89,146 @@
         /* --- 列印專用樣式 --- */
         @media print {
             body {
-                font-family: 'Noto Sans TC', sans-serif !important; /* 確保繁中字體 */
-                margin: 10mm !important; /* 適度調整列印邊界 */
+                font-family: 'Noto Sans TC', sans-serif !important;
+                margin: 5mm !important; /* 再縮小頁邊距 */
                 color: #000 !important;
                 background-color: #fff !important;
-                -webkit-print-color-adjust: exact !important; /* 嘗試保留必要的背景色 */
+                -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
             header, footer {
                 text-align: left !important;
-                margin-bottom: 0.8em !important;
-            }
-            header h1 { font-size: 16pt !important; color: #000 !important; }
-            header p { font-size: 9pt !important; color: #000 !important; margin-top: 0.5em !important;}
-            header .text-xs { font-size: 8pt !important; color: #333 !important; margin-top: 0.3em !important; }
-            footer p { font-size: 8pt !important; color: #333 !important; margin-top: 1em !important;}
-
-            /* 隱藏不需要列印的元素 */
-            form button[type="submit"],
-            form button[type="reset"],
-            #definitionsSection, /* 隱藏構面定義說明 */
-            .bg-sky-50.p-3.rounded-md.mb-4 /* 隱藏填寫指標說明區塊 */ {
-                display: none !important;
-            }
-             p.text-xs.text-red-600 { /* 調整提示文字大小 */
-                font-size: 7pt !important;
-                color: #555 !important; /* 列印時不要太刺眼的紅色 */
                 margin-bottom: 0.5em !important;
             }
+            header h1 { font-size: 14pt !important; color: #000 !important; }
+            header p { font-size: 8pt !important; color: #000 !important; margin-top: 0.3em !important;}
+            header .text-xs { font-size: 7pt !important; color: #333 !important; margin-top: 0.2em !important; }
+            footer p { font-size: 7pt !important; color: #333 !important; margin-top: 0.8em !important;}
 
+            form button[type="submit"],
+            form button[type="reset"],
+            #definitionsSection,
+            .bg-sky-50.p-3.rounded-md.mb-4 {
+                display: none !important;
+            }
+             p.text-xs.text-red-600 {
+                font-size: 6pt !important;
+                color: #444 !important;
+                margin-bottom: 0.3em !important;
+            }
 
-            /* 問卷主容器 */
             .max-w-6xl {
-                max-width: 100% !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-                background-color: #fff !important;
+                max-width: 100% !important; padding: 0 !important; margin: 0 !important;
+                box-shadow: none !important; border: none !important; background-color: #fff !important;
             }
             #questionnaireContainerToPrint {
-                 padding: 0 !important;
-                 box-shadow: none !important;
-                 border: none !important;
+                 padding: 0 !important; box-shadow: none !important; border: none !important;
             }
 
-            /* 評分表格的容器 */
             .overflow-auto[style*="max-height"] {
-                max-height: none !important;
-                overflow: visible !important;
-                border: none !important;
+                max-height: none !important; overflow: visible !important; border: none !important;
             }
 
             .rating-table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-                table-layout: fixed;
-                margin-bottom: 1em;
+                width: 100% !important; border-collapse: collapse !important;
+                table-layout: fixed; margin-bottom: 0.8em;
             }
 
             .rating-table th, .rating-table td {
-                font-size: 6pt !important; /* 大幅縮小字體以容納15x15表格 */
-                padding: 1.5px 1.5px !important; /* 最小化內邊距 */
-                border: 1px solid #777 !important; /* 清晰的細邊框 */
-                text-align: center !important;
-                vertical-align: middle !important;
+                font-size: 4.5pt !important; /* 極度縮小字體 */
+                padding: 0.5px !important;   /* 最小化內邊距 */
+                border: 0.5px solid #888 !important; /* 更細的邊框 */
+                text-align: center !important; vertical-align: middle !important;
                 word-break: break-all !important;
-                height: auto !important; /* 自動高度 */
-                line-height: 1.1 !important;
+                height: auto !important;
+                line-height: 1 !important;     /* 最緊湊行高 */
+                box-sizing: border-box !important;
             }
 
             .rating-table th.top-left-header-cell {
-                background-color: #ddd !important;
-                font-weight: bold;
+                background-color: #eee !important; /* 稍淺背景 */
+                font-weight: normal; /* 不加粗以節省空間 */
                 position: static !important;
-                font-size: 5pt !important;
+                font-size: 3.5pt !important; /* 左上角標題極小 */
                 display: table-cell !important;
                 vertical-align: middle !important;
             }
 
             .rating-table th.aspect-label {
                 font-weight: normal;
+                background-color: #f5f5f5 !important; /* 淺灰背景 */
             }
-            .rating-table th.aspect-label br { display: block; margin-bottom: -3px; line-height: 1; }
-
+            .rating-table th.aspect-label br {
+                display: block !important;
+                margin-bottom: -5px !important; /* 嘗試負值拉近距離 */
+                line-height: 0.8 !important; /* 嘗試更小的行高 */
+            }
 
             .rating-table th.aspect-label.sticky-row,
             .rating-table th.aspect-label.sticky-col {
-                background-color: #eee !important;
-                position: static !important; /* 列印時移除 sticky */
+                background-color: #f0f0f0 !important; /* 統一表頭背景 */
+                position: static !important;
             }
 
             .rating-table td input[type="number"] {
-                width: 95% !important; /* 輸入框寬度盡量填滿 */
-                height: 1.7em !important;
-                font-size: inherit !important;
-                border: 1px solid #999 !important;
-                padding: 1px !important;
+                width: 98% !important;
+                height: 1.4em !important; /* 配合極小字體調整高度 */
+                font-size: inherit !important; /* 繼承儲存格的極小字體 */
+                border: 0.5px solid #aaa !important; /* 細邊框 */
+                padding: 0 !important; /* 無內邊距 */
                 -moz-appearance: textfield !important;
                 appearance: textfield !important;
                 text-align: center !important;
                 border-radius: 0 !important;
                 background-color: #fff !important;
                 color: #000 !important;
-                box-sizing: border-box;
-                display: block; /* 確保在 td 中正確渲染 */
-                margin: auto; /* 水平居中 */
+                box-sizing: border-box !important;
+                display: block;
+                margin: auto;
+                line-height: 1 !important; /* 確保數字在框內垂直居中 */
             }
             input[type=number]::-webkit-inner-spin-button,
             input[type=number]::-webkit-outer-spin-button {
-                -webkit-appearance: none !important;
-                margin: 0 !important;
+                -webkit-appearance: none !important; margin: 0 !important;
             }
 
             .rating-table td.diagonal-cell {
-                background-color: #bbb !important;
+                background-color: #ccc !important;
             }
 
-            /* 個人基本資料區塊 */
             #personalInfoContainer h2, #ratingSection h2 {
-                font-size: 12pt !important;
-                color: #000 !important;
-                margin-top: 1em !important;
-                margin-bottom: 0.5em !important;
-                border-bottom: 1px solid #ccc !important;
-                padding-bottom: 0.2em !important;
+                font-size: 11pt !important; margin-top: 0.8em !important; margin-bottom: 0.4em !important;
+                border-bottom: 1px solid #ccc !important; padding-bottom: 0.15em !important;
             }
-            #ratingSection h2 { margin-top: 0.5em !important; } /* 評分表格的標題可以更靠上 */
-
+            #ratingSection h2 { margin-top: 0.3em !important; }
 
             #personalInfoContainer .grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
-                gap: 0.3rem !important;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; /* 縮小最小寬度 */
+                gap: 0.2rem !important;
             }
-            #personalInfoContainer > div > div { /* 包裹選項的容器 */
-                margin-bottom: 0.3em;
-            }
+            #personalInfoContainer > div > div { margin-bottom: 0.2em; }
 
             #personalInfoContainer div,
             #personalInfoContainer label,
             #personalInfoContainer input[type="radio"] + label {
-                font-size: 8.5pt !important;
-                color: #000 !important;
-                margin-bottom: 0.15em !important;
-                line-height: 1.2 !important;
+                font-size: 8pt !important; margin-bottom: 0.1em !important; line-height: 1.1 !important;
             }
-            #personalInfoContainer label.block { margin-bottom: 0.2em !important; font-weight: bold; }
+            #personalInfoContainer label.block { margin-bottom: 0.15em !important; font-weight: bold; }
 
             #personalInfoContainer input[type="radio"] {
-                 width: 0.9em;
-                 height: 0.9em;
-                 vertical-align: middle;
+                 width: 0.8em; height: 0.8em; vertical-align: middle;
             }
             input[type="radio"]:checked::before {
-                content: "◉";
-                font-size: 1.1em;
-                color: black;
-                display: inline-block;
-                width: 1em;
-                text-align: center;
-                position: relative;
-                left: -1.3em;
-                top: -0.12em;
+                font-size: 1em; left: -1.25em; top: -0.1em;
             }
-             input[type="radio"] {
-                opacity: 1 !important;
-            }
+             input[type="radio"] { opacity: 1 !important; }
             #retired_options_container label,
             #retired_options_container input[type="radio"] + label {
-                font-size: 7.5pt !important;
+                font-size: 7pt !important;
             }
 
-            .highlight-error { /* 移除列印時的錯誤提示 */
-                outline: none !important;
-                box-shadow: none !important;
-            }
+            .highlight-error { outline: none !important; box-shadow: none !important; }
         }
     </style>
 </head>
@@ -303,7 +267,7 @@
                         <thead>
                             <tr>
                                 <th class="top-left-header-cell">
-                                    影響<br>來源<br>因素<br>(欄)<br>↓<br>受影響<br>因素<br>(列)<br>→
+                                    <!-- 內容由 JS 設定 -->
                                 </th>
                             </tr>
                         </thead>
@@ -326,11 +290,11 @@
                         <label class="block font-medium text-gray-700 mb-1">1. 性別：</label>
                         <div class="flex items-center space-x-4">
                             <div>
-                                <input type="radio" id="gender_male" name="gender" value="生理男" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full">
+                                <input type="radio" id="gender_male" name="gender" value="生理男" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
                                 <label for="gender_male" class="ml-2 text-gray-700">生理男</label>
                             </div>
                             <div>
-                                <input type="radio" id="gender_female" name="gender" value="生理女" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full">
+                                <input type="radio" id="gender_female" name="gender" value="生理女" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
                                 <label for="gender_female" class="ml-2 text-gray-700">生理女</label>
                             </div>
                         </div>
@@ -351,11 +315,11 @@
                         <label class="block font-medium text-gray-700 mb-1">5. 職務類型：</label>
                         <div class="flex items-center space-x-4">
                            <div>
-                                <input type="radio" id="job_leader" name="job_type" value="領導職" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full">
+                                <input type="radio" id="job_leader" name="job_type" value="領導職" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
                                 <label for="job_leader" class="ml-2 text-gray-700">領導職</label>
                             </div>
                             <div>
-                                <input type="radio" id="job_non_leader" name="job_type" value="非領導職" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full">
+                                <input type="radio" id="job_non_leader" name="job_type" value="非領導職" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
                                 <label for="job_non_leader" class="ml-2 text-gray-700">非領導職</label>
                             </div>
                         </div>
@@ -364,11 +328,11 @@
                         <label class="block font-medium text-gray-700 mb-1">6. 兵役情況：</label>
                         <div class="space-y-1">
                             <div>
-                                <input type="radio" id="service_current" name="military_service_status" value="現役" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full">
+                                <input type="radio" id="service_current" name="military_service_status" value="現役" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
                                 <label for="service_current" class="ml-2 text-gray-700">現役</label>
                             </div>
                             <div>
-                                <input type="radio" id="service_retired" name="military_service_status" value="已退役" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full">
+                                <input type="radio" id="service_retired" name="military_service_status" value="已退役" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
                                 <label for="service_retired" class="ml-2 text-gray-700">已退役</label>
                                 <div id="retired_options_container" class="ml-6 mt-2 space-y-1 hidden">
                                     <div>
@@ -424,16 +388,14 @@
             const topLeftHeaderCell = questionnaireForm.querySelector('.top-left-header-cell');
 
             if (topLeftHeaderCell) {
-                 // 更新左上角標題的文字，確保換行符號 <br> 被正確解析
-                topLeftHeaderCell.innerHTML = '影響<br>來源<br>因素<br>(欄)<br>↓<br>受影響<br>因素<br>(列)<br>→';
+                topLeftHeaderCell.innerHTML = '影響來源<br>(欄) ↓<br>受影響因素<br>(列) →'; // 更新左上角標題的文字
             }
-
 
             if (tableHeadRow) {
                 aspects.forEach(aspect => {
                     const th = document.createElement('th');
                     th.className = "aspect-label sticky-row";
-                    if (aspect.length === 4 && !aspect.includes('<br>')) { // 避免重複處理已包含<br>的標籤
+                    if (aspect.length === 4 && !aspect.includes('<br>')) {
                         th.innerHTML = aspect.substring(0,2) + '<br>' + aspect.substring(2,4);
                     } else {
                         th.textContent = aspect;
@@ -462,19 +424,13 @@
                             const input = document.createElement('input');
                             input.type = "number";
                             input.name = `rating_${rowIndex}_${colIndex}`;
-                            input.min = "0"; // HTML5 原生驗證
-                            input.max = "4"; // HTML5 原生驗證
-                            input.pattern = "[0-4]"; // HTML5 原生驗證 (單一數字)
+                            input.min = "0"; input.max = "4"; input.pattern = "[0-4]";
                             input.addEventListener('input', function() {
-                                // 確保輸入為0-4的單一數字
                                 const value = this.value;
                                 if (value === "") return;
-
                                 const num = parseInt(value, 10);
                                 if (isNaN(num) || num < 0 || num > 4 || value.length > 1 || !/^[0-9]$/.test(value)) {
-                                    // 雖然有原生驗證，但 alert 仍然可以作為額外提醒
-                                    // alert("提醒：評比數字需介於 0 到 4 之間，且為單一數字！");
-                                    this.value = ""; // 清除非法輸入
+                                    this.value = "";
                                 }
                             });
                             td.appendChild(input);
@@ -486,9 +442,10 @@
             }
 
             if (definitionsList) {
+                definitionsList.innerHTML = ''; // 清空
                 aspectDefinitions.forEach((definition, index) => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<strong>${aspects[index]}：</strong>${definition}`; // 將構面名稱也加入
+                    li.innerHTML = `<strong>${index + 1}. ${aspects[index]}：</strong>${definition}`;
                     definitionsList.appendChild(li);
                 });
             }
@@ -496,11 +453,11 @@
             function setupRadioGroup(containerId, optionsArray, groupName, gridColsClass = 'sm:grid-cols-3') {
                 const container = questionnaireForm.querySelector(`#${containerId}`);
                 if (!container) { console.error(`容器 ID '${containerId}' 未找到`); return; }
-                container.innerHTML = ''; // 清空舊內容
-                container.className = `grid grid-cols-2 ${gridColsClass} gap-2`; // 更新 class 以應用 grid
+                container.innerHTML = '';
+                container.className = `grid grid-cols-2 ${gridColsClass} gap-2`;
 
                 optionsArray.forEach((opt, index) => {
-                    const div = document.createElement('div'); // 每個選項一個 div
+                    const div = document.createElement('div');
                     const inputId = `${groupName}_${index}`;
                     div.innerHTML = `
                         <input type="radio" id="${inputId}" name="${groupName}" value="${opt}" class="h-4 w-4 text-sky-600 border-gray-300 focus:ring-sky-500 rounded-full" required>
@@ -509,39 +466,26 @@
                     container.appendChild(div);
                 });
             }
-            // 年資選項使用預設的 sm:grid-cols-3
             setupRadioGroup('yearsServiceContainer', personalInfoOptions.year_service, 'year_service');
-            // 教育程度和階級使用單欄顯示，因此調整 gridColsClass
             setupRadioGroup('educationLevelContainer', personalInfoOptions.education_level, 'education_level', 'grid-cols-1');
             setupRadioGroup('rankContainer', personalInfoOptions.rank_options, 'rank', 'grid-cols-1');
-
 
             const serviceCurrentRadio = questionnaireForm.querySelector('#service_current');
             const serviceRetiredRadio = questionnaireForm.querySelector('#service_retired');
             const retiredOptionsDiv = questionnaireForm.querySelector('#retired_options_container');
             const retiredStatusRadios = questionnaireForm.querySelectorAll('input[name="retired_status"]');
-            // 將個人基本資料的 radio button 也設為 required
-            questionnaireForm.querySelectorAll('#genderSection input[type="radio"], #jobTypeSection input[type="radio"], #militaryServiceSection > div > div > input[type="radio"]').forEach(radio => {
-                radio.required = true;
-            });
-
 
             if(serviceCurrentRadio && serviceRetiredRadio && retiredOptionsDiv) {
                 serviceCurrentRadio.addEventListener('change', function() {
                     if (this.checked) {
                         retiredOptionsDiv.classList.add('hidden');
-                        retiredStatusRadios.forEach(radio => {
-                            radio.checked = false;
-                            radio.required = false; // 非必填
-                        });
+                        retiredStatusRadios.forEach(radio => { radio.checked = false; radio.required = false; });
                     }
                 });
                 serviceRetiredRadio.addEventListener('change', function() {
                     if (this.checked) {
                         retiredOptionsDiv.classList.remove('hidden');
-                        retiredStatusRadios.forEach(radio => {
-                            radio.required = true; // 設為必填
-                        });
+                        retiredStatusRadios.forEach(radio => { radio.required = true; });
                     }
                 });
             }
@@ -555,27 +499,9 @@
                     { name: 'job_type', sectionId: 'jobTypeSection', label: '職務類型' },
                     { name: 'military_service_status', sectionId: 'militaryServiceSection', label: '兵役情況' }
                 ];
-
-                // 檢查評分表格是否有至少一個填寫 (可選)
-                let ratingFilled = false;
-                const ratingInputs = questionnaireForm.querySelectorAll('.rating-table input[type="number"]');
-                for (const input of ratingInputs) {
-                    if (input.value.trim() !== "") {
-                        ratingFilled = true;
-                        break;
-                    }
-                }
-                // if (!ratingFilled) {
-                //     alert("提醒：「十五項構面影響關係之評比」尚未填寫任何內容。若無需填寫此部分，可直接提交。");
-                //     // 可以選擇是否要強制填寫，目前設定為可選
-                // }
-
-
                 for (const section of personalInfoSections) {
-                    // 使用 querySelectorAll 檢查 radio 是否有被選中
                     const selectedRadio = questionnaireForm.querySelector(`input[name="${section.name}"]:checked`);
                     const sectionElement = questionnaireForm.querySelector(`#${section.sectionId}`);
-
                     if (!selectedRadio) {
                         if (sectionElement) {
                             sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -585,7 +511,6 @@
                         alert(`提醒：「${section.label}」尚未填寫，請檢查後再提交。`);
                         return false;
                     }
-
                     if (section.name === 'military_service_status' && selectedRadio.value === '已退役') {
                         const retiredStatusSelected = questionnaireForm.querySelector('input[name="retired_status"]:checked');
                         if (!retiredStatusSelected) {
@@ -606,139 +531,75 @@
             if (questionnaireForm) {
                 questionnaireForm.addEventListener('submit', function(event) {
                     event.preventDefault();
-                    console.log("「提交問卷 (寄送郵件)」按鈕被點擊，開始驗證...");
+                    if (!validateAndFocusFirstError()) { return; }
 
-                    if (!validateAndFocusFirstError()) {
-                        console.log("驗證未通過，不執行後續操作。");
-                        return;
-                    }
-
-                    console.log("驗證通過。");
-
-                    alert('問卷驗證通過。\n\n即將準備列印問卷填答內容。\n在接下來的列印預覽視窗中，您可以：\n  - 選擇印表機 (或另存為PDF)\n  - 調整紙張大小 (建議A4)\n  - 設定版面為「橫向 Landscape」以容納較寬的表格\n  - 調整「縮放 Scale」比例 (例如：設為「符合頁面大小」或自訂百分比，如70%-90%)\n\n列印完成或取消列印後，才會繼續進行郵件寄送步驟。');
-
-                    // 觸發列印
+                    alert('問卷驗證通過。\n\n即將準備列印問卷填答內容。\n在接下來的列印預覽視窗中，請務必：\n  1. 將「版面設定」調整為「橫向 (Landscape)」。\n  2. 調整「縮放 (Scale)」比例 (例如：「符合頁面大小」或手動設定一個較小百分比，如 50%-70%)，直到整個表格能完整顯示於一頁。\n\n列印完成或取消列印後，才會繼續進行郵件寄送步驟。');
                     window.print();
 
-                    // 列印完成後 (無論成功或取消)，繼續組裝郵件內容
-                    // 為了確保郵件寄送邏輯在列印對話框關閉後執行，可以使用 setTimeout 稍微延遲
-                    // 但實際上 window.print() 是同步阻塞的，所以理論上不需要 setTimeout。
-                    // 不過，為了以防萬一某些瀏覽器行為不一致，可以保留一個極短的延遲。
                     setTimeout(() => {
-                        console.log("列印流程已觸發/結束，準備組裝郵件內容。");
                         let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果：\n\n";
                         mailBody += "==========================================\n";
                         mailBody += "壹、十五項構面影響關係之評比：\n";
                         mailBody += "(格式：影響來源構面 -> 受影響構面：評分值)\n";
                         mailBody += "==========================================\n";
-
                         const formDataForMail = new FormData(questionnaireForm);
                         let ratingDataExists = false;
-                        let ratingSectionOutput = ""; // 用於暫存評分部分的內容
-
+                        let ratingSectionOutput = "";
                         aspects.forEach((rowAspect, rowIndex) => {
-                            let rowSpecificOutput = "";
                             aspects.forEach((colAspect, colIndex) => {
                                 if (rowIndex !== colIndex) {
                                     const inputName = `rating_${rowIndex}_${colIndex}`;
                                     const inputValue = formDataForMail.get(inputName);
                                     if (inputValue !== null && inputValue.trim() !== "") {
-                                        // 為了讓郵件內容更易讀，將 "影響來源 -> 受影響" 的格式調整為每行一個
-                                        rowSpecificOutput += `${rowAspect} -> ${colAspect}: ${inputValue}\n`;
+                                        ratingSectionOutput += `${rowAspect} -> ${colAspect}: ${inputValue}\n`;
                                         ratingDataExists = true;
                                     }
                                 }
                             });
-                            if (rowSpecificOutput) {
-                                ratingSectionOutput += rowSpecificOutput; // 不再分組，直接附加
-                            }
                         });
-
-                        if (ratingDataExists) {
-                            mailBody += ratingSectionOutput;
-                        } else {
-                            mailBody += "(此部分無填答資料)\n";
-                        }
-                        mailBody += "\n";
-
-
-                        mailBody += "==========================================\n";
+                        mailBody += ratingDataExists ? ratingSectionOutput : "(此部分無填答資料)\n";
+                        mailBody += "\n==========================================\n";
                         mailBody += "肆、個人基本資料：\n";
                         mailBody += "==========================================\n";
-
-                        const gender = formDataForMail.get('gender');
-                        if (gender) mailBody += `1. 性別： ${gender}\n`;
-
-                        const yearService = formDataForMail.get('year_service');
-                        if (yearService) mailBody += `2. 年資： ${yearService}\n`;
-
-                        const educationLevel = formDataForMail.get('education_level');
-                        if (educationLevel) mailBody += `3. 教育程度： ${educationLevel}\n`;
-
-                        const rank = formDataForMail.get('rank');
-                        if (rank) mailBody += `4. 階級： ${rank}\n`;
-
-                        const jobType = formDataForMail.get('job_type');
-                        if (jobType) mailBody += `5. 職務類型： ${jobType}\n`;
-
+                        const pInfo = [
+                            {key: 'gender', label: '1. 性別'}, {key: 'year_service', label: '2. 年資'},
+                            {key: 'education_level', label: '3. 教育程度'}, {key: 'rank', label: '4. 階級'},
+                            {key: 'job_type', label: '5. 職務類型'}
+                        ];
+                        pInfo.forEach(info => {
+                            const val = formDataForMail.get(info.key);
+                            if (val) mailBody += `${info.label}： ${val}\n`;
+                        });
                         const militaryServiceStatus = formDataForMail.get('military_service_status');
                         if (militaryServiceStatus) {
                             mailBody += `6. 兵役情況： ${militaryServiceStatus}`;
                             if (militaryServiceStatus === '已退役') {
                                 const retiredStatus = formDataForMail.get('retired_status');
-                                if (retiredStatus) {
-                                    mailBody += ` (${retiredStatus})\n`;
-                                } else {
-                                    mailBody += " (退役狀況未選擇)\n";
-                                }
-                            } else {
-                                mailBody += "\n";
-                            }
+                                mailBody += retiredStatus ? ` (${retiredStatus})\n` : " (退役狀況未選擇)\n";
+                            } else { mailBody += "\n"; }
                         }
                         mailBody += "\n感謝您的填答！\n";
-
                         const recipientEmail = "ts9074@gmail.com";
                         const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究";
-
-                        const encodedSubject = encodeURIComponent(mailSubject);
-                        const encodedBody = encodeURIComponent(mailBody);
-
-                        const mailtoLink = `mailto:${recipientEmail}?subject=${encodedSubject}&body=${encodedBody}`;
-
-                        console.log("Mailto link:", mailtoLink);
-                        // console.log("Mail body content:\n", mailBody); // 印出郵件內容以供調試
-
+                        const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
                         try {
                              window.location.href = mailtoLink;
-                             // 郵件寄送提示可以等實際跳轉後再提示，或者如果跳轉失敗則提示
-                             // alert('即將開啟您的電子郵件應用程式以寄送問卷。\n請檢查內容並手動按下「傳送/寄出」按鈕。\n\n若郵件程式未自動開啟，請檢查瀏覽器設定或是否有預設郵件應用程式。');
                         } catch (e) {
                             console.error("無法開啟郵件客戶端:", e);
-                            alert('開啟郵件客戶端失敗。\n\n這可能是因為瀏覽器限制或未設定預設郵件應用程式。\n\n您可以手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
+                            alert('開啟郵件客戶端失敗。\n\n您可以手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
                         }
-                    }, 100); // 100毫秒延遲，給列印對話框一點時間
+                    }, 100);
                 });
 
                 questionnaireForm.addEventListener('reset', function() {
-                    questionnaireForm.querySelectorAll('.highlight-error').forEach(el => {
-                        el.classList.remove('highlight-error');
-                    });
-                    // 確保 DOM 更新後再執行 classList 操作
+                    questionnaireForm.querySelectorAll('.highlight-error').forEach(el => el.classList.remove('highlight-error'));
                     setTimeout(() => {
                         const currentRetiredOptionsDiv = questionnaireForm.querySelector('#retired_options_container');
                         if(currentRetiredOptionsDiv) currentRetiredOptionsDiv.classList.add('hidden');
-
                         const currentRetiredStatusRadios = questionnaireForm.querySelectorAll('input[name="retired_status"]');
-                        if(currentRetiredStatusRadios) {
-                            currentRetiredStatusRadios.forEach(radio => {
-                                radio.checked = false;
-                                radio.required = false; // 重設時也取消必填
-                            });
-                        }
+                        if(currentRetiredStatusRadios) currentRetiredStatusRadios.forEach(radio => { radio.checked = false; radio.required = false; });
                     }, 0);
                 });
-            } else {
-                console.error("問卷表單 (questionnaireForm) 未找到！");
             }
         });
     </script>
