@@ -96,7 +96,6 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            /* 嘗試建議瀏覽器預設為橫向A4，但最終仍由使用者在列印預覽中控制 */
             @page {
                 size: A4 landscape;
                 margin: 5mm;
@@ -396,6 +395,7 @@
             }
 
             function validateAndFocusFirstError() {
+                console.log("執行 validateAndFocusFirstError() 函數...");
                 const personalInfoSections = [
                     { name: 'gender', sectionId: 'genderSection', label: '性別'},
                     { name: 'year_service', sectionId: 'yearServiceSection', label: '年資' },
@@ -408,6 +408,7 @@
                     const selectedRadio = questionnaireForm.querySelector(`input[name="${section.name}"]:checked`);
                     const sectionElement = questionnaireForm.querySelector(`#${section.sectionId}`);
                     if (!selectedRadio) {
+                        console.warn(`驗證失敗：欄位 "${section.label}" 未填寫。`);
                         if (sectionElement) {
                             sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             sectionElement.classList.add('highlight-error');
@@ -419,6 +420,7 @@
                     if (section.name === 'military_service_status' && selectedRadio.value === '已退役') {
                         const retiredStatusSelected = questionnaireForm.querySelector('input[name="retired_status"]:checked');
                         if (!retiredStatusSelected) {
+                            console.warn("驗證失敗：選擇「已退役」但未填寫役期狀況。");
                             const retiredContainer = questionnaireForm.querySelector('#retired_options_container');
                              if (retiredContainer) {
                                 retiredContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -430,137 +432,143 @@
                         }
                     }
                 }
+                console.log("所有個人基本資料欄位驗證通過。");
                 return true;
             }
 
             if (questionnaireForm) {
                 questionnaireForm.addEventListener('submit', function(event) {
                     event.preventDefault();
+                    console.log("問卷提交按鈕被點擊。");
+
                     if (!validateAndFocusFirstError()) {
-                        console.log("驗證未通過，已中止提交。");
+                        console.log("驗證未通過，已中止提交程序。");
                         return;
                     }
-                    console.log("問卷驗證通過。");
+                    console.log("問卷驗證成功。");
 
                     alert(
                         '即將開啟列印預覽視窗，以便您儲存問卷副本為PDF。\n\n' +
                         '【重要列印設定】請在列印預覽中務必：\n' +
-                        '  1. 目的地/印表機：選擇「另存為 PDF」或您的PDF印表機。\n' +
-                        '  2. 版面設定：調整為「橫向 (Landscape)」。\n' +
-                        '  3. 更多設定 > 縮放：調整比例 (例如「符合頁面大小」或手動調整至 50%-70%)，確保表格完整顯示。\n\n' +
-                        '在您完成「儲存PDF」(或取消列印) 後，程式將自動繼續處理郵件寄送。'
+                        '  1. 目的地/印表機：選擇「另存為 PDF」(Save as PDF) 或您的PDF印表機。\n' +
+                        '  2. 版面設定(Layout/Orientation)：調整為「橫向 (Landscape)」。\n' +
+                        '  3. 更多設定 > 縮放(Scale)：調整比例 (例如「符合頁面大小」或手動調整至 50%-70%)，確保表格完整顯示。\n\n' +
+                        '在您完成「儲存PDF」(或取消列印) 後，程式將自動繼續處理郵件寄送。\n請勿在儲存PDF前關閉此網頁。'
                     );
 
-                    console.log("準備呼叫 window.print()...");
+                    console.log("準備執行 window.print() 以開啟列印對話框...");
                     window.print(); // 此操作會暫停JS執行，直到列印對話框關閉
 
-                    // 列印對話框關閉後，此處的程式碼才會繼續執行
-                    console.log("window.print() 已結束 (使用者已完成列印/儲存PDF/取消)。準備寄送郵件...");
+                    // --- 此處的程式碼會在列印對話框關閉後才執行 ---
+                    console.log("window.print() 執行結束 (使用者已完成列印/儲存PDF/取消操作)。");
+                    console.log("準備開始組裝郵件內容...");
 
-                    setTimeout(() => {
-                        console.log("開始組裝郵件內容...");
-                        const formDataForMail = new FormData(questionnaireForm);
-                        let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果（純文字摘要）：\n\n";
-                        mailBody += "==========================================\n";
-                        mailBody += "壹、十五項構面影響關係之評比：\n";
-                        mailBody += "(格式：影響來源構面 -> 受影響構面：評分值)\n";
-                        mailBody += "==========================================\n";
+                    const formDataForMail = new FormData(questionnaireForm);
+                    let mailBody = "「影響空軍修護人員離職因素之研究」問卷填答結果（純文字摘要）：\n\n";
+                    mailBody += "==========================================\n";
+                    mailBody += "壹、十五項構面影響關係之評比：\n";
+                    mailBody += "(格式：影響來源構面 -> 受影響構面：評分值)\n";
+                    mailBody += "==========================================\n";
 
-                        let ratingDataExists = false;
-                        let ratingSectionOutput = "";
-                        aspects.forEach((rowAspect, rowIndex) => {
-                            aspects.forEach((colAspect, colIndex) => {
-                                if (rowIndex !== colIndex) {
-                                    const inputName = `rating_${rowIndex}_${colIndex}`;
-                                    const inputValue = formDataForMail.get(inputName);
-                                    if (inputValue !== null && inputValue.trim() !== "") {
-                                        ratingSectionOutput += `${rowAspect} -> ${colAspect}: ${inputValue}\n`;
-                                        ratingDataExists = true;
-                                    }
+                    let ratingDataExists = false;
+                    let ratingSectionOutput = "";
+                    aspects.forEach((rowAspect, rowIndex) => {
+                        aspects.forEach((colAspect, colIndex) => {
+                            if (rowIndex !== colIndex) {
+                                const inputName = `rating_${rowIndex}_${colIndex}`;
+                                const inputValue = formDataForMail.get(inputName);
+                                if (inputValue !== null && inputValue.trim() !== "") {
+                                    ratingSectionOutput += `${rowAspect} -> ${colAspect}: ${inputValue}\n`;
+                                    ratingDataExists = true;
                                 }
-                            });
+                            }
                         });
-                        mailBody += ratingDataExists ? ratingSectionOutput : "(此部分無填答資料)\n";
-                        mailBody += "\n==========================================\n";
-                        mailBody += "肆、個人基本資料：\n";
-                        mailBody += "==========================================\n";
-                        const pInfoPlain = [
-                            {key: 'gender', label: '1. 性別'}, {key: 'year_service', label: '2. 年資'},
-                            {key: 'education_level', label: '3. 教育程度'}, {key: 'rank', label: '4. 階級'},
-                            {key: 'job_type', label: '5. 職務類型'}
-                        ];
-                        pInfoPlain.forEach(info => {
-                            const val = formDataForMail.get(info.key);
-                            if (val) mailBody += `${info.label}： ${val}\n`;
+                    });
+                    mailBody += ratingDataExists ? ratingSectionOutput : "(此部分無填答資料)\n";
+                    mailBody += "\n==========================================\n";
+                    mailBody += "肆、個人基本資料：\n";
+                    mailBody += "==========================================\n";
+                    const pInfoPlain = [
+                        {key: 'gender', label: '1. 性別'}, {key: 'year_service', label: '2. 年資'},
+                        {key: 'education_level', label: '3. 教育程度'}, {key: 'rank', label: '4. 階級'},
+                        {key: 'job_type', label: '5. 職務類型'}
+                    ];
+                    pInfoPlain.forEach(info => {
+                        const val = formDataForMail.get(info.key);
+                        if (val) mailBody += `${info.label}： ${val}\n`;
+                    });
+                    const militaryServiceStatusPlain = formDataForMail.get('military_service_status');
+                    if (militaryServiceStatusPlain) {
+                        mailBody += `6. 兵役情況： ${militaryServiceStatusPlain}`;
+                        if (militaryServiceStatusPlain === '已退役') {
+                            const retiredStatusPlain = formDataForMail.get('retired_status');
+                            mailBody += retiredStatusPlain ? ` (${retiredStatusPlain})\n` : " (退役狀況未選擇)\n";
+                        } else { mailBody += "\n"; }
+                    }
+                    mailBody += "\n感謝您的填答！\n\n";
+                    mailBody += "------------------------------------------------------------\n";
+                    mailBody += "以下為 CSV 格式資料，您可以複製此區塊文字，\n貼到純文字檔案中並儲存為 .csv 檔案，即可用試算表軟體開啟：\n";
+                    mailBody += "------------------------------------------------------------\n\n";
+
+                    let csvData = "";
+                    csvData += "影響關係評比 (列影響欄)\n";
+                    csvData += "," + aspects.join(",") + "\n";
+                    aspects.forEach((rowAspect, rowIndex) => {
+                        let csvRow = `"${rowAspect.replace(/"/g, '""')}"`;
+                        aspects.forEach((colAspect, colIndex) => {
+                            if (rowIndex === colIndex) {
+                                csvRow += ",X";
+                            } else {
+                                const inputName = `rating_${rowIndex}_${colIndex}`;
+                                const inputValue = formDataForMail.get(inputName);
+                                csvRow += `,${inputValue !== null && inputValue.trim() !== "" ? inputValue.trim() : ""}`;
+                            }
                         });
-                        const militaryServiceStatusPlain = formDataForMail.get('military_service_status');
-                        if (militaryServiceStatusPlain) {
-                            mailBody += `6. 兵役情況： ${militaryServiceStatusPlain}`;
-                            if (militaryServiceStatusPlain === '已退役') {
-                                const retiredStatusPlain = formDataForMail.get('retired_status');
-                                mailBody += retiredStatusPlain ? ` (${retiredStatusPlain})\n` : " (退役狀況未選擇)\n";
-                            } else { mailBody += "\n"; }
-                        }
-                        mailBody += "\n感謝您的填答！\n\n";
-                        mailBody += "------------------------------------------------------------\n";
-                        mailBody += "以下為 CSV 格式資料，您可以複製此區塊文字，\n貼到純文字檔案中並儲存為 .csv 檔案，即可用試算表軟體開啟：\n";
-                        mailBody += "------------------------------------------------------------\n\n";
+                        csvData += csvRow + "\n";
+                    });
+                    csvData += "\n";
+                    csvData += "個人基本資料\n";
+                    csvData += "項目,內容\n";
+                    const pInfoCsv = [
+                        {key: 'gender', label: '性別'}, {key: 'year_service', label: '年資'},
+                        {key: 'education_level', label: '教育程度'}, {key: 'rank', label: '階級'},
+                        {key: 'job_type', label: '職務類型'},
+                        {key: 'military_service_status', label: '兵役情況'}
+                    ];
+                    pInfoCsv.forEach(info => {
+                        const val = formDataForMail.get(info.key);
+                        if (val) csvData += `"${info.label.replace(/"/g, '""')}","${val.replace(/"/g, '""')}"\n`;
+                    });
+                    if (formDataForMail.get('military_service_status') === '已退役') {
+                        const retiredStatusCsv = formDataForMail.get('retired_status');
+                        if (retiredStatusCsv) csvData += `"退役狀況","${retiredStatusCsv.replace(/"/g, '""')}"\n`;
+                    }
+                    mailBody += csvData;
 
-                        let csvData = "";
-                        csvData += "影響關係評比 (列影響欄)\n";
-                        csvData += "," + aspects.join(",") + "\n";
-                        aspects.forEach((rowAspect, rowIndex) => {
-                            let csvRow = `"${rowAspect.replace(/"/g, '""')}"`;
-                            aspects.forEach((colAspect, colIndex) => {
-                                if (rowIndex === colIndex) {
-                                    csvRow += ",X";
-                                } else {
-                                    const inputName = `rating_${rowIndex}_${colIndex}`;
-                                    const inputValue = formDataForMail.get(inputName);
-                                    csvRow += `,${inputValue !== null && inputValue.trim() !== "" ? inputValue.trim() : ""}`;
-                                }
-                            });
-                            csvData += csvRow + "\n";
-                        });
-                        csvData += "\n";
-                        csvData += "個人基本資料\n";
-                        csvData += "項目,內容\n";
-                        const pInfoCsv = [
-                            {key: 'gender', label: '性別'}, {key: 'year_service', label: '年資'},
-                            {key: 'education_level', label: '教育程度'}, {key: 'rank', label: '階級'},
-                            {key: 'job_type', label: '職務類型'},
-                            {key: 'military_service_status', label: '兵役情況'}
-                        ];
-                        pInfoCsv.forEach(info => {
-                            const val = formDataForMail.get(info.key);
-                            if (val) csvData += `"${info.label.replace(/"/g, '""')}","${val.replace(/"/g, '""')}"\n`;
-                        });
-                        if (formDataForMail.get('military_service_status') === '已退役') {
-                            const retiredStatusCsv = formDataForMail.get('retired_status');
-                            if (retiredStatusCsv) csvData += `"退役狀況","${retiredStatusCsv.replace(/"/g, '""')}"\n`;
-                        }
-                        mailBody += csvData;
+                    console.log("郵件內容 (含CSV) 已組裝完成。");
+                    // console.log("Mail body content for debugging:\n", mailBody); // 可取消註解以在控制台查看完整郵件內容
 
-                        const recipientEmail = "ts9074@gmail.com";
-                        const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究 (含CSV)";
-                        const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+                    const recipientEmail = "ts9074@gmail.com";
+                    const mailSubject = "問卷填答結果 - 影響空軍修護人員離職因素之研究 (含CSV)";
+                    const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
 
-                        console.log("郵件內容已組裝完成，準備跳轉 mailto link...");
-                        // console.log("Mail body content:\n", mailBody); // 取消註解以在控制台查看完整郵件內容
+                    console.log("準備跳轉至 mailto link: ", mailtoLink.substring(0,100) + "..."); // 只顯示部分 mailto link 以免過長
 
-                        try {
-                             window.location.href = mailtoLink;
-                             console.log("已嘗試跳轉至郵件客戶端。");
-                        } catch (e) {
-                            console.error("無法開啟郵件客戶端:", e);
-                            alert('開啟郵件客戶端失敗。\n\n您可以手動複製以下內容並寄送至 ' + recipientEmail + '：\n\n' + mailBody);
-                        }
-                    }, 50); // 短暫延遲，確保UI更新後執行
+                    try {
+                         window.location.href = mailtoLink;
+                         console.log("已嘗試跳轉至郵件客戶端。");
+                    } catch (e) {
+                        console.error("開啟郵件客戶端時發生錯誤:", e);
+                        alert('開啟郵件客戶端失敗。\n\n您可以手動複製郵件內容 (已顯示於開發者工具 Console 中) 並寄送至 ' + recipientEmail);
+                        // 在錯誤情況下，也將 mailBody 輸出到 console，方便使用者複製
+                        console.log("郵件內容 (供手動複製):\n", mailBody);
+                    }
                 });
 
                 questionnaireForm.addEventListener('reset', function() {
+                    console.log("清除重填按鈕被點擊。");
                     questionnaireForm.querySelectorAll('.highlight-error').forEach(el => el.classList.remove('highlight-error'));
-                    setTimeout(() => {
+                    setTimeout(() => { // 使用 setTimeout 確保 DOM 更新
                         const currentRetiredOptionsDiv = questionnaireForm.querySelector('#retired_options_container');
                         if(currentRetiredOptionsDiv) currentRetiredOptionsDiv.classList.add('hidden');
                         const currentRetiredStatusRadios = questionnaireForm.querySelectorAll('input[name="retired_status"]');
@@ -568,7 +576,7 @@
                     }, 0);
                 });
             } else {
-                console.error("錯誤：問卷表單 (questionnaireForm) 未在DOM中找到！");
+                console.error("嚴重錯誤：問卷表單元素 (ID: questionnaireForm) 未在 DOM 中找到！程式無法正常運作。");
             }
         });
     </script>
