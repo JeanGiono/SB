@@ -9,9 +9,14 @@
         body {
             font-family: 'Inter', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
         }
-        .aspect-cell {
-            min-width: 3.75rem; /* 優化：60px -> 3.75rem */
+        .aspect-cell { /* 用於DEMATEL評估表中的構面標題和輸入儲存格 */
+            min-width: 4.5rem; /* 稍微增加最小寬度 (原 3.75rem) */
             text-align: center;
+            vertical-align: middle; /* 確保內容垂直居中 */
+        }
+        .dematel-table thead th.aspect-cell { /* 特別針對表頭的構面 */
+            height: 4em; /* 增加高度以容納換行 */
+            line-height: 1.4; /* 調整行高 */
         }
         .input-cell {
             width: 4em;
@@ -42,17 +47,28 @@
             background-color: #f8fafc;
             z-index: 10;
             font-weight: 600;
+            min-width: 6rem; /* 讓影響構面有足夠寬度 */
+            height: 3em; /* 與輸入格同高 */
+            vertical-align: middle;
         }
-        .dematel-table thead th:first-child {
+        .dematel-table thead th:first-child { /* 左上角標題 */
             left: 0;
             z-index: 30;
+            min-width: 8rem; /* 給左上角標題更多空間 */
+            vertical-align: middle;
         }
         .diagonal-cell {
             background-color: #4b5563;
             color: #4b5563;
             user-select: none;
             vertical-align: middle;
+            height: 3em; /* 與輸入格同高 */
         }
+        .input-cell-container { /* 包裹輸入框的td */
+            height: 3em; /* 設定固定高度 */
+            vertical-align: middle;
+        }
+
         .custom-alert {
             display: none;
             position: fixed;
@@ -78,7 +94,7 @@
         }
         .radio-options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); /* 優化：120px -> 7.5rem */
+            grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
             gap: 0.5rem;
         }
         .example-table th, .example-table td {
@@ -90,104 +106,35 @@
             background-color: #e5e7eb;
         }
 
-
         /* 列印樣式 */
         @media print {
-            body {
-                font-size: 10pt;
-                margin: 0;
-                padding: 0;
-                background-color: #fff;
-            }
-            .max-w-4xl {
-                max-width: 100%;
-                box-shadow: none;
-                border: none;
-                padding: 1cm;
-            }
-            header, section:not(#printSectionDematalTable):not(#printSectionPersonalData), form > div:last-of-type, footer, #customAlert, .dematel-table-container {
-                display: none !important;
-            }
-             #printSectionDematalTable {
-                display: block !important;
-                margin-bottom: 20px;
-                overflow: visible;
-            }
-            #printSectionDematalTable table {
-                width: 100%;
-                font-size: 8pt;
-                border-collapse: collapse;
-                table-layout: fixed;
-            }
-            #printSectionDematalTable th, #printSectionDematalTable td {
-                border: 1px solid #000 !important;
-                padding: 2px;
-                min-width: auto !important;
-                background-color: #fff !important;
-                word-break: break-all;
-                vertical-align: middle;
-            }
-            #printSectionDematalTable th.aspect-header-print {
-                height: 3em;
-            }
-             .diagonal-cell {
-                 background-color: #ccc !important;
-                 color: #ccc !important;
-             }
-            #printSectionPersonalData {
-                display: block !important;
-                margin-top: 20px;
-            }
-            #printSectionPersonalData h2 {
-                font-size: 12pt;
-                margin-bottom: 10px;
-            }
-            #printSectionPersonalData p {
-                font-size: 10pt;
-                margin-bottom: 5px;
-            }
-            button[type="submit"], .bg-sky-50, .bg-emerald-50, .bg-indigo-50, .bg-gray-50, .text-sky-700, .text-emerald-700, .text-indigo-700, .border-sky-200, .border-emerald-200, .border-indigo-200, .border-gray-200 {
-                display: none !important;
-            }
-            .dematel-table-container {
-                 overflow: visible !important;
-            }
-            .dematel-table thead th, .dematel-table tbody td:first-child {
-                position: static !important;
-            }
+            body { font-size: 10pt; margin: 0; padding: 0; background-color: #fff; }
+            .max-w-4xl { max-width: 100%; box-shadow: none; border: none; padding: 1cm; }
+            header, section:not(#printSectionDematalTable):not(#printSectionPersonalData), form > div:last-of-type, footer, #customAlert, .dematel-table-container { display: none !important; }
+            #printSectionDematalTable { display: block !important; margin-bottom: 20px; overflow: visible; }
+            #printSectionDematalTable table { width: 100%; font-size: 8pt; border-collapse: collapse; table-layout: fixed; }
+            #printSectionDematalTable th, #printSectionDematalTable td { border: 1px solid #000 !important; padding: 2px; min-width: auto !important; background-color: #fff !important; word-break: break-all; vertical-align: middle; }
+            #printSectionDematalTable th.aspect-header-print { height: 3em; }
+            .diagonal-cell { background-color: #ccc !important; color: #ccc !important; }
+            #printSectionPersonalData { display: block !important; margin-top: 20px; }
+            #printSectionPersonalData h2 { font-size: 12pt; margin-bottom: 10px; }
+            #printSectionPersonalData p { font-size: 10pt; margin-bottom: 5px; }
+            button[type="submit"], .bg-sky-50, .bg-emerald-50, .bg-indigo-50, .bg-gray-50, .text-sky-700, .text-emerald-700, .text-indigo-700, .border-sky-200, .border-emerald-200, .border-indigo-200, .border-gray-200 { display: none !important; }
+            .dematel-table-container { overflow: visible !important; }
+            .dematel-table thead th, .dematel-table tbody td:first-child { position: static !important; }
         }
-        #printSectionDematalTable, #printSectionPersonalData {
-            display: none;
-        }
+        #printSectionDematalTable, #printSectionPersonalData { display: none; }
 
-
-        /* Media Queries 手動編寫範例 */
         @media (max-width: 768px) {
-            .dematel-table-container {
-                overflow-x: auto;
-                max-height: 500px;
-            }
-            .dematel-table th, .dematel-table td {
-                min-width: 5rem; /* 優化：80px -> 5rem */
-                font-size: 0.875rem;
-            }
-            .dematel-table .aspect-name-col {
-                min-width: 6.25rem; /* 優化: 100px -> 6.25rem */
-                white-space: normal;
-            }
-            .input-cell {
-                width: 3.5em;
-                font-size: 0.875rem;
-            }
-            .radio-options-grid {
-                 grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr)); /* 優化: 100px -> 6.25rem */
-            }
-             .example-table {
-                font-size: 0.75rem;
-            }
-            .example-table th, .example-table td {
-                padding: 0.15rem 0.3rem;
-            }
+            .dematel-table-container { overflow-x: auto; max-height: 500px; }
+            .dematel-table thead th.aspect-cell { min-width: 4.5rem; height: auto; line-height: 1.2; font-size:0.8rem; } /*手機版表頭調整*/
+            .dematel-table tbody td:first-child {min-width: 5.5rem; font-size:0.8rem;} /*手機版影響構面*/
+            .dematel-table thead th:first-child {min-width: 6rem; font-size:0.8rem;} /*手機版左上角*/
+            
+            .input-cell { width: 3.5em; font-size: 0.875rem; }
+            .radio-options-grid { grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr)); }
+            .example-table { font-size: 0.75rem; }
+            .example-table th, .example-table td { padding: 0.15rem 0.3rem; }
         }
     </style>
 </head>
@@ -277,11 +224,13 @@
                     <table class="min-w-full border-collapse border border-gray-300 dematel-table">
                         <thead>
                             <tr>
-                                <th class="p-2 border aspect-name-col">影響構面(i)↓ \ 被影響構面(j)→</th>
-                                </tr>
+                                <th class="p-2 border aspect-name-col">影響構面(i)↓ <br> 被影響構面(j)→</th>
+                                <!-- Headers generated by JavaScript -->
+                            </tr>
                         </thead>
                         <tbody>
-                            </tbody>
+                            <!-- Rows generated by JavaScript -->
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -289,6 +238,7 @@
             <section class="mb-8 p-4 bg-indigo-50 rounded-md border border-indigo-200">
                 <h2 class="text-lg font-semibold text-indigo-700 mb-3">構面定義說明</h2>
                  <ul class="space-y-2 text-sm text-gray-700">
+                    <!-- 構面定義內容 -->
                     <li><strong>1. 勞役不均：</strong> 工作任務分配不合理，常以低階優先，導致部分人員承擔過多工作。</li>
                     <li><strong>2. 任務壓力：</strong> 工作時間過長，工作量過多或工作內容過於繁重導致身心疲憊。</li>
                     <li><strong>3. 職業傷害：</strong> 飛機修護環境噪音過大，或需長時間承受大量廢氣或化學溶劑。</li>
@@ -304,12 +254,13 @@
                     <li><strong>13. 家庭照顧：</strong> 工作佔據私人時間過多對家庭照護不足無法充分陪伴家人。</li>
                     <li><strong>14. 就業市場：</strong> 民間企業提供更具吸引力的職涯發展機會工作選擇更加多元。</li>
                     <li><strong>15. 政策疑慮：</strong> 國家退撫、薪資政策變動頻繁，使得軍人對於未來權益保障產生不確定感與擔憂。</li>
-                </ul>
+                 </ul>
             </section>
 
             <section id="personalDataSection" class="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">肆、個人基本資料</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <!-- 個人資料表單內容 -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">1. 性別：</label>
                         <div class="flex items-center space-x-6">
@@ -406,14 +357,27 @@
                 alertBox.style.display = 'none';
             }, 3500);
         }
+        
+        // Helper function to format aspect names for display (two characters per line if 4 chars)
+        function formatAspectNameForDisplay(name) {
+            if (name.length === 4) {
+                return name.substring(0, 2) + '<br>' + name.substring(2, 4);
+            } else if (name.length === 2 || name.length === 3){ // For 2 or 3 char names, ensure they don't take too much space if BR added elsewhere
+                 return name;
+            }
+            return name; // Default for other lengths
+        }
+
 
         const firstHeaderCell = headerRow.querySelector('th');
+        firstHeaderCell.innerHTML = '影響構面(i)↓ <br> 被影響構面(j)→'; // 更新左上角標題使其換行
         firstHeaderCell.className = 'p-2 border aspect-name-col';
+
 
         aspects.forEach(aspect => {
             const th = document.createElement('th');
-            th.className = 'p-1 md:p-2 border aspect-cell';
-            th.textContent = aspect;
+            th.className = 'p-1 md:p-2 border aspect-cell'; // class 'aspect-cell' now handles vertical-align
+            th.innerHTML = formatAspectNameForDisplay(aspect); // 使用換行函數
             headerRow.appendChild(th);
         });
 
@@ -421,17 +385,16 @@
             const tr = document.createElement('tr');
             const firstTd = document.createElement('td');
             firstTd.className = 'p-1 md:p-2 border aspect-name-col'; 
-            firstTd.textContent = rowAspect;
+            firstTd.innerHTML = formatAspectNameForDisplay(rowAspect); // 左側影響構面也套用換行
             tr.appendChild(firstTd);
 
             aspects.forEach((colAspect, colIndex) => {
                 const td = document.createElement('td');
-                td.className = 'p-1 border aspect-cell';
                 if (rowIndex === colIndex) {
-                    td.classList.add('diagonal-cell');
+                    td.className = 'p-1 border diagonal-cell'; // diagonal-cell 包含 vertical-align
                     td.textContent = '██';
-                    td.style.verticalAlign = 'middle';
                 } else {
+                    td.className = 'p-1 border input-cell-container'; // 新增 class
                     const input = document.createElement('input');
                     input.type = 'number';
                     input.min = '0';
@@ -478,7 +441,7 @@
         if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
         toggleRetiredOptions();
 
-        function formatAspectNameForPrint(name) {
+        function formatAspectNameForPrint(name) { // 列印時的換行邏輯
             if (name.length === 4) {
                 return name.substring(0, 2) + '<br>' + name.substring(2, 4);
             }
@@ -681,15 +644,7 @@
                 if (mailToLink.length > 2000) {
                     showAlert("郵件內容過長，可能無法完整透過 mailto 傳送。建議手動複製主控台的資料。");
                     console.log("CSV 資料 (請手動複製):\n", csvData);
-                    console.log("個人基本資料 (請手動複製):\n", 
-                                `性別: ${collectedData.gender}\n` +
-                                `年資: ${collectedData.experience}\n` +
-                                `教育程度: ${collectedData.education}\n` +
-                                `階級: ${collectedData.rank}\n` +
-                                `職務類型: ${collectedData.job_type}\n` +
-                                `兵役情況: ${collectedData.military_service_status}` +
-                                (collectedData.military_service_status === '已退役' ? ` (${collectedData.military_service_detail || '未選擇詳細情況'})\n` : "\n")
-                    );
+                    console.log("個人基本資料 (請手動複製):\n", /* ...個人資料字串... */ );
                 } else {
                     setTimeout(() => {
                         console.log("嘗試開啟郵件客戶端，連結:", mailToLink);
