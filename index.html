@@ -203,7 +203,7 @@
                 <div class="flex justify-center my-3">
                     <div class="w-auto border border-gray-400 p-2 rounded bg-white shadow">
                          <p class="text-center font-semibold mb-1">影響程度示意</p>
-                        <table class="example-table text-center"> <!-- This example table still uses .example-table for simplicity -->
+                        <table class="example-table text-center">
                             <thead>
                                 <tr><th> </th><th class="px-2">構面A</th><th class="px-2">構面B</th></tr>
                             </thead>
@@ -392,8 +392,7 @@
 
         const firstHeaderCell = headerRow.querySelector('th');
         firstHeaderCell.innerHTML = '影響構面(i)↓ <br> 被影響構面(j)→';
-        // Removed explicit class setting for firstHeaderCell as it's handled by .dematel-table thead th.aspect-name-col in CSS
-
+        
         aspects.forEach(aspect => {
             const th = document.createElement('th');
             th.classList.add('aspect-cell'); 
@@ -556,17 +555,19 @@
             }
         }
 
-        function generateCSV(data) {
-            let csvContent = "影響構面\\被影響構面," + aspects.join(',') + "\n";
+        function generateCSVText(data) { // Renamed to avoid conflict with a potential global 'CSV'
+            let csvContent = "\"影響構面\\被影響構面\"," + aspects.map(a => `"${a}"`).join(',') + "\n"; // Quoted headers
             aspects.forEach((rowAspect, rowIndex) => {
-                let row = rowAspect;
+                let row = `"${rowAspect}"`; // Quoted row header
                 aspects.forEach((colAspect, colIndex) => {
                     if (rowIndex === colIndex) {
                         row += ",-"; 
                     } else {
                         const key = `${rowAspect}_影響_${colAspect}`;
                         const value = data[key] !== null && data[key] !== "無效輸入" ? data[key] : '';
-                        row += "," + value;
+                        // Quote if value contains comma or quote, or is not a simple number
+                        const quotedValue = (typeof value === 'string' && (value.includes(',') || value.includes('"'))) ? `"${value.replace(/"/g, '""')}"` : value;
+                        row += "," + quotedValue;
                     }
                 });
                 csvContent += row + "\n";
@@ -639,11 +640,11 @@
                 
                 console.log("onafterprint 事件觸發，準備寄送郵件。");
 
-                const csvData = generateCSV(collectedData);
+                const csvDataText = generateCSVText(collectedData); // Use the renamed function
                 let mailBody = "DEMATEL 問卷填答結果 (CSV 格式):\n";
-                mailBody += "```csv\n";
-                mailBody += csvData;
-                mailBody += "```\n\n";
+                mailBody += "--------------------------------------------------\n";
+                mailBody += csvDataText;
+                mailBody += "--------------------------------------------------\n\n";
                 mailBody += "個人基本資料:\n";
                 mailBody += `性別: ${collectedData.gender}\n`;
                 mailBody += `年資: ${collectedData.experience}\n`;
@@ -661,13 +662,25 @@
                                    `?subject=${encodeURIComponent("DEMATEL 問卷填答結果")}` +
                                    `&body=${encodeURIComponent(mailBody)}`;
 
-                if (mailToLink.length > 2000) {
-                    showAlert("郵件內容過長，可能無法完整透過 mailto 傳送。建議手動複製主控台的資料。");
-                    console.log("CSV 資料 (請手動複製):\n", csvData);
-                    console.log("個人基本資料 (請手動複製):\n", /* ...個人資料字串... */ );
+                if (mailToLink.length > 2000) { // A common, conservative limit for mailto URLs
+                    showAlert("郵件內容過長，可能無法完整透過 mailto 傳送。\n建議手動複製主控台輸出的「CSV 資料」與「個人基本資料」。");
+                    console.log("CSV 資料 (請手動複製):\n", csvDataText);
+                    let personalDataText = "個人基本資料 (請手動複製):\n";
+                    personalDataText += `性別: ${collectedData.gender}\n`;
+                    personalDataText += `年資: ${collectedData.experience}\n`;
+                    personalDataText += `教育程度: ${collectedData.education}\n`;
+                    personalDataText += `階級: ${collectedData.rank}\n`;
+                    personalDataText += `職務類型: ${collectedData.job_type}\n`;
+                    personalDataText += `兵役情況: ${collectedData.military_service_status}`;
+                    if (collectedData.military_service_status === '已退役') {
+                        personalDataText += ` (${collectedData.military_service_detail || '未選擇詳細情況'})\n`;
+                    } else {
+                        personalDataText += "\n";
+                    }
+                    console.log(personalDataText);
                 } else {
                     setTimeout(() => {
-                        console.log("嘗試開啟郵件客戶端，連結:", mailToLink);
+                        console.log("嘗試開啟郵件客戶端，連結:", mailToLink.substring(0, 200) + "..."); // Log a snippet
                         window.location.href = mailToLink;
                     }, 100); 
                 }
