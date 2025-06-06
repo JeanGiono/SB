@@ -14,7 +14,7 @@
         .dematel-table th, .dematel-table td {
             padding: 0.5rem 0.25rem; 
             text-align: center;
-            border: 1px solid #e2e8f0; 
+            border: 1px solid #e2e8f0; /* Tailwind gray-200 */
             vertical-align: middle; 
         }
         .dematel-table thead th.aspect-cell {
@@ -32,7 +32,7 @@
             padding-left: 0.5rem;
             padding-right: 0.5rem;
             font-weight: 600;
-            background-color: #f8fafc; 
+            background-color: #f8fafc; /* Tailwind slate-50 */
             position: sticky;
             left: 0;
             z-index: 10;
@@ -41,7 +41,7 @@
              min-width: 8.5rem; 
              height: 4.5em; 
              line-height: 1.35;
-             background-color: #f1f5f9; 
+             background-color: #f1f5f9; /* Tailwind slate-100 */
              position: sticky;
              top: 0;
              left: 0;
@@ -57,12 +57,12 @@
             max-width: 4em; 
             padding: 0.4rem 0.2rem;
             text-align: center;
-            border: 1px solid #cbd5e1; 
+            border: 1px solid #cbd5e1; /* Tailwind slate-300 */
             border-radius: 0.25rem;
             box-sizing: border-box; 
         }
         .input-cell:focus {
-            border-color: #3b82f6; 
+            border-color: #3b82f6; /* Tailwind sky-500 */
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
             outline: none;
         }
@@ -74,14 +74,15 @@
              border-color: #f97316 !important; /* Tailwind orange-500 */
              box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
         }
-        .personal-info-field.error-empty-group > label:first-of-type, /* Target the main label of the group */
+        .personal-info-field.error-empty-group > label:first-of-type, 
         .personal-info-field.error-empty-group .radio-options-grid,
-        .personal-info-field.error-empty-group .flex.items-center.space-x-6, /* For gender and job_type */
-        .personal-info-field.error-empty-group .flex.flex-col.space-y-2 /* For military_service_status */
+        .personal-info-field.error-empty-group .flex.items-center.space-x-6, 
+        .personal-info-field.error-empty-group .flex.flex-col.space-y-2,
+        #retired_options.error-empty-group /* Target the div directly for sub-options */
          {
-            border-left: 3px solid #ef4444; /* Red border for empty group */
+            border-left: 3px solid #ef4444; 
             padding-left: 0.5rem;
-            background-color: #fef2f2; /* Light red background */
+            background-color: #fef2f2; 
         }
 
 
@@ -121,11 +122,17 @@
         @media print { /* Print Styles Remain the Same */ }
         #printSectionDematalTable, #printSectionPersonalData { display: none; }
 
-        @media (max-width: 768px) { /* Mobile Styles Remain Largely the Same */
+        @media (max-width: 768px) { /* Mobile Styles */
             .dematel-table-container { overflow-x: auto; max-height: 500px; }
-            .dematel-table thead th.aspect-cell { min-width: 4.5rem; height: auto; line-height: 1.3; font-size:0.75rem; padding-top: 0.3rem; padding-bottom: 0.3rem;}
-            .dematel-table tbody td.aspect-name-col { min-width: 5.8rem; font-size:0.75rem; line-height: 1.3; height: 3.2em;}
-            .dematel-table thead th.aspect-name-col { min-width: 7rem; font-size:0.75rem; line-height: 1.3; height: auto; padding-top: 0.3rem; padding-bottom: 0.3rem;}
+            .dematel-table thead th.aspect-cell { 
+                min-width: 4.5rem; height: auto; line-height: 1.3; font-size:0.75rem; padding-top: 0.3rem; padding-bottom: 0.3rem;
+            }
+            .dematel-table tbody td.aspect-name-col { 
+                min-width: 5.8rem; font-size:0.75rem; line-height: 1.3; height: 3.2em;
+            }
+            .dematel-table thead th.aspect-name-col { 
+                min-width: 7rem; font-size:0.75rem; line-height: 1.3; height: auto; padding-top: 0.3rem; padding-bottom: 0.3rem;
+            }
             .dematel-table td.input-cell-container, .dematel-table td.diagonal-cell { height: 3.2em; }
             .input-cell { width: 100%; max-width:3.5em; font-size: 0.875rem; padding: 0.3rem 0.1rem;}
             .radio-options-grid { grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); } 
@@ -134,7 +141,8 @@
             .personal-info-field.error-empty-group > label:first-of-type,
             .personal-info-field.error-empty-group .radio-options-grid,
             .personal-info-field.error-empty-group .flex.items-center.space-x-6,
-            .personal-info-field.error-empty-group .flex.flex-col.space-y-2 {
+            .personal-info-field.error-empty-group .flex.flex-col.space-y-2,
+            #retired_options.error-empty-group {
                 padding-left: 0.25rem; /* Adjust padding for mobile */
             }
         }
@@ -148,7 +156,6 @@
 
     <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-lg shadow-xl">
         <header class="text-center mb-8">
-            <!-- Header Content -->
             <h1 class="text-2xl md:text-3xl font-bold text-sky-700 mb-2">「影響空軍修護人員離職因素之研究」問卷</h1>
             <p class="text-sm text-gray-600">
                 這是一份純學術之問卷研究，本問卷所有資料僅作為研究之目的，絕對保密，請您依實際感受最直接的反應填寫此份問卷，誠摯感謝您熱心的協助！
@@ -161,7 +168,6 @@
         </header>
 
         <section class="mb-8 p-4 bg-sky-50 rounded-md border border-sky-200">
-            <!-- Section 1 Content -->
             <h2 class="text-lg font-semibold text-sky-700 mb-3">壹、十五項構面影響關係之評比</h2>
             <p class="text-sm text-gray-700 mb-2"><strong>填寫指標說明：</strong></p>
             <ul class="list-disc list-inside text-sm text-gray-700 mb-3 space-y-1">
@@ -198,7 +204,6 @@
         </section>
 
         <section class="mb-8 p-4 bg-emerald-50 rounded-md border border-emerald-200">
-            <!-- Section 2 Content -->
             <h2 class="text-lg font-semibold text-emerald-700 mb-3">貳、填答問卷之範例</h2>
             <p class="text-sm text-gray-700 mb-2">(0：無影響；1：低影響；2：中影響；3：高影響；4：極高影響)</p>
             <div class="overflow-x-auto pb-2">
@@ -241,7 +246,6 @@
             </section>
 
             <section class="mb-8 p-4 bg-indigo-50 rounded-md border border-indigo-200">
-                <!-- Section構面定義說明 Content -->
                  <h2 class="text-lg font-semibold text-indigo-700 mb-3">構面定義說明</h2>
                  <ul class="space-y-2 text-sm text-gray-700">
                     <li><strong>1. 勞役不均：</strong> 工作任務分配不合理，常以低階優先，導致部分人員承擔過多工作。</li>
@@ -312,7 +316,7 @@
                              <label class="flex items-center"><input type="radio" name="military_service_status" value="現役" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 現役</label>
                              <div class="ml-0">
                                 <label class="flex items-center mt-1"><input type="radio" name="military_service_status" value="已退役" id="retired_radio" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 已退役</label>
-                                <div id="retired_options" class="ml-6 mt-1 space-y-1 hidden personal-info-field" data-field-name="military_service_detail"> <!-- Added class and data-field-name -->
+                                <div id="retired_options" class="ml-6 mt-1 space-y-1 hidden personal-info-field" data-field-name="military_service_detail">
                                    <label class="flex items-center"><input type="radio" name="military_service_detail" value="服滿役期" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 服滿役期</label>
                                    <label class="flex items-center"><input type="radio" name="military_service_detail" value="未服滿役期" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded mr-1.5"> 未服滿役期</label>
                                 </div>
@@ -360,6 +364,10 @@
             setTimeout(() => {
                 alertBox.style.display = 'none';
             }, 3500);
+        }
+
+        function isLineBrowser() {
+            return /Line\//i.test(navigator.userAgent);
         }
         
         function formatAspectNameForDisplay(name) {
@@ -439,30 +447,28 @@
         
         if(activeRadio) activeRadio.addEventListener('change', toggleRetiredOptions);
         if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
-        toggleRetiredOptions(); // Initial check
+        toggleRetiredOptions();
 
-        // Add event listeners to personal info radio buttons to clear error state on change
         document.querySelectorAll('#personalDataSection input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const fieldName = this.name;
-                // Find the parent .personal-info-field and remove error class
                 let fieldContainer = this.closest('.personal-info-field');
                 if (fieldContainer) {
                     fieldContainer.classList.remove('error-empty-group');
-                } else if (fieldName === 'military_service_detail') { // Special handling for nested military_service_detail
-                    fieldContainer = this.closest('#retired_options');
-                    if (fieldContainer && fieldContainer.classList.contains('error-empty-group')) {
-                         fieldContainer.classList.remove('error-empty-group');
-                    }
-                    // Also check the parent 'military_service_status' if this fixes its validation
-                    const parentGroup = document.querySelector('.personal-info-field[data-field-name="military_service_status"]');
-                    if (parentGroup && document.querySelector('input[name="military_service_status"]:checked')) {
-                        parentGroup.classList.remove('error-empty-group');
-                    }
+                } 
+                // If "已退役" is selected, and its detail is now selected, remove error from detail
+                if(fieldName === 'military_service_detail' && document.querySelector('input[name="military_service_detail"]:checked')) {
+                    const detailContainer = document.getElementById('retired_options');
+                    if(detailContainer) detailContainer.classList.remove('error-empty-group');
                 }
+                // If main military status is selected, remove its group error
+                if(fieldName === 'military_service_status' && document.querySelector('input[name="military_service_status"]:checked')){
+                    const statusContainer = document.querySelector('.personal-info-field[data-field-name="military_service_status"]');
+                     if(statusContainer) statusContainer.classList.remove('error-empty-group');
+                }
+
             });
         });
-
 
         function formatAspectNameForPrint(name) { /* ... same as before ... */ return name.length === 4 ? name.substring(0,2)+'<br>'+name.substring(2,4) : name; }
         function generatePrintableDematalTable(data) { /* ... same as before ... */ 
@@ -561,10 +567,9 @@
             document.querySelectorAll('.personal-info-field.error-empty-group').forEach(el => {
                 el.classList.remove('error-empty-group');
             });
-             if (document.getElementById('retired_options').classList.contains('error-empty-group')) {
+            if (document.getElementById('retired_options').classList.contains('error-empty-group')) { // Clear error on sub-options specifically
                 document.getElementById('retired_options').classList.remove('error-empty-group');
             }
-
 
             const formData = new FormData(this);
             const collectedData = {};
@@ -575,7 +580,6 @@
             let personalInfoAllValid = true;
             let firstEmptyPersonalInfoElement = null;
 
-            // DEMATEL表格 - 未填答檢查
             aspects.forEach((rowAspect, rowIndex) => {
                 aspects.forEach((colAspect, colIndex) => {
                     if (rowIndex !== colIndex) {
@@ -598,7 +602,6 @@
                 return;
             }
 
-            // DEMATEL表格 - 範圍檢查
             aspects.forEach((rowAspect, rowIndex) => {
                 aspects.forEach((colAspect, colIndex) => {
                     if (rowIndex !== colIndex) {
@@ -626,21 +629,19 @@
                 return;
             }
 
-            // 個人基本資料檢查
-            const personalInfoFields = [
-                {name: "gender", containerSelector: '.personal-info-field[data-field-name="gender"]'},
-                {name: "experience", containerSelector: '.personal-info-field[data-field-name="experience"]'},
-                {name: "education", containerSelector: '.personal-info-field[data-field-name="education"]'},
-                {name: "rank", containerSelector: '.personal-info-field[data-field-name="rank"]'},
-                {name: "job_type", containerSelector: '.personal-info-field[data-field-name="job_type"]'},
-                {name: "military_service_status", containerSelector: '.personal-info-field[data-field-name="military_service_status"]'}
+            const personalInfoFieldSelectors = [
+                {name: "gender", selector: '.personal-info-field[data-field-name="gender"]'},
+                {name: "experience", selector: '.personal-info-field[data-field-name="experience"]'},
+                {name: "education", selector: '.personal-info-field[data-field-name="education"]'},
+                {name: "rank", selector: '.personal-info-field[data-field-name="rank"]'},
+                {name: "job_type", selector: '.personal-info-field[data-field-name="job_type"]'},
+                {name: "military_service_status", selector: '.personal-info-field[data-field-name="military_service_status"]'}
             ];
 
-            personalInfoFields.forEach(field => {
-                const selected = formData.get(field.name);
-                if (!selected) {
+            personalInfoFieldSelectors.forEach(fieldInfo => {
+                if (!formData.get(fieldInfo.name)) {
                     personalInfoAllValid = false;
-                    const container = document.querySelector(field.containerSelector);
+                    const container = document.querySelector(fieldInfo.selector);
                     if (container) {
                         container.classList.add('error-empty-group');
                         if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = container;
@@ -648,39 +649,33 @@
                 }
             });
 
-            // 特別檢查兵役情況的子選項
-            const militaryStatus = formData.get('military_service_status');
-            if (militaryStatus === '已退役') {
+            const militaryStatusValue = formData.get('military_service_status');
+            if (militaryStatusValue === '已退役') {
                 if (!formData.get('military_service_detail')) {
                     personalInfoAllValid = false;
                     const retiredOptionsContainer = document.getElementById('retired_options');
-                    if (retiredOptionsContainer) {
-                         retiredOptionsContainer.classList.add('error-empty-group');
-                         if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = retiredOptionsContainer.closest('.personal-info-field');
-                    }
+                    retiredOptionsContainer.classList.add('error-empty-group');
+                    if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = retiredOptionsContainer.closest('.personal-info-field[data-field-name="military_service_status"]');
                 }
             }
-
 
             if (!personalInfoAllValid) {
                 showAlert('個人基本資料尚有項目未填寫，請檢查並完成後再提交。');
                 if (firstEmptyPersonalInfoElement) {
                     firstEmptyPersonalInfoElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Try to focus the first radio button in the errored group
-                    const firstRadioInError = firstEmptyPersonalInfoElement.querySelector('input[type="radio"]');
-                    if(firstRadioInError) firstRadioInError.focus();
+                    const firstRadioToFocus = firstEmptyPersonalInfoElement.querySelector('input[type="radio"]');
+                    if(firstRadioToFocus) firstRadioToFocus.focus();
                 }
                 return;
             }
 
-            // 收集個人資料 (如果所有驗證都通過)
             collectedData.gender = formData.get('gender') || "未填寫";
             collectedData.experience = formData.get('experience') || "未填寫";
             collectedData.education = formData.get('education') || "未填寫";
             collectedData.rank = formData.get('rank') || "未填寫";
             collectedData.job_type = formData.get('job_type') || "未填寫";
-            collectedData.military_service_status = militaryStatus || "未填寫";
-            if (militaryStatus === '已退役') {
+            collectedData.military_service_status = militaryStatusValue || "未填寫";
+            if (militaryStatusValue === '已退役') {
                 collectedData.military_service_detail = formData.get('military_service_detail') || "未選擇詳細情況";
             } else {
                 collectedData.military_service_detail = null;
@@ -691,6 +686,12 @@
             generatePrintableDematalTable(collectedData);
             generatePrintablePersonalData(collectedData);
             
+            if (isLineBrowser()) {
+                 showAlert('偵測到您可能正在使用LINE內建瀏覽器。\n為了獲得最佳列印體驗，建議您複製目前網址，並在手機的預設瀏覽器（如 Safari 或 Chrome）中開啟此頁面後再進行列印操作。');
+                // 在LINE瀏覽器中，直接調用print可能效果不佳或無效，但還是嘗試
+                // 也可以考慮在LINE中不直接調用print，而是只提示
+            }
+
             setTimeout(() => {
                  console.log("準備觸發 window.print()");
                  window.print();
