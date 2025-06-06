@@ -36,7 +36,7 @@
         .dematel-table th, .dematel-table td {
             padding: 0.5rem 0.25rem; 
             text-align: center;
-            border: 1px solid #e2e8f0; 
+            border: 1px solid #e2e8f0; /* Tailwind gray-200 */
             vertical-align: middle; 
         }
         .dematel-table thead th.aspect-cell { /* 頂部橫向表頭 */
@@ -54,7 +54,7 @@
             padding-left: 0.5rem;
             padding-right: 0.5rem;
             font-weight: 600;
-            background-color: #f8fafc; 
+            background-color: #f8fafc; /* Tailwind slate-50 */
             position: sticky;
             left: 0;
             z-index: 10;
@@ -63,7 +63,7 @@
              min-width: 8.5rem; 
              height: 4.5em; 
              line-height: 1.35;
-             background-color: #f1f5f9; 
+             background-color: #f1f5f9; /* Tailwind slate-100 */
              position: sticky;
              top: 0;
              left: 0;
@@ -79,17 +79,17 @@
             max-width: 4em; 
             padding: 0.4rem 0.2rem;
             text-align: center;
-            border: 1px solid #cbd5e1; 
+            border: 1px solid #cbd5e1; /* Tailwind slate-300 */
             border-radius: 0.25rem;
             box-sizing: border-box; 
         }
         .input-cell:focus {
-            border-color: #3b82f6; 
+            border-color: #3b82f6; /* Tailwind sky-500 */
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
             outline: none;
         }
         .dematel-table td.diagonal-cell { /* 對角線儲存格 */
-            background-color: #4b5563; 
+            background-color: #4b5563; /* Tailwind gray-600 */
             color: #4b5563;
             user-select: none;
             height: 3.5em; 
@@ -97,17 +97,17 @@
         .dematel-table thead th { /* 凍結頂部表頭 */
             position: sticky;
             top: 0;
-            background-color: #f1f5f9; 
+            background-color: #f1f5f9; /* Tailwind slate-100 */
             z-index: 20;
         }
 
         /* --- 3. 錯誤提示樣式 --- */
         .input-cell.error-empty { 
-            border-color: #ef4444 !important; 
+            border-color: #ef4444 !important; /* Tailwind red-500 */
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3) !important;
         }
         .input-cell.error-range { 
-             border-color: #f97316 !important; 
+             border-color: #f97316 !important; /* Tailwind orange-500 */
              box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
         }
         .personal-info-field.error-empty-group > label:first-of-type, 
@@ -147,7 +147,7 @@
         @media print {
             body { font-size: 10pt; margin: 0; padding: 0; background-color: #fff; }
             .max-w-4xl { max-width: 100%; box-shadow: none; border: none; padding: 1cm; }
-            header, section:not(#printSectionDematalTable):not(#printSectionPersonalData), form > div:last-of-type, footer, #customAlert, .dematel-table-container { display: none !important; }
+            header, section:not(#printSectionDematalTable):not(#printSectionPersonalData), form > div:last-of-type, footer, #customAlert, .dematel-table-container, .print-hidden { display: none !important; }
             #printSectionDematalTable { display: block !important; margin-bottom: 20px; overflow: visible; }
             #printSectionDematalTable table { width: 100%; font-size: 8pt; border-collapse: collapse; table-layout: fixed; }
             #printSectionDematalTable th, #printSectionDematalTable td { border: 1px solid #000 !important; padding: 2px; min-width: auto !important; background-color: #fff !important; word-break: break-all; vertical-align: middle; }
@@ -156,7 +156,6 @@
             #printSectionPersonalData { display: block !important; margin-top: 20px; }
             #printSectionPersonalData h2 { font-size: 12pt; margin-bottom: 10px; }
             #printSectionPersonalData p { font-size: 10pt; margin-bottom: 5px; }
-            button[type="submit"], .bg-sky-50, .bg-emerald-50, .bg-indigo-50, .bg-gray-50, .text-sky-700, .text-emerald-700, .text-indigo-700, .border-sky-200, .border-emerald-200, .border-indigo-200, .border-gray-200 { display: none !important; }
             .dematel-table-container { overflow: visible !important; }
             .dematel-table thead th, .dematel-table tbody td:first-child { position: static !important; }
         }
@@ -179,11 +178,7 @@
             .radio-options-grid { grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); } 
             .example-table-示意 th, .example-table-示意 td { width: 2.5rem; height: 2.5rem; line-height: 2.5rem; font-size: 0.75rem; }
             .example-table-square th, .example-table-square td { width: 2.2rem; height: 2.2rem; line-height: 2.2rem; font-size: 0.75rem;}
-            .personal-info-field.error-empty-group > label:first-of-type,
-            .personal-info-field.error-empty-group .radio-options-grid,
-            .personal-info-field.error-empty-group .flex.items-center.space-x-6,
-            .personal-info-field.error-empty-group .flex.flex-col.space-y-2,
-            #retired_options.error-empty-group {
+            .personal-info-field.error-empty-group > label:first-of-type, .personal-info-field.error-empty-group .radio-options-grid, .personal-info-field.error-empty-group .flex.items-center.space-x-6, .personal-info-field.error-empty-group .flex.flex-col.space-y-2, #retired_options.error-empty-group {
                 padding-left: 0.25rem;
             }
         }
@@ -296,12 +291,9 @@
                         <thead>
                             <tr>
                                 <th class="aspect-name-col">影響構面(i)↓ <br> 被影響構面(j)→</th>
-                                <!-- Headers generated by JavaScript -->
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Rows generated by JavaScript -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </section>
@@ -387,19 +379,18 @@
                 </div>
             </section>
 
-            <div class="mt-10 text-center">
+            <div class="mt-10 text-center flex justify-center items-center gap-4 flex-wrap print-hidden">
+                <button type="button" id="saveProgressButton" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition duration-150 ease-in-out">
+                    儲存進度
+                </button>
                 <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition duration-150 ease-in-out">
                     提交問卷
                 </button>
             </div>
         </form>
 
-        <div id="printSectionDematalTable" style="display: none;">
-             <h2 style="text-align:center; font-size:14pt; margin-bottom:15px;">DEMATEL 影響程度評估結果</h2>
-        </div>
-        <div id="printSectionPersonalData" style="display: none;">
-            <h2 style="font-size:12pt; margin-bottom:10px;">個人基本資料</h2>
-        </div>
+        <div id="printSectionDematalTable" style="display: none;"></div>
+        <div id="printSectionPersonalData" style="display: none;"></div>
 
         <footer class="mt-12 text-center text-sm text-gray-600 border-t pt-6">
             <p>此份問卷到此結束，感謝您在百忙之中撥冗填答，衷心感謝您對本研究之支持！</p>
@@ -408,20 +399,14 @@
 
     <script>
         // --- 1. 初始化與全域變數 ---
-        const aspects = [
-            "勞役不均", "任務壓力", "職業傷害", "薪資待遇", "成就實現",
-            "職涯發展", "社會認同", "期望落差", "權威壓迫", "同袍互動",
-            "人力匱乏", "輕視專業", "家庭照顧", "就業市場", "政策疑慮"
-        ];
-        const dematelTable = document.querySelector('.dematel-table');
-        const headerRow = dematelTable.querySelector('thead tr');
-        const tbody = dematelTable.querySelector('tbody');
+        const aspects = ["勞役不均", "任務壓力", "職業傷害", "薪資待遇", "成就實現", "職涯發展", "社會認同", "期望落差", "權威壓迫", "同袍互動", "人力匱乏", "輕視專業", "家庭照顧", "就業市場", "政策疑慮"];
+        const dematelForm = document.getElementById('dematelForm');
+        const localStorageKey = 'dematelSurveyProgress_v1';
 
         // --- 2. 瀏覽器偵測與處理 ---
         document.addEventListener('DOMContentLoaded', function() {
             function isUnsupportedBrowser() {
                 const userAgent = navigator.userAgent;
-                // 偵測 LINE 或 Juiker 的 user agent 字串
                 return /Line\//i.test(userAgent) || /Juiker/i.test(userAgent);
             }
 
@@ -448,10 +433,62 @@
                     document.body.removeChild(textArea);
                 });
             }
+
+            loadProgress();
         });
 
 
-        // --- 3. UI 生成函式 ---
+        // --- 3. 儲存與載入進度功能 ---
+        function saveProgress() {
+            const formData = new FormData(dematelForm);
+            const dataToSave = Object.fromEntries(formData.entries());
+            try {
+                localStorage.setItem(localStorageKey, JSON.stringify(dataToSave));
+                showAlert('您的填寫進度已成功儲存！');
+            } catch (e) {
+                console.error("儲存進度時發生錯誤:", e);
+                showAlert('儲存進度失敗，可能是瀏覽器儲存空間已滿。');
+            }
+        }
+
+        function loadProgress() {
+            try {
+                const savedData = localStorage.getItem(localStorageKey);
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    for (const name in data) {
+                        if (Object.prototype.hasOwnProperty.call(data, name)) {
+                            const value = data[name];
+                            const elements = dematelForm.elements[name];
+                            if (elements) {
+                                if (elements.type === 'radio' || (elements.length > 0 && elements[0].type === 'radio')) {
+                                    const radioGroup = Array.isArray(elements) || elements instanceof NodeList ? elements : [elements];
+                                    for (const radio of radioGroup) {
+                                        if (radio.value === value) {
+                                            radio.checked = true;
+                                            if (name === 'military_service_status') {
+                                                toggleRetiredOptions();
+                                            }
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    elements.value = value;
+                                }
+                            }
+                        }
+                    }
+                    showAlert('已成功載入您上次儲存的進度。');
+                }
+            } catch(e) {
+                console.error("載入進度時發生錯誤:", e);
+                localStorage.removeItem(localStorageKey); // Corrupted data, remove it.
+                showAlert('載入先前進度失敗，資料可能已損毀。');
+            }
+        }
+
+
+        // --- 4. UI 生成與事件監聽 ---
         function showAlert(message) {
             const alertBox = document.getElementById('customAlert');
             const alertMessage = document.getElementById('customAlertMessage');
@@ -470,6 +507,8 @@
         }
 
         function generateDematalTable() {
+            const tableBody = dematelForm.querySelector('.dematel-table tbody');
+            const headerRow = dematelForm.querySelector('.dematel-table thead tr');
             const firstHeaderCell = headerRow.querySelector('th');
             firstHeaderCell.innerHTML = '影響構面(i)↓ <br> 被影響構面(j)→';
             
@@ -512,26 +551,58 @@
                                 e.target.classList.add('error-range'); 
                             }
                         });
-                        input.addEventListener('keypress', function(e) {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                            }
-                        });
+                        input.addEventListener('keypress', function(e) { if (e.key === 'Enter') e.preventDefault(); });
                         td.appendChild(input);
                     }
                     tr.appendChild(td);
                 });
-                tbody.appendChild(tr);
+                tableBody.appendChild(tr);
             });
         }
         
-        // --- 4. 列印內容生成函式 ---
+        generateDematalTable();
+
+        const retiredRadio = document.getElementById('retired_radio');
+        const retiredOptions = document.getElementById('retired_options');
+        const activeRadio = document.querySelector('input[name="military_service_status"][value="現役"]');
+        
+        function toggleRetiredOptions() {
+            if (retiredRadio && retiredRadio.checked) {
+                if(retiredOptions) retiredOptions.classList.remove('hidden');
+            } else {
+                if(retiredOptions) retiredOptions.classList.add('hidden');
+                document.querySelectorAll('input[name="military_service_detail"]').forEach(radio => radio.checked = false);
+            }
+        }
+        
+        if(activeRadio) activeRadio.addEventListener('change', toggleRetiredOptions);
+        if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
+        toggleRetiredOptions();
+
+        document.querySelectorAll('#personalDataSection input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                let fieldContainer = this.closest('.personal-info-field');
+                if (fieldContainer) fieldContainer.classList.remove('error-empty-group');
+                if(this.name === 'military_service_detail' && document.querySelector('input[name="military_service_detail"]:checked')) {
+                    const detailContainer = document.getElementById('retired_options');
+                    if(detailContainer) detailContainer.classList.remove('error-empty-group');
+                }
+                if(this.name === 'military_service_status' && document.querySelector('input[name="military_service_status"]:checked')){
+                    const statusContainer = document.querySelector('.personal-info-field[data-field-name="military_service_status"]');
+                     if(statusContainer) statusContainer.classList.remove('error-empty-group');
+                }
+            });
+        });
+
+        document.getElementById('saveProgressButton').addEventListener('click', saveProgress);
+
+        // --- 5. 列印與提交邏輯 ---
         function formatAspectNameForPrint(name) { return name.length === 4 ? name.substring(0,2)+'<br>'+name.substring(2,4) : name; }
         function generatePrintableDematalTable(data) { 
             const tableContainer = document.getElementById('printSectionDematalTable');
             tableContainer.innerHTML = '<h2 style="text-align:center; font-size:14pt; margin-bottom:15px;">DEMATEL 影響程度評估結果</h2>';
             const table = document.createElement('table');
-            table.style.width = '100%'; table.style.borderCollapse = 'collapse'; table.style.fontSize = '8pt'; table.style.tableLayout = 'fixed';
+            table.style.cssText = "width: 100%; border-collapse: collapse; font-size: 8pt; table-layout: fixed;";
             const thead = table.createTHead(); const headerRowPrint = thead.insertRow(); 
             let thPrint = headerRowPrint.insertCell(); 
             thPrint.innerHTML = '影響構面↓<br>被影響構面→';
@@ -578,48 +649,10 @@
                 }
             }
         }
-        
-        // --- 5. 事件監聽器與主邏輯 ---
-        generateDematalTable(); // 頁面載入時生成DEMATEL表格
 
-        const retiredRadio = document.getElementById('retired_radio');
-        const retiredOptions = document.getElementById('retired_options');
-        const activeRadio = document.querySelector('input[name="military_service_status"][value="現役"]');
-        
-        function toggleRetiredOptions() {
-            if (retiredRadio && retiredRadio.checked) {
-                if(retiredOptions) retiredOptions.classList.remove('hidden');
-            } else {
-                if(retiredOptions) retiredOptions.classList.add('hidden');
-                document.querySelectorAll('input[name="military_service_detail"]').forEach(radio => radio.checked = false);
-            }
-        }
-        
-        if(activeRadio) activeRadio.addEventListener('change', toggleRetiredOptions);
-        if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
-        toggleRetiredOptions();
-
-        // 為個人資料選項添加事件監聽器，以便在選擇後清除錯誤狀態
-        document.querySelectorAll('#personalDataSection input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                let fieldContainer = this.closest('.personal-info-field');
-                if (fieldContainer) fieldContainer.classList.remove('error-empty-group');
-                if(this.name === 'military_service_detail' && document.querySelector('input[name="military_service_detail"]:checked')) {
-                    const detailContainer = document.getElementById('retired_options');
-                    if(detailContainer) detailContainer.classList.remove('error-empty-group');
-                }
-                if(this.name === 'military_service_status' && document.querySelector('input[name="military_service_status"]:checked')){
-                    const statusContainer = document.querySelector('.personal-info-field[data-field-name="military_service_status"]');
-                     if(statusContainer) statusContainer.classList.remove('error-empty-group');
-                }
-            });
-        });
-
-        // 表單提交的主要處理函式
-        document.getElementById('dematelForm').addEventListener('submit', function(event) {
+        dematelForm.addEventListener('submit', function(event) {
             event.preventDefault();
             
-            // 清除所有舊的錯誤標記
             document.querySelectorAll('.input-cell.error-empty, .input-cell.error-range').forEach(el => el.classList.remove('error-empty', 'error-range'));
             document.querySelectorAll('.personal-info-field.error-empty-group').forEach(el => el.classList.remove('error-empty-group'));
             if (document.getElementById('retired_options').classList.contains('error-empty-group')) {
@@ -628,12 +661,9 @@
 
             const formData = new FormData(this);
             const collectedData = {};
-            let dematelAllFilled = true;
-            let firstEmptyDematalElement = null;
-            let dematelAllValidRange = true;
-            let firstRangeErrorDematalElement = null;
-            let personalInfoAllValid = true;
-            let firstEmptyPersonalInfoElement = null;
+            let dematelAllFilled = true, firstEmptyDematalElement = null;
+            let dematelAllValidRange = true, firstRangeErrorDematalElement = null;
+            let personalInfoAllValid = true, firstEmptyPersonalInfoElement = null;
 
             // 驗證階段 1: DEMATEL表格 - 未填答檢查
             aspects.forEach((rowAspect, rowIndex) => {
@@ -648,7 +678,6 @@
                     }
                 });
             });
-
             if (!dematelAllFilled) {
                 showAlert('DEMATEL評估表尚有未填答的儲存格，請全部填寫完成後再提交。');
                 if (firstEmptyDematalElement) {
@@ -672,7 +701,6 @@
                     }
                 });
             });
-
             if (!dematelAllValidRange) {
                 showAlert('部分DEMATEL評分輸入無效或超出範圍 (0-4)，請檢查標示的欄位。');
                 if (firstRangeErrorDematalElement) {
@@ -683,10 +711,7 @@
             }
 
             // 驗證階段 3: 個人基本資料檢查
-            const personalInfoFieldSelectors = [
-                "gender", "experience", "education", "rank", "job_type", "military_service_status"
-            ];
-
+            const personalInfoFieldSelectors = ["gender", "experience", "education", "rank", "job_type", "military_service_status"];
             personalInfoFieldSelectors.forEach(fieldName => {
                 if (!formData.get(fieldName)) {
                     personalInfoAllValid = false;
@@ -697,7 +722,6 @@
                     }
                 }
             });
-
             const militaryStatusValue = formData.get('military_service_status');
             if (militaryStatusValue === '已退役' && !formData.get('military_service_detail')) {
                 personalInfoAllValid = false;
@@ -705,7 +729,6 @@
                 retiredOptionsContainer.classList.add('error-empty-group');
                 if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = retiredOptionsContainer.closest('.personal-info-field');
             }
-
             if (!personalInfoAllValid) {
                 showAlert('個人基本資料尚有項目未填寫，請檢查並完成後再提交。');
                 if (firstEmptyPersonalInfoElement) {
@@ -739,7 +762,6 @@
 
             console.log("表單資料（準備列印）：", collectedData);
 
-            // 準備並觸發列印
             generatePrintableDematalTable(collectedData);
             generatePrintablePersonalData(collectedData);
             
