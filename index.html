@@ -10,14 +10,36 @@
             font-family: 'Inter', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
             scroll-behavior: smooth; 
         }
-        /* DEMATEL Table General Cell Styling */
+
+        /* --- 1. 禁用瀏覽器提示頁面樣式 --- */
+        #browser-blocker {
+            display: none; /* 預設隱藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8fafc; /* Tailwind slate-50 */
+            z-index: 2000;
+            padding: 2rem;
+            text-align: center;
+        }
+        #browser-blocker-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* --- 2. DEMATEL 主評估表樣式 --- */
         .dematel-table th, .dematel-table td {
             padding: 0.5rem 0.25rem; 
             text-align: center;
-            border: 1px solid #e2e8f0; /* Tailwind gray-200 */
+            border: 1px solid #e2e8f0; 
             vertical-align: middle; 
         }
-        .dematel-table thead th.aspect-cell {
+        .dematel-table thead th.aspect-cell { /* 頂部橫向表頭 */
             min-width: 4.8rem; 
             height: 4.5em;    
             line-height: 1.35; 
@@ -25,80 +47,83 @@
             padding-bottom: 0.4rem;
             font-weight: 600; 
         }
-        .dematel-table tbody td.aspect-name-col {
+        .dematel-table tbody td.aspect-name-col { /* 左側縱向表頭 */
             min-width: 6.5rem; 
             height: 3.5em;   
             line-height: 1.35;
             padding-left: 0.5rem;
             padding-right: 0.5rem;
             font-weight: 600;
-            background-color: #f8fafc; /* Tailwind slate-50 */
+            background-color: #f8fafc; 
             position: sticky;
             left: 0;
             z-index: 10;
         }
-        .dematel-table thead th.aspect-name-col {
+        .dematel-table thead th.aspect-name-col { /* 左上角標題 */
              min-width: 8.5rem; 
              height: 4.5em; 
              line-height: 1.35;
-             background-color: #f1f5f9; /* Tailwind slate-100 */
+             background-color: #f1f5f9; 
              position: sticky;
              top: 0;
              left: 0;
              z-index: 30;
              font-weight: 600;
         }
-        .dematel-table td.input-cell-container {
+        .dematel-table td.input-cell-container { /* 輸入格容器 */
             height: 3.5em; 
             padding: 0.25rem; 
         }
-        .input-cell { 
+        .input-cell { /* 輸入框本身 */
             width: 100%; 
             max-width: 4em; 
             padding: 0.4rem 0.2rem;
             text-align: center;
-            border: 1px solid #cbd5e1; /* Tailwind slate-300 */
+            border: 1px solid #cbd5e1; 
             border-radius: 0.25rem;
             box-sizing: border-box; 
         }
         .input-cell:focus {
-            border-color: #3b82f6; /* Tailwind sky-500 */
+            border-color: #3b82f6; 
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
             outline: none;
         }
-        .input-cell.error-empty { 
-            border-color: #ef4444 !important; /* Tailwind red-500 */
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3) !important;
-        }
-        .input-cell.error-range { 
-             border-color: #f97316 !important; /* Tailwind orange-500 */
-             box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
-        }
-        .personal-info-field.error-empty-group > label:first-of-type, 
-        .personal-info-field.error-empty-group .radio-options-grid,
-        .personal-info-field.error-empty-group .flex.items-center.space-x-6, 
-        .personal-info-field.error-empty-group .flex.flex-col.space-y-2,
-        #retired_options.error-empty-group /* Target the div directly for sub-options */
-         {
-            border-left: 3px solid #ef4444; 
-            padding-left: 0.5rem;
-            background-color: #fef2f2; 
-        }
-
-
-        .dematel-table td.diagonal-cell {
+        .dematel-table td.diagonal-cell { /* 對角線儲存格 */
             background-color: #4b5563; 
             color: #4b5563;
             user-select: none;
             height: 3.5em; 
         }
-        .dematel-table thead th {
+        .dematel-table thead th { /* 凍結頂部表頭 */
             position: sticky;
             top: 0;
             background-color: #f1f5f9; 
             z-index: 20;
         }
 
+        /* --- 3. 錯誤提示樣式 --- */
+        .input-cell.error-empty { 
+            border-color: #ef4444 !important; 
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3) !important;
+        }
+        .input-cell.error-range { 
+             border-color: #f97316 !important; 
+             box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3) !important;
+        }
+        .personal-info-field.error-empty-group > label:first-of-type, 
+        .personal-info-field.error-empty-group .radio-options-grid,
+        .personal-info-field.error-empty-group .flex.items-center.space-x-6, 
+        .personal-info-field.error-empty-group .flex.flex-col.space-y-2,
+        #retired_options.error-empty-group
+         {
+            border-left: 3px solid #ef4444; 
+            padding-left: 0.5rem;
+            background-color: #fef2f2; 
+        }
+        .custom-alert { display: none; position: fixed; left: 50%; top: 20px; transform: translateX(-50%); padding: 1rem 1.5rem; background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 0.375rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); z-index: 1000; font-size: 0.875rem; }
+        .custom-alert button { margin-left: 1rem; background-color: transparent; border: none; color: #b91c1c; font-weight: bold; cursor: pointer; }
+        
+        /* --- 4. 範例表格樣式 --- */
         .example-table-示意 { 
             border-collapse: collapse; margin-left: auto; margin-right: auto; border: 1px solid #9ca3af; 
         }
@@ -114,15 +139,31 @@
         }
         .example-table-square th { background-color: #e5e7eb; font-weight: bold; }
         .example-table-square td.diagonal-cell-example { background-color: #374151; color: #374151; }
-
-        .custom-alert { display: none; position: fixed; left: 50%; top: 20px; transform: translateX(-50%); padding: 1rem 1.5rem; background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 0.375rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); z-index: 1000; font-size: 0.875rem; }
-        .custom-alert button { margin-left: 1rem; background-color: transparent; border: none; color: #b91c1c; font-weight: bold; cursor: pointer; }
+        
+        /* --- 5. 其他通用樣式 --- */
         .radio-options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.5rem; }
 
-        @media print { /* Print Styles Remain the Same */ }
+        /* --- 6. 列印專用樣式 --- */
+        @media print {
+            body { font-size: 10pt; margin: 0; padding: 0; background-color: #fff; }
+            .max-w-4xl { max-width: 100%; box-shadow: none; border: none; padding: 1cm; }
+            header, section:not(#printSectionDematalTable):not(#printSectionPersonalData), form > div:last-of-type, footer, #customAlert, .dematel-table-container { display: none !important; }
+            #printSectionDematalTable { display: block !important; margin-bottom: 20px; overflow: visible; }
+            #printSectionDematalTable table { width: 100%; font-size: 8pt; border-collapse: collapse; table-layout: fixed; }
+            #printSectionDematalTable th, #printSectionDematalTable td { border: 1px solid #000 !important; padding: 2px; min-width: auto !important; background-color: #fff !important; word-break: break-all; vertical-align: middle; }
+            #printSectionDematalTable th.aspect-header-print { height: 3em; }
+            .diagonal-cell { background-color: #ccc !important; color: #ccc !important; }
+            #printSectionPersonalData { display: block !important; margin-top: 20px; }
+            #printSectionPersonalData h2 { font-size: 12pt; margin-bottom: 10px; }
+            #printSectionPersonalData p { font-size: 10pt; margin-bottom: 5px; }
+            button[type="submit"], .bg-sky-50, .bg-emerald-50, .bg-indigo-50, .bg-gray-50, .text-sky-700, .text-emerald-700, .text-indigo-700, .border-sky-200, .border-emerald-200, .border-indigo-200, .border-gray-200 { display: none !important; }
+            .dematel-table-container { overflow: visible !important; }
+            .dematel-table thead th, .dematel-table tbody td:first-child { position: static !important; }
+        }
         #printSectionDematalTable, #printSectionPersonalData { display: none; }
 
-        @media (max-width: 768px) { /* Mobile Styles */
+        /* --- 7. 行動裝置響應式樣式 --- */
+        @media (max-width: 768px) {
             .dematel-table-container { overflow-x: auto; max-height: 500px; }
             .dematel-table thead th.aspect-cell { 
                 min-width: 4.5rem; height: auto; line-height: 1.3; font-size:0.75rem; padding-top: 0.3rem; padding-bottom: 0.3rem;
@@ -143,18 +184,38 @@
             .personal-info-field.error-empty-group .flex.items-center.space-x-6,
             .personal-info-field.error-empty-group .flex.flex-col.space-y-2,
             #retired_options.error-empty-group {
-                padding-left: 0.25rem; /* Adjust padding for mobile */
+                padding-left: 0.25rem;
             }
         }
     </style>
 </head>
 <body class="bg-gray-100 p-4 md:p-8">
+    <!-- 禁用瀏覽器提示區塊 -->
+    <div id="browser-blocker">
+        <div id="browser-blocker-content">
+            <svg class="w-16 h-16 text-red-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">不支援的瀏覽器</h2>
+            <p class="text-gray-600 mb-6 max-w-md">
+                您目前使用的瀏覽器（如LINE或Juiker內建瀏覽器）可能無法支援本問卷的完整功能（如列印）。
+                為了獲得最佳體驗，請使用手機的預設瀏覽器（如 Safari 或 Chrome）開啟。
+            </p>
+            <p class="text-gray-500 text-sm mb-4">請點擊右上角選單，並選擇「在預設瀏覽器中開啟」。</p>
+            <button id="copyUrlButton" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                複製網址
+            </button>
+        </div>
+    </div>
+
+    <!-- 彈出式警示訊息 -->
     <div id="customAlert" class="custom-alert">
         <span id="customAlertMessage"></span>
         <button onclick="document.getElementById('customAlert').style.display='none'">&times;</button>
     </div>
 
-    <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-lg shadow-xl">
+    <!-- 主要問卷內容 -->
+    <div id="main-content" class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-lg shadow-xl">
         <header class="text-center mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-sky-700 mb-2">「影響空軍修護人員離職因素之研究」問卷</h1>
             <p class="text-sm text-gray-600">
@@ -224,7 +285,7 @@
                     </tbody>
                 </table>
             </div>
-            <p class="text-xs text-gray-600 mt-2"><em>(填答時請注意：此表格右上方與左下 方之答案不一定對稱)</em></p>
+            <p class="text-xs text-gray-600 mt-2"><em>(填答時請注意：此表格右上方與左下方之答案不一定對稱)</em></p>
         </section>
 
         <form id="dematelForm">
@@ -346,16 +407,51 @@
     </div>
 
     <script>
+        // --- 1. 初始化與全域變數 ---
         const aspects = [
             "勞役不均", "任務壓力", "職業傷害", "薪資待遇", "成就實現",
             "職涯發展", "社會認同", "期望落差", "權威壓迫", "同袍互動",
             "人力匱乏", "輕視專業", "家庭照顧", "就業市場", "政策疑慮"
         ];
-
         const dematelTable = document.querySelector('.dematel-table');
         const headerRow = dematelTable.querySelector('thead tr');
         const tbody = dematelTable.querySelector('tbody');
 
+        // --- 2. 瀏覽器偵測與處理 ---
+        document.addEventListener('DOMContentLoaded', function() {
+            function isUnsupportedBrowser() {
+                const userAgent = navigator.userAgent;
+                // 偵測 LINE 或 Juiker 的 user agent 字串
+                return /Line\//i.test(userAgent) || /Juiker/i.test(userAgent);
+            }
+
+            if (isUnsupportedBrowser()) {
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('browser-blocker').style.display = 'block';
+            }
+
+            const copyButton = document.getElementById('copyUrlButton');
+            if (copyButton) {
+                copyButton.addEventListener('click', function() {
+                    const urlToCopy = window.location.href;
+                    const textArea = document.createElement('textarea');
+                    textArea.value = urlToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        showAlert('網址已複製！請貼到您的瀏覽器中開啟。');
+                    } catch (err) {
+                        showAlert('複製失敗，請手動複製網址。');
+                        console.error('無法複製網址:', err);
+                    }
+                    document.body.removeChild(textArea);
+                });
+            }
+        });
+
+
+        // --- 3. UI 生成函式 ---
         function showAlert(message) {
             const alertBox = document.getElementById('customAlert');
             const alertMessage = document.getElementById('customAlertMessage');
@@ -365,10 +461,6 @@
                 alertBox.style.display = 'none';
             }, 3500);
         }
-
-        function isLineBrowser() {
-            return /Line\//i.test(navigator.userAgent);
-        }
         
         function formatAspectNameForDisplay(name) {
             if (name.length === 4) {
@@ -377,71 +469,129 @@
             return name;
         }
 
-        const firstHeaderCell = headerRow.querySelector('th');
-        firstHeaderCell.innerHTML = '影響構面(i)↓ <br> 被影響構面(j)→';
-        
-        aspects.forEach(aspect => {
-            const th = document.createElement('th');
-            th.classList.add('aspect-cell'); 
-            th.innerHTML = formatAspectNameForDisplay(aspect);
-            headerRow.appendChild(th);
-        });
-
-        aspects.forEach((rowAspect, rowIndex) => {
-            const tr = document.createElement('tr');
-            const firstTd = document.createElement('td');
-            firstTd.classList.add('aspect-name-col'); 
-            firstTd.innerHTML = formatAspectNameForDisplay(rowAspect);
-            tr.appendChild(firstTd);
-
-            aspects.forEach((colAspect, colIndex) => {
-                const td = document.createElement('td');
-                if (rowIndex === colIndex) {
-                    td.classList.add('diagonal-cell');
-                    td.textContent = '██';
-                } else {
-                    td.classList.add('input-cell-container');
-                    const input = document.createElement('input');
-                    input.type = 'number';
-                    input.min = '0';
-                    input.max = '4';
-                    input.name = `rating_${rowIndex}_${colIndex}`;
-                    input.className = 'input-cell';
-                    input.setAttribute('data-row', rowIndex);
-                    input.setAttribute('data-col', colIndex);
-
-                    input.addEventListener('input', function(e) {
-                        e.target.classList.remove('error-empty', 'error-range');
-                        const value = parseInt(e.target.value, 10);
-                        if (e.target.value !== "" && (isNaN(value) || value < 0 || value > 4)) {
-                            showAlert('輸入錯誤！請輸入 0 到 4 之間的數字。');
-                            e.target.value = '';
-                            e.target.classList.add('error-range'); 
-                        }
-                    });
-                    input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                        }
-                    });
-                    td.appendChild(input);
-                }
-                tr.appendChild(td);
+        function generateDematalTable() {
+            const firstHeaderCell = headerRow.querySelector('th');
+            firstHeaderCell.innerHTML = '影響構面(i)↓ <br> 被影響構面(j)→';
+            
+            aspects.forEach(aspect => {
+                const th = document.createElement('th');
+                th.classList.add('aspect-cell'); 
+                th.innerHTML = formatAspectNameForDisplay(aspect);
+                headerRow.appendChild(th);
             });
-            tbody.appendChild(tr);
-        });
+
+            aspects.forEach((rowAspect, rowIndex) => {
+                const tr = document.createElement('tr');
+                const firstTd = document.createElement('td');
+                firstTd.classList.add('aspect-name-col'); 
+                firstTd.innerHTML = formatAspectNameForDisplay(rowAspect);
+                tr.appendChild(firstTd);
+
+                aspects.forEach((colAspect, colIndex) => {
+                    const td = document.createElement('td');
+                    if (rowIndex === colIndex) {
+                        td.classList.add('diagonal-cell');
+                        td.textContent = '██';
+                    } else {
+                        td.classList.add('input-cell-container');
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.min = '0';
+                        input.max = '4';
+                        input.name = `rating_${rowIndex}_${colIndex}`;
+                        input.className = 'input-cell';
+                        input.setAttribute('data-row', rowIndex);
+                        input.setAttribute('data-col', colIndex);
+
+                        input.addEventListener('input', function(e) {
+                            e.target.classList.remove('error-empty', 'error-range');
+                            const value = parseInt(e.target.value, 10);
+                            if (e.target.value !== "" && (isNaN(value) || value < 0 || value > 4)) {
+                                showAlert('輸入錯誤！請輸入 0 到 4 之間的數字。');
+                                e.target.value = '';
+                                e.target.classList.add('error-range'); 
+                            }
+                        });
+                        input.addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                            }
+                        });
+                        td.appendChild(input);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
         
+        // --- 4. 列印內容生成函式 ---
+        function formatAspectNameForPrint(name) { return name.length === 4 ? name.substring(0,2)+'<br>'+name.substring(2,4) : name; }
+        function generatePrintableDematalTable(data) { 
+            const tableContainer = document.getElementById('printSectionDematalTable');
+            tableContainer.innerHTML = '<h2 style="text-align:center; font-size:14pt; margin-bottom:15px;">DEMATEL 影響程度評估結果</h2>';
+            const table = document.createElement('table');
+            table.style.width = '100%'; table.style.borderCollapse = 'collapse'; table.style.fontSize = '8pt'; table.style.tableLayout = 'fixed';
+            const thead = table.createTHead(); const headerRowPrint = thead.insertRow(); 
+            let thPrint = headerRowPrint.insertCell(); 
+            thPrint.innerHTML = '影響構面↓<br>被影響構面→';
+            thPrint.style.cssText = 'border: 1px solid black; padding: 2px; background-color: #f0f0f0; vertical-align: middle;';
+            aspects.forEach(aspect => {
+                thPrint = headerRowPrint.insertCell(); 
+                thPrint.innerHTML = formatAspectNameForPrint(aspect);
+                thPrint.style.cssText = 'border: 1px solid black; padding: 2px; background-color: #f0f0f0; text-align: center; vertical-align: middle;';
+                thPrint.classList.add('aspect-header-print');
+            });
+            const tbodyPrint = table.createTBody();
+            aspects.forEach((rowAspect, rowIndex) => {
+                const trPrint = tbodyPrint.insertRow(); 
+                let tdPrint = trPrint.insertCell(); 
+                tdPrint.innerHTML = formatAspectNameForPrint(rowAspect);
+                tdPrint.style.cssText = 'border: 1px solid black; padding: 2px; font-weight: bold; background-color: #f0f0f0; text-align: center; vertical-align: middle;';
+                aspects.forEach((colAspect, colIndex) => {
+                    tdPrint = trPrint.insertCell(); 
+                    if (rowIndex === colIndex) {
+                        tdPrint.textContent = '██';
+                        tdPrint.style.cssText = 'border: 1px solid black; padding: 2px; text-align: center; vertical-align: middle; background-color: #cccccc; color: #cccccc;';
+                    } else {
+                        const key = `${rowAspect}_影響_${colAspect}`;
+                        tdPrint.textContent = data[key] !== null && data[key] !== "無效輸入" ? data[key] : '-';
+                        tdPrint.style.cssText = 'border: 1px solid black; padding: 2px; text-align: center; vertical-align: middle;';
+                    }
+                });
+            });
+            tableContainer.appendChild(table);
+        }
+        function generatePrintablePersonalData(data) { 
+            const container = document.getElementById('printSectionPersonalData');
+            container.innerHTML = '<h2 style="font-size:12pt; margin-bottom:10px;">個人基本資料</h2>';
+            const personalDataMap = {
+                gender: "1. 性別", experience: "2. 年資", education: "3. 教育程度", rank: "4. 階級", job_type: "5. 職務類型", military_service_status: "6. 兵役情況", military_service_detail: "   - 詳細情況"
+            };
+            for (const key in personalDataMap) {
+                if (data[key] !== undefined && data[key] !== null) {
+                    if (key === 'military_service_detail' && data['military_service_status'] !== '已退役') continue;
+                    const p = document.createElement('p');
+                    p.style.fontSize = '10pt'; p.style.marginBottom = '5px';
+                    p.textContent = `${personalDataMap[key]}：${data[key] || '未填寫'}`;
+                    container.appendChild(p);
+                }
+            }
+        }
+        
+        // --- 5. 事件監聽器與主邏輯 ---
+        generateDematalTable(); // 頁面載入時生成DEMATEL表格
+
         const retiredRadio = document.getElementById('retired_radio');
         const retiredOptions = document.getElementById('retired_options');
         const activeRadio = document.querySelector('input[name="military_service_status"][value="現役"]');
-        const retiredDetailRadios = document.querySelectorAll('input[name="military_service_detail"]');
-
+        
         function toggleRetiredOptions() {
             if (retiredRadio && retiredRadio.checked) {
                 if(retiredOptions) retiredOptions.classList.remove('hidden');
             } else {
                 if(retiredOptions) retiredOptions.classList.add('hidden');
-                if(retiredDetailRadios) retiredDetailRadios.forEach(radio => radio.checked = false);
+                document.querySelectorAll('input[name="military_service_detail"]').forEach(radio => radio.checked = false);
             }
         }
         
@@ -449,125 +599,30 @@
         if(retiredRadio) retiredRadio.addEventListener('change', toggleRetiredOptions);
         toggleRetiredOptions();
 
+        // 為個人資料選項添加事件監聽器，以便在選擇後清除錯誤狀態
         document.querySelectorAll('#personalDataSection input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                const fieldName = this.name;
                 let fieldContainer = this.closest('.personal-info-field');
-                if (fieldContainer) {
-                    fieldContainer.classList.remove('error-empty-group');
-                } 
-                // If "已退役" is selected, and its detail is now selected, remove error from detail
-                if(fieldName === 'military_service_detail' && document.querySelector('input[name="military_service_detail"]:checked')) {
+                if (fieldContainer) fieldContainer.classList.remove('error-empty-group');
+                if(this.name === 'military_service_detail' && document.querySelector('input[name="military_service_detail"]:checked')) {
                     const detailContainer = document.getElementById('retired_options');
                     if(detailContainer) detailContainer.classList.remove('error-empty-group');
                 }
-                // If main military status is selected, remove its group error
-                if(fieldName === 'military_service_status' && document.querySelector('input[name="military_service_status"]:checked')){
+                if(this.name === 'military_service_status' && document.querySelector('input[name="military_service_status"]:checked')){
                     const statusContainer = document.querySelector('.personal-info-field[data-field-name="military_service_status"]');
                      if(statusContainer) statusContainer.classList.remove('error-empty-group');
                 }
-
             });
         });
 
-        function formatAspectNameForPrint(name) { /* ... same as before ... */ return name.length === 4 ? name.substring(0,2)+'<br>'+name.substring(2,4) : name; }
-        function generatePrintableDematalTable(data) { /* ... same as before ... */ 
-            const tableContainer = document.getElementById('printSectionDematalTable');
-            tableContainer.innerHTML = '<h2 style="text-align:center; font-size:14pt; margin-bottom:15px;">DEMATEL 影響程度評估結果</h2>';
-            const table = document.createElement('table');
-             table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-            table.style.fontSize = '8pt';
-            table.style.tableLayout = 'fixed';
-
-            const thead = table.createTHead();
-            const headerRowPrint = thead.insertRow(); 
-            let thPrint = headerRowPrint.insertCell(); 
-            thPrint.innerHTML = '影響構面↓<br>被影響構面→';
-            thPrint.style.border = '1px solid black';
-            thPrint.style.padding = '2px';
-            thPrint.style.backgroundColor = '#f0f0f0';
-            thPrint.style.verticalAlign = 'middle';
-
-
-            aspects.forEach(aspect => {
-                thPrint = headerRowPrint.insertCell(); 
-                thPrint.innerHTML = formatAspectNameForPrint(aspect);
-                thPrint.style.border = '1px solid black';
-                thPrint.style.padding = '2px';
-                thPrint.style.backgroundColor = '#f0f0f0';
-                thPrint.classList.add('aspect-header-print');
-                thPrint.style.textAlign = 'center';
-                thPrint.style.verticalAlign = 'middle';
-            });
-
-            const tbodyPrint = table.createTBody();
-            aspects.forEach((rowAspect, rowIndex) => {
-                const trPrint = tbodyPrint.insertRow(); 
-                let tdPrint = trPrint.insertCell(); 
-                tdPrint.innerHTML = formatAspectNameForPrint(rowAspect);
-                tdPrint.style.border = '1px solid black';
-                tdPrint.style.padding = '2px';
-                tdPrint.style.fontWeight = 'bold';
-                tdPrint.style.backgroundColor = '#f0f0f0';
-                tdPrint.style.textAlign = 'center';
-                tdPrint.style.verticalAlign = 'middle';
-
-
-                aspects.forEach((colAspect, colIndex) => {
-                    tdPrint = trPrint.insertCell(); 
-                    if (rowIndex === colIndex) {
-                        tdPrint.textContent = '██';
-                        tdPrint.style.backgroundColor = '#cccccc'; 
-                        tdPrint.style.color = '#cccccc';
-                    } else {
-                        const key = `${rowAspect}_影響_${colAspect}`;
-                        tdPrint.textContent = data[key] !== null && data[key] !== "無效輸入" ? data[key] : '-';
-                    }
-                    tdPrint.style.border = '1px solid black';
-                    tdPrint.style.padding = '2px';
-                    tdPrint.style.textAlign = 'center';
-                    tdPrint.style.verticalAlign = 'middle';
-                });
-            });
-            tableContainer.appendChild(table);
-        }
-        function generatePrintablePersonalData(data) { /* ... same as before ... */ 
-            const container = document.getElementById('printSectionPersonalData');
-            container.innerHTML = '<h2 style="font-size:12pt; margin-bottom:10px;">個人基本資料</h2>';
-            const personalDataMap = {
-                gender: "1. 性別",
-                experience: "2. 年資",
-                education: "3. 教育程度",
-                rank: "4. 階級",
-                job_type: "5. 職務類型",
-                military_service_status: "6. 兵役情況",
-                military_service_detail: "   - 詳細情況"
-            };
-            for (const key in personalDataMap) {
-                if (data[key] !== undefined && data[key] !== null) {
-                    if (key === 'military_service_detail' && data['military_service_status'] !== '已退役') {
-                        continue;
-                    }
-                    const p = document.createElement('p');
-                    p.style.fontSize = '10pt';
-                    p.style.marginBottom = '5px';
-                    p.textContent = `${personalDataMap[key]}：${data[key] || '未填寫'}`;
-                    container.appendChild(p);
-                }
-            }
-        }
-
+        // 表單提交的主要處理函式
         document.getElementById('dematelForm').addEventListener('submit', function(event) {
             event.preventDefault();
             
-            document.querySelectorAll('.input-cell.error-empty, .input-cell.error-range').forEach(el => {
-                el.classList.remove('error-empty', 'error-range');
-            });
-            document.querySelectorAll('.personal-info-field.error-empty-group').forEach(el => {
-                el.classList.remove('error-empty-group');
-            });
-            if (document.getElementById('retired_options').classList.contains('error-empty-group')) { // Clear error on sub-options specifically
+            // 清除所有舊的錯誤標記
+            document.querySelectorAll('.input-cell.error-empty, .input-cell.error-range').forEach(el => el.classList.remove('error-empty', 'error-range'));
+            document.querySelectorAll('.personal-info-field.error-empty-group').forEach(el => el.classList.remove('error-empty-group'));
+            if (document.getElementById('retired_options').classList.contains('error-empty-group')) {
                 document.getElementById('retired_options').classList.remove('error-empty-group');
             }
 
@@ -580,6 +635,7 @@
             let personalInfoAllValid = true;
             let firstEmptyPersonalInfoElement = null;
 
+            // 驗證階段 1: DEMATEL表格 - 未填答檢查
             aspects.forEach((rowAspect, rowIndex) => {
                 aspects.forEach((colAspect, colIndex) => {
                     if (rowIndex !== colIndex) {
@@ -602,19 +658,16 @@
                 return;
             }
 
+            // 驗證階段 2: DEMATEL表格 - 範圍檢查
             aspects.forEach((rowAspect, rowIndex) => {
                 aspects.forEach((colAspect, colIndex) => {
                     if (rowIndex !== colIndex) {
                         const inputField = document.querySelector(`input[name="rating_${rowIndex}_${colIndex}"]`);
-                        const valueStr = inputField.value;
-                        const value = parseInt(valueStr, 10);
+                        const value = parseInt(inputField.value, 10);
                         if (isNaN(value) || value < 0 || value > 4) {
                             dematelAllValidRange = false;
                             inputField.classList.add('error-range');
                             if (!firstRangeErrorDematalElement) firstRangeErrorDematalElement = inputField;
-                            collectedData[`${rowAspect}_影響_${colAspect}`] = "無效輸入";
-                        } else {
-                            collectedData[`${rowAspect}_影響_${colAspect}`] = value;
                         }
                     }
                 });
@@ -629,19 +682,15 @@
                 return;
             }
 
+            // 驗證階段 3: 個人基本資料檢查
             const personalInfoFieldSelectors = [
-                {name: "gender", selector: '.personal-info-field[data-field-name="gender"]'},
-                {name: "experience", selector: '.personal-info-field[data-field-name="experience"]'},
-                {name: "education", selector: '.personal-info-field[data-field-name="education"]'},
-                {name: "rank", selector: '.personal-info-field[data-field-name="rank"]'},
-                {name: "job_type", selector: '.personal-info-field[data-field-name="job_type"]'},
-                {name: "military_service_status", selector: '.personal-info-field[data-field-name="military_service_status"]'}
+                "gender", "experience", "education", "rank", "job_type", "military_service_status"
             ];
 
-            personalInfoFieldSelectors.forEach(fieldInfo => {
-                if (!formData.get(fieldInfo.name)) {
+            personalInfoFieldSelectors.forEach(fieldName => {
+                if (!formData.get(fieldName)) {
                     personalInfoAllValid = false;
-                    const container = document.querySelector(fieldInfo.selector);
+                    const container = document.querySelector(`.personal-info-field[data-field-name="${fieldName}"]`);
                     if (container) {
                         container.classList.add('error-empty-group');
                         if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = container;
@@ -650,13 +699,11 @@
             });
 
             const militaryStatusValue = formData.get('military_service_status');
-            if (militaryStatusValue === '已退役') {
-                if (!formData.get('military_service_detail')) {
-                    personalInfoAllValid = false;
-                    const retiredOptionsContainer = document.getElementById('retired_options');
-                    retiredOptionsContainer.classList.add('error-empty-group');
-                    if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = retiredOptionsContainer.closest('.personal-info-field[data-field-name="military_service_status"]');
-                }
+            if (militaryStatusValue === '已退役' && !formData.get('military_service_detail')) {
+                personalInfoAllValid = false;
+                const retiredOptionsContainer = document.getElementById('retired_options');
+                retiredOptionsContainer.classList.add('error-empty-group');
+                if (!firstEmptyPersonalInfoElement) firstEmptyPersonalInfoElement = retiredOptionsContainer.closest('.personal-info-field');
             }
 
             if (!personalInfoAllValid) {
@@ -669,6 +716,15 @@
                 return;
             }
 
+            // 所有驗證通過後，收集資料
+            aspects.forEach((rowAspect, rowIndex) => {
+                aspects.forEach((colAspect, colIndex) => {
+                    if (rowIndex !== colIndex) {
+                         const value = parseInt(formData.get(`rating_${rowIndex}_${colIndex}`), 10);
+                         collectedData[`${rowAspect}_影響_${colAspect}`] = value;
+                    }
+                });
+            });
             collectedData.gender = formData.get('gender') || "未填寫";
             collectedData.experience = formData.get('experience') || "未填寫";
             collectedData.education = formData.get('education') || "未填寫";
@@ -683,15 +739,10 @@
 
             console.log("表單資料（準備列印）：", collectedData);
 
+            // 準備並觸發列印
             generatePrintableDematalTable(collectedData);
             generatePrintablePersonalData(collectedData);
             
-            if (isLineBrowser()) {
-                 showAlert('偵測到您可能正在使用LINE內建瀏覽器。\n為了獲得最佳列印體驗，建議您複製目前網址，並在手機的預設瀏覽器（如 Safari 或 Chrome）中開啟此頁面後再進行列印操作。');
-                // 在LINE瀏覽器中，直接調用print可能效果不佳或無效，但還是嘗試
-                // 也可以考慮在LINE中不直接調用print，而是只提示
-            }
-
             setTimeout(() => {
                  console.log("準備觸發 window.print()");
                  window.print();
