@@ -13,7 +13,7 @@
         .dematel-table th, .dematel-table td {
             padding: 0.5rem 0.25rem; 
             text-align: center;
-            border: 1px solid #e2e8f0; 
+            border: 1px solid #e2e8f0; /* Tailwind gray-200 */
             vertical-align: middle; 
         }
         .dematel-table thead th.aspect-cell {
@@ -31,7 +31,7 @@
             padding-left: 0.5rem;
             padding-right: 0.5rem;
             font-weight: 600;
-            background-color: #f8fafc; 
+            background-color: #f8fafc; /* Tailwind slate-50 */
             position: sticky;
             left: 0;
             z-index: 10;
@@ -40,7 +40,7 @@
              min-width: 8.5rem; 
              height: 4.5em; 
              line-height: 1.35;
-             background-color: #f1f5f9; 
+             background-color: #f1f5f9; /* Tailwind slate-100 */
              position: sticky;
              top: 0;
              left: 0;
@@ -56,17 +56,17 @@
             max-width: 4em; 
             padding: 0.4rem 0.2rem;
             text-align: center;
-            border: 1px solid #cbd5e1; 
+            border: 1px solid #cbd5e1; /* Tailwind slate-300 */
             border-radius: 0.25rem;
             box-sizing: border-box; 
         }
         .input-cell:focus {
-            border-color: #3b82f6; 
+            border-color: #3b82f6; /* Tailwind sky-500 */
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
             outline: none;
         }
         .dematel-table td.diagonal-cell {
-            background-color: #4b5563; 
+            background-color: #4b5563; /* Tailwind gray-600 */
             color: #4b5563;
             user-select: none;
             height: 3.5em; 
@@ -74,11 +74,38 @@
         .dematel-table thead th {
             position: sticky;
             top: 0;
-            background-color: #f1f5f9; 
+            background-color: #f1f5f9; /* Tailwind slate-100 */
             z-index: 20;
         }
 
-        /* Styling for the example table to make cells square-like */
+        /* Styling for the example table (影響程度示意) */
+        .example-table-示意 { /* New class for clarity */
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #9ca3af; /* Tailwind gray-400 for outer border */
+        }
+        .example-table-示意 th, .example-table-示意 td {
+            border: 1px solid #9ca3af; /* Tailwind gray-400 for inner borders */
+            width: 3rem;  /* Adjust as needed */
+            height: 3rem; /* Adjust as needed */
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.875rem;
+            line-height: 3rem; /* For vertical centering */
+        }
+        .example-table-示意 th {
+            background-color: #e5e7eb; /* Tailwind gray-200 */
+            font-weight: bold;
+        }
+        .example-table-示意 td.diagonal-cell-示意 { /* Diagonal cells in "影響程度示意" table */
+            background-color: #374151; /* Tailwind gray-700 */
+            color: #374151;
+        }
+
+
+        /* Styling for the example table (貳、填答問卷之範例) */
         .example-table-square {
             border-collapse: collapse;
             margin-left: auto; 
@@ -130,38 +157,19 @@
         @media (max-width: 768px) {
             .dematel-table-container { overflow-x: auto; max-height: 500px; }
             .dematel-table thead th.aspect-cell { 
-                min-width: 4.5rem; 
-                height: auto;     
-                line-height: 1.3; 
-                font-size:0.75rem; 
-                padding-top: 0.3rem;
-                padding-bottom: 0.3rem;
+                min-width: 4.5rem; height: auto; line-height: 1.3; font-size:0.75rem; padding-top: 0.3rem; padding-bottom: 0.3rem;
             }
             .dematel-table tbody td.aspect-name-col { 
-                min-width: 5.8rem; 
-                font-size:0.75rem;
-                line-height: 1.3;
-                height: 3.2em;
+                min-width: 5.8rem; font-size:0.75rem; line-height: 1.3; height: 3.2em;
             }
             .dematel-table thead th.aspect-name-col { 
-                min-width: 7rem; 
-                font-size:0.75rem;
-                line-height: 1.3;
-                height: auto;
-                 padding-top: 0.3rem;
-                padding-bottom: 0.3rem;
+                min-width: 7rem; font-size:0.75rem; line-height: 1.3; height: auto; padding-top: 0.3rem; padding-bottom: 0.3rem;
             }
-            .dematel-table td.input-cell-container, .dematel-table td.diagonal-cell {
-                height: 3.2em; 
-            }
+            .dematel-table td.input-cell-container, .dematel-table td.diagonal-cell { height: 3.2em; }
             .input-cell { width: 100%; max-width:3.5em; font-size: 0.875rem; padding: 0.3rem 0.1rem;}
             .radio-options-grid { grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr)); } 
-            .example-table-square th, .example-table-square td { 
-                width: 2.2rem; 
-                height: 2.2rem;
-                line-height: 2.2rem;
-                font-size: 0.75rem;
-            }
+            .example-table-示意 th, .example-table-示意 td { width: 2.5rem; height: 2.5rem; line-height: 2.5rem; font-size: 0.75rem; }
+            .example-table-square th, .example-table-square td { width: 2.2rem; height: 2.2rem; line-height: 2.2rem; font-size: 0.75rem;}
         }
     </style>
 </head>
@@ -201,15 +209,15 @@
                     <li>若您認為「構面B」對「構面A」的影響程度為「極高影響」，則請在「構面B」列與「構面A」行的交叉儲存格中填入數字「4」。</li>
                 </ul>
                 <div class="flex justify-center my-3">
-                    <div class="w-auto border border-gray-400 p-2 rounded bg-white shadow">
-                         <p class="text-center font-semibold mb-1">影響程度示意</p>
-                        <table class="example-table text-center">
+                    <div class="w-auto bg-white shadow"> <!-- Removed explicit border and rounded from here -->
+                         <p class="text-center font-semibold mb-1 pt-2">影響程度示意</p>
+                        <table class="example-table-示意"> <!-- Changed class -->
                             <thead>
-                                <tr><th> </th><th class="px-2">構面A</th><th class="px-2">構面B</th></tr>
+                                <tr><th> </th><th>構面A</th><th>構面B</th></tr>
                             </thead>
                             <tbody>
-                                <tr><th class="text-left px-2">構面A</th><td class="bg-gray-700 text-gray-700">██</td><td>3</td></tr>
-                                <tr><th class="text-left px-2">構面B</th><td>4</td><td class="bg-gray-700 text-gray-700">██</td></tr>
+                                <tr><th>構面A</th><td class="diagonal-cell-示意">██</td><td>3</td></tr>
+                                <tr><th>構面B</th><td>4</td><td class="diagonal-cell-示意">██</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -555,31 +563,8 @@
             }
         }
 
-        function generateCSVText(data) { // Renamed to avoid conflict with a potential global 'CSV'
-            let csvContent = "\"影響構面\\被影響構面\"," + aspects.map(a => `"${a}"`).join(',') + "\n"; // Quoted headers
-            aspects.forEach((rowAspect, rowIndex) => {
-                let row = `"${rowAspect}"`; // Quoted row header
-                aspects.forEach((colAspect, colIndex) => {
-                    if (rowIndex === colIndex) {
-                        row += ",-"; 
-                    } else {
-                        const key = `${rowAspect}_影響_${colAspect}`;
-                        const value = data[key] !== null && data[key] !== "無效輸入" ? data[key] : '';
-                        // Quote if value contains comma or quote, or is not a simple number
-                        const quotedValue = (typeof value === 'string' && (value.includes(',') || value.includes('"'))) ? `"${value.replace(/"/g, '""')}"` : value;
-                        row += "," + quotedValue;
-                    }
-                });
-                csvContent += row + "\n";
-            });
-            return csvContent;
-        }
-
-        let mailtoAttempted = false;
-
         document.getElementById('dematelForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            mailtoAttempted = false;
             
             const formData = new FormData(this);
             const collectedData = {};
@@ -629,68 +614,18 @@
                 collectedData.military_service_detail = null;
             }
 
-            console.log("表單資料（準備列印與郵寄）：", collectedData);
+            console.log("表單資料（準備列印）：", collectedData); // 更新主控台訊息
 
             generatePrintableDematalTable(collectedData);
             generatePrintablePersonalData(collectedData);
             
-            window.onafterprint = function() {
-                if (mailtoAttempted) return;
-                mailtoAttempted = true;
-                
-                console.log("onafterprint 事件觸發，準備寄送郵件。");
+            // 移除 onafterprint 和 mailto 相關邏輯
+            // window.onafterprint = function() { ... } // 此段已刪除
 
-                const csvDataText = generateCSVText(collectedData); // Use the renamed function
-                let mailBody = "DEMATEL 問卷填答結果 (CSV 格式):\n";
-                mailBody += "--------------------------------------------------\n";
-                mailBody += csvDataText;
-                mailBody += "--------------------------------------------------\n\n";
-                mailBody += "個人基本資料:\n";
-                mailBody += `性別: ${collectedData.gender}\n`;
-                mailBody += `年資: ${collectedData.experience}\n`;
-                mailBody += `教育程度: ${collectedData.education}\n`;
-                mailBody += `階級: ${collectedData.rank}\n`;
-                mailBody += `職務類型: ${collectedData.job_type}\n`;
-                mailBody += `兵役情況: ${collectedData.military_service_status}`;
-                if (collectedData.military_service_status === '已退役') {
-                    mailBody += ` (${collectedData.military_service_detail || '未選擇詳細情況'})\n`;
-                } else {
-                    mailBody += "\n";
-                }
-                
-                const mailToLink = `mailto:ts9074@gmail.com` +
-                                   `?subject=${encodeURIComponent("DEMATEL 問卷填答結果")}` +
-                                   `&body=${encodeURIComponent(mailBody)}`;
-
-                if (mailToLink.length > 2000) { // A common, conservative limit for mailto URLs
-                    showAlert("郵件內容過長，可能無法完整透過 mailto 傳送。\n建議手動複製主控台輸出的「CSV 資料」與「個人基本資料」。");
-                    console.log("CSV 資料 (請手動複製):\n", csvDataText);
-                    let personalDataText = "個人基本資料 (請手動複製):\n";
-                    personalDataText += `性別: ${collectedData.gender}\n`;
-                    personalDataText += `年資: ${collectedData.experience}\n`;
-                    personalDataText += `教育程度: ${collectedData.education}\n`;
-                    personalDataText += `階級: ${collectedData.rank}\n`;
-                    personalDataText += `職務類型: ${collectedData.job_type}\n`;
-                    personalDataText += `兵役情況: ${collectedData.military_service_status}`;
-                    if (collectedData.military_service_status === '已退役') {
-                        personalDataText += ` (${collectedData.military_service_detail || '未選擇詳細情況'})\n`;
-                    } else {
-                        personalDataText += "\n";
-                    }
-                    console.log(personalDataText);
-                } else {
-                    setTimeout(() => {
-                        console.log("嘗試開啟郵件客戶端，連結:", mailToLink.substring(0, 200) + "..."); // Log a snippet
-                        window.location.href = mailToLink;
-                    }, 100); 
-                }
-                showAlert('列印完成。問卷資料已準備完成，即將嘗試開啟郵件客戶端。');
-                window.onafterprint = null; 
-            };
-            
             setTimeout(() => {
                  console.log("準備觸發 window.print()");
                  window.print();
+                 showAlert('問卷資料已準備好列印。'); // 更新提示訊息
             }, 500); 
         });
     </script>
